@@ -1069,19 +1069,41 @@ body,
     overflow: hidden;
   }
 
+  #app[data-mode="live"] {
+    --live-topbar: 11.75rem;
+    --live-sheet: min(36vh, 17rem);
+    --live-teach: min(18vh, 9rem);
+  }
+
   #app[data-mode="live"] .live-panel {
     top: auto;
     bottom: var(--chrome-bottom);
-    max-height: 30vh;
+    max-height: var(--live-sheet);
+  }
+
+  /* Empty Learn copy on Live phone until a tagged component is picked. */
+  #app[data-mode="live"] .teach-panel:has(#teach-body:empty) {
+    display: none !important;
   }
 
   #app[data-mode="live"] .teach-panel {
-    bottom: calc(var(--chrome-bottom) + 30vh);
-    max-height: 18vh;
+    bottom: calc(var(--chrome-bottom) + var(--live-sheet));
+    max-height: var(--live-teach);
   }
 
   #app[data-mode="live"] .live-stage {
-    padding: calc(96px + var(--safe-top)) 8px calc(var(--chrome-bottom) + 48vh);
+    padding:
+      calc(var(--safe-top) + 8px + var(--live-topbar) + 8px)
+      8px
+      calc(var(--chrome-bottom) + var(--live-sheet));
+  }
+
+  #app[data-mode="live"]:has(#teach-body:not(:empty)) .live-stage {
+    padding-bottom: calc(var(--chrome-bottom) + var(--live-sheet) + var(--live-teach));
+  }
+
+  #app[data-mode="live"] .live-frame {
+    max-height: 100%;
   }
 }
 
