@@ -4,11 +4,25 @@ GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
 **Live site (open in a normal browser):** [https://kellybyron2222-dev.github.io/SpaceX-/](https://kellybyron2222-dev.github.io/SpaceX-/)
 
+This Pages app is the **Starship Component Viewer**. The related Grok bot is **Starship Render Lab** (public template + X quote-tweet later, ~Sep 29). Contest **not submitted**.
+
 **Snapshot:** [STATUS.md](STATUS.md)
 
-Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
+Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Parametric teaching models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
+
+## Contest demo script (2 minutes)
+
+Booth walkthrough (~120s) — keep the footer disclaimer on screen the whole time. Laptop path; phone is backup only.
+
+1. **Explore (25s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~124 m vehicle. Hit **Explode** to lift the ship, then **Reset camera** (tween; also collapses explode). Skip the grid-fin vs catch-pin click if it is fiddly at booth distance — they are distinct Learn catalog picks.
+2. **Tracker (20s).** Switch to **Tracker**. Point at Live data vs Sample and the “not official SpaceX telemetry” banner. Click a Starship Flight 14 row if listed, otherwise a Falcon 9 card. Use one related chip to jump into Learn.
+3. **Learn + physics (30s).** Select **Raptor**. Flip Overview → **Sources**, then opt in to physics notes. Search **`ASDS`** or **`catch hardpoints`** — not bare `catch` (that substring is noisy).
+4. **Falcon 9 (15s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Skip Mechazilla if time is tight (or swap this beat for Mechazilla, not both).
+5. **Live Launch (30s).** Public-stream disclaimer + **T−** card (LL2, not official). If the embed is blocked: **Open on YouTube**. Else: leave **Hotspots** off, pick one tagged name, then click the **`1:40 · Catch` chapter** (the Catch preset does not seek — the clock stays on the pad poster). Do not paste IDs or use Live webcast fit/nudge unless a real webcast is up.
+
+If LL2 or YouTube fails: Sample banner + 3D path; keep talking.
 
 ## Deploy (GitHub Pages)
 
@@ -35,7 +49,7 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL (default [http://127.0.0.1:47321](http://127.0.0.1:47321)).
+Then open the printed local URL, or [http://127.0.0.1:47321/SpaceX-/](http://127.0.0.1:47321/SpaceX-/) (Vite `base` is `/SpaceX-/`).
 
 | Script | What it does |
 | --- | --- |
@@ -174,19 +188,6 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 
 - **Orbit** one-finger / left-drag · **pan** two-finger / right-drag · **zoom** pinch / wheel
 - **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
 - **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **F** fullscreen · **?** help · **Esc** clear selection
-
-## Contest demo script (2 minutes)
-
-Booth walkthrough — keep the footer disclaimer on screen the whole time.
-
-1. **Explore (20s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~124 m vehicle. Click a **grid fin** vs a **catch pin** so the callouts stay distinct. Hit **Explode** to lift the ship, then **Reset camera** (tween; also collapses explode).
-2. **Tracker (25s).** Switch to **Tracker**. Point at the Live data vs Sample toggle and the “not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
-3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
-4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
-5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
-6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer and, if a Starship window is on the public list, the **T−** card (LL2, not official). If the embed is blocked, show **Open on YouTube**. Otherwise show **Stack on pad**, click a tagged name (or a hotspot on desktop), flip Learn tabs. Switch to **Catch / chopsticks** (chapter ~1:40 on the default recap). For a live webcast, use **Live webcast** fit + nudge — leave **Hotspots** off until you want tags. Optionally paste the current public webcast ID — prefer one that allows embedding.
-
-If live launches fail, the sample-data banner is expected — keep talking; the 3D path is the demo.
 
 ## Contest / demo notes
 

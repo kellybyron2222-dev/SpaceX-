@@ -4,15 +4,17 @@
 
 ## Shipped
 
-- Through [#18](https://github.com/kellybyron2222-dev/SpaceX-/pull/18): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, Explore/Tracker/Learn QA
-- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md` on main
-- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): Live Launch YouTube fallback, overlay fit + nudge, public Starship **T−** card (LL2)
-- This PR [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21): Learn **Vacuum Raptor** frames the aft bells (no black canvas) · tokenized catalog search (`catch` / `QD`)
+- Through [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, Explore/Tracker/Learn QA, YouTube fallback / overlay fit / Starship **T−** card
+- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md`
+- [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21): Learn **Vacuum Raptor** frames the aft bells · tokenized catalog search
+- This PR: contest-ready README — 120s booth script, viewer vs **Starship Render Lab** identity
 
 ## Open PRs
 
-- [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21) — Vacuum Raptor framing + Learn search tokens
+- [#22](https://github.com/kellybyron2222-dev/SpaceX-/pull/22) (draft) — mobile tabs / Learn 3D band
+- [#23](https://github.com/kellybyron2222-dev/SpaceX-/pull/23) — Catch auto-seek + stricter YouTube IDs
+- This PR — README contest demo script + identity
 
 ## Next
 
-Mobile polish (tab row / Learn 3D band on phone) **or** Live Launch catch auto-seek + stricter YouTube IDs. Do not submit the contest.
+Merge/verify [#23](https://github.com/kellybyron2222-dev/SpaceX-/pull/23) (Catch chapter auto-seek; until then demo **`1:40 · Catch`**, not the Catch preset) and [#22](https://github.com/kellybyron2222-dev/SpaceX-/pull/22) mobile polish. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.
