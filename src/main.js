@@ -69,8 +69,9 @@ function setMode(mode) {
   if (mode === "live") {
     live.activate();
     viewer.setPaused(true);
-    live.setSelected(state.catalogId);
-    showTeach(state.catalogId ? catalogById(state.catalogId) : null);
+    state.catalogId = null;
+    live.clearSelection();
+    showTeach(null);
   } else if (prev === "live") {
     live.deactivate();
     viewer.setPaused(false);

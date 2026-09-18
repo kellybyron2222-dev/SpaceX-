@@ -22,6 +22,25 @@
             <svg id="live-hotspots" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="false"></svg>
             <div id="live-labels" class="live-labels"></div>
           </div>
+          <div id="live-fallback" class="live-fallback hidden" hidden>
+            <img id="live-fallback-thumb" alt="" />
+            <div class="live-fallback-body">
+              <p class="live-fallback-kicker">In-page playback unavailable</p>
+              <h3 id="live-fallback-title">Watch on YouTube</h3>
+              <p id="live-fallback-copy">
+                YouTube may block embeds (sign-in / bot check), or the uploader may disable embedding.
+                Some SpaceX video IDs cannot play in-page.
+              </p>
+              <a
+                id="live-fallback-open"
+                class="tool primary live-fallback-cta"
+                href="https://www.youtube.com/watch?v=hI9HQfCAw64"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Open on YouTube</a>
+              <button type="button" id="live-fallback-retry" class="text-btn">Retry embed</button>
+            </div>
+          </div>
           <p id="live-player-error" class="live-error hidden" role="alert"></p>
         </div>
       </div>
@@ -122,12 +141,24 @@
         <p id="live-banner" class="banner">Public YouTube embed — not official SpaceX telemetry or internal cameras.</p>
         <label class="field-label" for="live-url">YouTube URL or video ID</label>
         <div class="live-url-row">
-          <input id="live-url" type="text" spellcheck="false" autocomplete="off" placeholder="https://youtube.com/watch?v=… or 11-char ID" />
+          <input
+            id="live-url"
+            type="text"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            inputmode="text"
+            size="14"
+            maxlength="128"
+            placeholder="11-char ID or youtube.com/watch?v=…"
+            title="YouTube video ID — 11 characters, letter I not digit 1"
+          />
           <button type="button" id="btn-live-load" class="tool">Load</button>
         </div>
         <div class="live-url-actions">
+          <a id="live-open-yt" class="tool primary" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+          <button type="button" id="btn-embed-help" class="text-btn">Can't play here?</button>
           <button type="button" id="btn-live-default" class="text-btn">Reset to default webcast</button>
-          <a id="live-open-yt" class="text-btn" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
         </div>
         <p class="section-label">Overlay preset</p>
         <div class="filters" id="live-presets"></div>
@@ -143,8 +174,10 @@
         <nav id="live-hotspot-list" class="catalog-nav"></nav>
         <p class="hint">
           Overlays start off so the stream stays visible. Turn on <strong>Hotspots</strong> (or press H)
-          to tag the picture — outlines stay dim until hover or focus. Click a box or a name here
-          to open Learn. Coordinates live in <code>src/data/live/overlays.json</code> (0–1, top-left origin).
+          to tag the picture — outlines stay dim until hover or focus. On phones, pick a name in this
+          list (44px rows); overlay boxes are visual only so they do not steal the YouTube play control.
+          Click a box or a name here to open Learn. Coordinates live in
+          <code>src/data/live/overlays.json</code> (0–1, top-left origin).
         </p>
       </aside>
 
