@@ -1168,10 +1168,29 @@ body,
       calc(var(--safe-top) + 8px + var(--live-topbar) + 8px)
       8px
       calc(var(--chrome-bottom) + var(--live-sheet));
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
   }
 
   #app[data-mode="live"]:has(#teach-body:not(:empty)) .live-stage {
     padding-bottom: calc(var(--chrome-bottom) + var(--live-sheet) + var(--live-teach));
+  }
+
+  #app[data-mode="live"] .live-frame {
+    width: 100%;
+    max-height: none;
+    flex: 1 1 auto;
+  }
+
+  #app[data-mode="live"] .commentator {
+    flex: 0 0 auto;
+    width: 100%;
+    max-height: 38%;
+  }
+
+  #app[data-mode="live"] .commentator.is-idle {
+    max-height: none;
   }
 
   #app[data-mode="live"] .teach-panel .ref-photo {
@@ -1245,8 +1264,10 @@ body,
   position: absolute;
   inset: 0;
   z-index: 1;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   padding: 104px 16px 58px;
   background: #05080c;
 }
@@ -1259,7 +1280,9 @@ body,
 
 .live-frame {
   position: relative;
+  flex: 1 1 auto;
   width: min(100%, calc((100vh - 170px) * 16 / 9));
+  min-width: 0;
   aspect-ratio: 16 / 9;
   max-height: calc(100vh - 170px);
   background: #000;
@@ -1553,6 +1576,150 @@ a.live-fallback-cta.tool.primary {
 .live-nudge .tool.ghost {
   min-width: 36px;
   min-height: 36px;
+}
+
+.commentator {
+  flex: 0 0 272px;
+  align-self: stretch;
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--accent);
+  z-index: 2;
+}
+
+.commentator.is-idle {
+  flex-basis: 200px;
+  max-height: min(280px, calc(100vh - 170px));
+  align-self: center;
+}
+
+.commentator.is-idle .commentator-beats,
+.commentator.is-idle .field-label,
+.commentator.is-idle select,
+.commentator.is-idle .follow-row,
+.commentator.is-idle .hint {
+  display: none;
+}
+
+.commentator-kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.commentator-clock {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+
+.commentator h2 {
+  font-size: 18px;
+  text-transform: capitalize;
+  margin: 0 0 8px;
+}
+
+.commentator-cue {
+  color: var(--steel);
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+.commentator-cue.is-pulse {
+  animation: comm-pulse 0.6s ease;
+}
+
+@keyframes comm-pulse {
+  from {
+    color: var(--accent);
+  }
+  to {
+    color: var(--steel);
+  }
+}
+
+.commentator-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.commentator-controls .tool.primary {
+  width: 100%;
+  justify-content: center;
+}
+
+.commentator-controls select {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font: 12px var(--font);
+}
+
+.commentator-beats {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.commentator-beat {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--steel);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 12px/1.35 var(--font);
+}
+
+.commentator-beat.active {
+  border-color: rgba(245, 193, 108, 0.45);
+  background: rgba(245, 193, 108, 0.12);
+  color: var(--text);
+}
+
+.commentator-beat-clock {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+@media (max-width: 1099px) {
+  .live-stage {
+    flex-wrap: wrap;
+  }
+
+  .commentator {
+    flex: 1 1 240px;
+    max-height: min(42vh, 22rem);
+  }
 }
 
 @container (max-height: 320px) {

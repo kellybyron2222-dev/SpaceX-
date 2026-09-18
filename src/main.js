@@ -81,6 +81,10 @@ const live = createLiveLaunch({
   onShareChange() {
     syncShareUrl();
   },
+  onLearn(catalogId) {
+    setMode("learn");
+    selectCatalog(catalogId);
+  },
 });
 
 const state = {
@@ -108,6 +112,8 @@ function shareQuery() {
     preset: state.mode === "live" ? snap.presetId : "",
     video: state.mode === "live" ? snap.videoId : "",
     hotspots: state.mode === "live" ? snap.hotspotsOn : false,
+    commentary: state.mode === "live" ? snap.commentaryOn : false,
+    phase: state.mode === "live" && snap.commentaryOn ? snap.beatId : "",
   });
 }
 
@@ -130,6 +136,8 @@ function applyDeepLink(link) {
       presetId: link.preset || undefined,
       hotspotId: catalogId || undefined,
       hotspots: link.hotspots,
+      commentary: link.commentary || undefined,
+      phase: link.phase || undefined,
     });
     return;
   }
@@ -287,7 +295,7 @@ function showTeach(entry) {
     teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
     teachTitle.textContent = liveMode ? "Select a tagged component" : "Select a component";
     teachBlurb.textContent = liveMode
-      ? "Turn on Hotspots (toolbar or H) and click a tag on the stream, or pick a name in the list. Overview / History / Function / Sources / Physics use the same catalog as Learn."
+      ? "Start Commentary (C) for sports-style beats, or turn on Hotspots (H) and pick a tag. Overview / History / Function / Sources / Physics use the same catalog as Learn."
       : "Pick an entry in the catalog. The 3D view will focus that part.";
     teachBody.innerHTML = "";
     return;
@@ -619,7 +627,13 @@ btnPhysics.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (event) => {
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+  if (
+    event.target instanceof HTMLInputElement ||
+    event.target instanceof HTMLTextAreaElement ||
+    event.target instanceof HTMLSelectElement
+  ) {
+    return;
+  }
   const key = event.key.toLowerCase();
   if (key === "t") setMode("tracker");
   if (key === "v") setMode("explore");
@@ -642,6 +656,7 @@ window.addEventListener("keydown", (event) => {
   }
   if (state.mode === "live") {
     if (key === "h") live.toggleHotspots();
+    if (key === "c") live.toggleCommentary();
     return;
   }
   if (key === "r") resetView();

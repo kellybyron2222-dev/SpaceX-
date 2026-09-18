@@ -23,7 +23,7 @@ function paramsFrom(search, hash) {
 
 function flag(raw) {
   const v = String(raw || "").toLowerCase();
-  if (v === "1" || v === "true" || v === "on") return true;
+  if (v === "1" || v === "true" || v === "on" || v === "start" || v === "yes") return true;
   if (v === "0" || v === "false" || v === "off") return false;
   return null;
 }
@@ -39,20 +39,31 @@ export function parseDeepLink(search = "", hash = "") {
     hotspot: get("hotspot"),
     scene: get("scene"),
     preset: get("preset"),
-    video: get("video"),
+    video: get("video") || get("youtube"),
     hotspots: flag(get("hotspots")),
+    commentary: flag(get("commentary")) === true,
+    phase: get("phase") || get("beat"),
   };
 }
 
 export function hasDeepLink(link) {
   if (!link) return false;
-  return Boolean(link.mode || link.id || link.hotspot || link.scene || link.preset || link.video);
+  return Boolean(
+    link.mode ||
+      link.id ||
+      link.hotspot ||
+      link.scene ||
+      link.preset ||
+      link.video ||
+      link.commentary ||
+      link.phase,
+  );
 }
 
 /** Infer tab when the bot omits `mode` but sends a scene / catalog id / Live preset. */
 export function inferredMode(link) {
   if (link?.mode) return link.mode;
-  if (link?.preset || link?.video) return "live";
+  if (link?.preset || link?.video || link?.commentary || link?.phase) return "live";
   if (link?.scene) return "explore";
   if (link?.id || link?.hotspot) return "learn";
   return "";
@@ -66,12 +77,15 @@ export function serializeDeepLink({
   preset = "",
   video = "",
   hotspots = false,
+  commentary = false,
+  phase = "",
 } = {}) {
   const tab = MODES.includes(mode) ? mode : "explore";
   const catalogId = id || "";
   const sceneId = scene || "";
   const presetId = preset || "";
   const videoId = video || "";
+  const phaseId = phase || "";
   const cleanExplore = tab === "explore" && (!sceneId || sceneId === "fullstack") && !catalogId;
   if (tab === "explore" && cleanExplore) return "";
 
@@ -83,6 +97,8 @@ export function serializeDeepLink({
     if (presetId) p.set("preset", presetId);
     if (videoId) p.set("video", videoId);
     if (hotspots) p.set("hotspots", "1");
+    if (commentary) p.set("commentary", "1");
+    if (phaseId) p.set("phase", phaseId);
   }
   return p.toString();
 }
