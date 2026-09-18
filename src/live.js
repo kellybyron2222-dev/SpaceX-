@@ -239,12 +239,13 @@ export function createLiveLaunch({ onSelect } = {}) {
 
   function bannerText() {
     const launch = state.windowLaunch;
-    const recap = overlayConfig.defaultVideoNote;
-    if (!launch) return recap;
-    if (launch.status === "in-flight") {
-      return `${launch.mission} is in flight on the public Launch Library 2 list (not official SpaceX). Paste the webcast ID if this recap is not the live stream. ${recap}`;
+    if (launch?.status === "in-flight") {
+      return `${launch.mission} is in flight on the public Launch Library 2 list — not official SpaceX. Paste a webcast ID if this recap is not the live stream.`;
     }
-    return `Public Starship window on the manifest: ${launch.mission}. This tab still embeds a public YouTube recap until you paste a webcast ID — not official telemetry. ${recap}`;
+    if (launch) {
+      return `Public Starship window on the manifest: ${launch.mission}. This tab still embeds a public YouTube recap until you paste a webcast ID — not official telemetry.`;
+    }
+    return overlayConfig.defaultVideoNote;
   }
 
   function renderCountdown() {
