@@ -54,6 +54,7 @@ const PARTS = ids("raptor", {
   },
 });
 
+/** Textbook FFSC teaching layout (regen rings, two preburners, pumps, gimbal) — not a factory-floor look-alike. */
 export function createRaptor() {
   const mats = createMaterials();
   const g = new THREE.Group();

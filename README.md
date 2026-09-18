@@ -156,7 +156,7 @@ All sizes are **rounded public figures** used only as rough scale (1 scene unit 
 | **Full stack** | Super Heavy + Starship, about **124 m** tall and **9 m** diameter. Exploded view lifts the ship. Includes rainbird stand-ins on the mount. |
 | **Super Heavy** | First-stage booster, about **72 m**. Ring-stack barrel, raceway, three grid fins (V3 public layout; Falcon 9 still uses four), catch hardpoints, vented hot-staging ring, **33-Raptor** cluster (3 + 10 + 20). |
 | **Starship** | Upper stage, about **52 m**. Ogive nose, barrel tanks, windward hex tiles, forward/aft flaps, three sea-level and three vacuum Raptors. |
-| **Raptor engine** | Close-up methane/LOX **full-flow staged combustion** teaching model: nozzle, chamber, gimbal, preburners, pumps, pipes. |
+| **Raptor engine** | Close-up methane/LOX **full-flow staged combustion** textbook teaching model: nozzle, chamber, gimbal, two preburners, pumps, pipes. Learn / Live show a licensed photo of real hardware beside the mesh. |
 | **Mechazilla** | Launch-and-catch tower with chopsticks and a ghost booster. Tower height is a **~146 m-class** round figure. |
 | **QD arm** | Quick-disconnect swing arm from a tower stub to a ghost 9 m barrel. |
 | **Heat-shield panel** | Curved hex/rect tile grid. Explode lifts tiles along normals. |
@@ -169,7 +169,7 @@ Click any labeled mesh for a 1–2 sentence explainer. Nothing here is a drawing
 
 ## Teaching catalog
 
-Learn mode includes **24** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**. Public educational approximations — not official SpaceX infrastructure drawings.
+Learn mode includes **24** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**. The Raptor card (and Live Raptor-cluster hotspot) also shows a **licensed Wikimedia still** of a real sea-level engine; the 3D stays a textbook teaching model. Public educational approximations — not official SpaceX infrastructure drawings.
 
 **Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, **Merlin Vacuum**, Starship tanks, **Falcon tanks**, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, landing legs.
 
