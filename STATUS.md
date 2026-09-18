@@ -6,12 +6,12 @@
 
 - Through [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26): Pages viewer, Live Launch (fallback / overlay / T− / Catch auto-seek), Vacuum Raptor framing, Falcon **MVac** + tanks rows, mobile tabs, Tracker first-card frame / Crew-13 chips
 - [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19) `STATUS.md` · [#24](https://github.com/kellybyron2222-dev/SpaceX-/pull/24) contest README (120s booth script)
-- This PR: Learn **Merlin Vacuum** frames the white second-stage tank (not the carbon interstage wall)
+- This PR [#28](https://github.com/kellybyron2222-dev/SpaceX-/pull/28): Learn **Merlin Vacuum** frames the white second-stage tank (not the carbon interstage wall)
 
 ## Open PRs
 
 - [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27) (draft) — prefer Starship flap picks over the barrel
-- this PR — MVac second-stage framing
+- [#28](https://github.com/kellybyron2222-dev/SpaceX-/pull/28) — MVac second-stage framing
 
 ## Next
 
