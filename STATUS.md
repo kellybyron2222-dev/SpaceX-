@@ -5,11 +5,11 @@
 ## Shipped
 
 - Through [#31](https://github.com/kellybyron2222-dev/SpaceX-/pull/31): Mechazilla look (#29), public-figure copy (#30), living STATUS
-- This PR: Explore **Raptor** stays a textbook FFSC teaching mesh. Learn + Live show a licensed Wikimedia still of a real sea-level Raptor beside the model / feed (not hangar photoreal)
+- [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): Explore **Raptor** stays a textbook FFSC teaching mesh; Learn + Live show a licensed Wikimedia still of a real sea-level Raptor (not hangar photoreal)
 
 ## Open PRs
 
-- [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): textbook Raptor 3D + licensed Learn/Live photo refs
+None.
 
 ## Next
 
