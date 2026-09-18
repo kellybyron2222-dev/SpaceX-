@@ -113,6 +113,17 @@ export class Viewer {
     return this.idleRotateEnabled;
   }
 
+  setPaused(paused) {
+    this._paused = Boolean(paused);
+    if (this._paused) {
+      this.controls.autoRotate = false;
+      this.renderer.setAnimationLoop(null);
+    } else {
+      this.clock.getDelta();
+      this.renderer.setAnimationLoop(this._loop);
+    }
+  }
+
   _lights() {
     const hemi = new THREE.HemisphereLight(0xb9c9e0, 0x1a140f, 0.38);
     this.scene.add(hemi);
