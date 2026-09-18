@@ -7,7 +7,7 @@
 ## Shipped
 
 - Through [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): Mechazilla look, public-figure copy, living STATUS, textbook Raptor + licensed still
-- Broadcast **cue sheet** at [`/SpaceX-/broadcast/cues.json`](https://kellybyron2222-dev.github.io/SpaceX-/broadcast/cues.json) — Flight 5 + generic launch/test phases (clock, sports cue, optional hotspot / Learn id). Approximate teaching beats only.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33): broadcast **cue sheet** at [`/SpaceX-/broadcast/cues.json`](https://kellybyron2222-dev.github.io/SpaceX-/broadcast/cues.json) — Flight 5 + generic launch/test phases (clock, sports cue, optional hotspot / Learn id). Approximate teaching beats only.
 
 ## Open PRs
 
