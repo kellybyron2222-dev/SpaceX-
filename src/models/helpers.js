@@ -323,6 +323,23 @@ export function createFlap(mats, width, height, thick = 0.18) {
   hinge.position.set(width * 0.12, 0.05, 0);
   const g = new THREE.Group();
   g.add(mesh, hinge);
+  // Thick invisible plate so a default-camera click on the silhouette hits the flap, not the barrel.
+  const proxyMat = pickProxyMaterial();
+  const plate = new THREE.Mesh(
+    new THREE.BoxGeometry(width * 1.08, height * 1.12, Math.max(1.7, thick * 8)),
+    proxyMat,
+  );
+  plate.position.set(width * 0.35, height * 0.48, 0);
+  plate.userData.pickProxy = true;
+  plate.castShadow = false;
+  plate.receiveShadow = false;
+  g.add(plate);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(Math.max(width, height) * 0.38, 12, 10), proxyMat);
+  ball.position.set(width * 0.32, height * 0.45, 0);
+  ball.userData.pickProxy = true;
+  ball.castShadow = false;
+  ball.receiveShadow = false;
+  g.add(ball);
   return g;
 }
 

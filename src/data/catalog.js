@@ -542,6 +542,17 @@ function hasToken(haystack, token) {
   return re.test(haystack);
 }
 
+const FALCON_PAD_SCENES = new Set(["falcon9", "falconheavy", "falcon-pad"]);
+
+/** Keep Falcon rainbirds on the Falcon pad/vehicle instead of jumping to the Starship stack. */
+export function frameTargetForCatalog(entry, currentSceneId) {
+  if (!entry) return null;
+  if (entry.id === "deluge" && FALCON_PAD_SCENES.has(currentSceneId)) {
+    return { sceneId: currentSceneId, partId: entry.partId || "pad.deluge" };
+  }
+  return { sceneId: entry.sceneId, partId: entry.partId };
+}
+
 export function searchCatalog(query, family = "all") {
   const toks = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return CATALOG.filter((e) => {
