@@ -9,8 +9,8 @@ const PARTS = ids("tiles", {
   },
   tiles: {
     name: "Thermal-protection tiles",
-    frameTight: 1.18,
-    frameBias: { x: 0.18, y: 0.06, z: 1.08 },
+    frameTight: 1.22,
+    frameBias: { x: 0.32, y: 0.12, z: 1.05 },
     blurb:
       "Hexagonal (and a few rectangular edge) tiles in a public heat-shield style. Gaps, thickness, and numbering are educational, not a flight map.",
   },
@@ -106,7 +106,12 @@ export function createTilePanel() {
   rectMesh.instanceMatrix.needsUpdate = true;
   tag(hexMesh, PARTS.tiles);
   tag(rectMesh, PARTS.tiles);
-  g.add(hexMesh, rectMesh);
+  const tileGroup = new THREE.Group();
+  tileGroup.add(hexMesh, rectMesh);
+  tag(tileGroup, PARTS.tiles);
+  // InstancedMesh geometry bbox is one hex at the origin; frame the carrier instead.
+  tileGroup.userData.frameFocus = carrier;
+  g.add(tileGroup);
 
   g.userData.tileMeta = tileMeta;
   g.userData.supportsExplode = true;
