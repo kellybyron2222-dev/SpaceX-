@@ -4,15 +4,13 @@
 
 ## Shipped
 
-- Through [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26): Pages viewer, Live Launch (fallback / overlay / T− / Catch auto-seek), Vacuum Raptor framing, Falcon **MVac** + tanks rows, mobile tabs, Tracker first-card frame / Crew-13 chips
-- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19) `STATUS.md` · [#24](https://github.com/kellybyron2222-dev/SpaceX-/pull/24) contest README (120s booth script)
-- [#28](https://github.com/kellybyron2222-dev/SpaceX-/pull/28): Learn **Merlin Vacuum** frames the white second-stage tank (not the carbon interstage wall)
-- This PR [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27): Explore **Starship flaps** pick the flap (not the barrel); Falcon rainbirds stay on the Falcon pad
+- Through [#28](https://github.com/kellybyron2222-dev/SpaceX-/pull/28) / [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27): Pages viewer, Live Launch, catalog framing, flap picks, MVac on the second-stage tank
+- This PR [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29): Explore **Mechazilla** chopsticks sandwich a ~72 m / 33-Raptor / 3-fin ghost Super Heavy; tower lattice is continuous ~146 m-class. Tile-panel tight frame looks at the hex face.
 
 ## Open PRs
 
-- This PR [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27) — flap picks + Falcon rainbirds stay-on-scene
+- This PR [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29) — Mechazilla catch-bay look (not CAD)
 
 ## Next
 
-Land this Explore pick fix. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.
+Land the catch-bay silhouette. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.
