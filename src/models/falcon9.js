@@ -44,8 +44,8 @@ const PARTS = ids("falcon9", {
   },
   second: {
     name: "Second stage",
-    frameTight: 1.18,
-    frameBias: { x: 0.55, y: 0.12, z: 0.82 },
+    frameTight: 1.42,
+    frameBias: { x: 0.78, y: 0.1, z: 0.55 },
     blurb:
       "A single Merlin Vacuum engine and a shorter tank set. No RCS thruster detail.",
   },
@@ -206,7 +206,8 @@ function buildCore(mats, { sideBooster = false, tankPart = PARTS.tanks } = {}) {
   vac.position.y = 43.6;
   second.add(tank, vac);
   tag(second, PARTS.second);
-  second.userData.frameFocus = vac;
+  // Vac bell sits inside the carbon interstage; frame the white S2 tank instead of a black wall.
+  second.userData.frameFocus = tank;
   g.add(second);
 
   addFairing(g, mats, r * 1.02, 56.4);
