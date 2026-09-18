@@ -5,12 +5,12 @@
 ## Shipped
 
 - Through [#28](https://github.com/kellybyron2222-dev/SpaceX-/pull/28) / [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27): Pages viewer, Live Launch, catalog framing, flap picks, MVac on the second-stage tank
-- This PR [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29): Explore **Mechazilla** chopsticks sandwich a ~72 m / 33-Raptor / 3-fin ghost Super Heavy; tower lattice is continuous ~146 m-class. Tile-panel tight frame looks at the hex face.
+- [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29): Explore **Mechazilla** chopsticks sandwich a ~72 m / 33-Raptor / 3-fin ghost Super Heavy; tower lattice is continuous ~146 m-class. Tile-panel tight frame looks at the hex face.
 
 ## Open PRs
 
-- This PR [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29) — Mechazilla catch-bay look (not CAD)
+- This PR [#30](https://github.com/kellybyron2222-dev/SpaceX-/pull/30): public-figure **copy** — header tanks (LOX nose tip, CH4 below), Tracker **Falcon Heavy** vs Super Heavy, Super Heavy thrust puck not octaweb, Teaching catalog kicker. No Mechazilla mesh work.
 
 ## Next
 
-Land the catch-bay silhouette. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.
+Land this copy PR. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.

@@ -1,4 +1,4 @@
-/** Critical infrastructure catalog — public-architecture teaching notes only. */
+/** Teaching catalog — public-architecture notes only, not official SpaceX infrastructure. */
 
 const SRC = {
   starship: { label: "SpaceX Starship", url: "https://www.spacex.com/vehicles/starship/" },
@@ -83,7 +83,7 @@ export const CATALOG = [
     blurb:
       "Widely reported Super Heavy layout: 33 sea-level Raptors in three rings (3 + 10 + 20). Bells and spacing are round-number approximations.",
     history:
-      "Public booster photos and webcasts count a 33-engine sea-level cluster. SpaceX has discussed center, middle, and outer rings and engine-out capability at a high level. The aft “octaweb” nickname is commentary, not a released drawing. Cluster count and shielding have been iterative across flight articles.",
+      "Public booster photos and webcasts count a 33-engine sea-level cluster. SpaceX has discussed center, middle, and outer rings and engine-out capability at a high level. The aft structure is a thrust puck / engine section in public commentary — octaweb is the Falcon 9 nine-engine nickname, not a Super Heavy drawing. Cluster count and shielding have been iterative across flight articles.",
     function:
       "The cluster is the booster’s only propulsion: liftoff, boostback (when used), landing / catch burn. Inner engines gimbal for TVC; outer engines pack the 9 m aft bay. The teaching model drops the cluster in explode view so the three rings are readable.",
     physics:
@@ -197,13 +197,13 @@ export const CATALOG = [
     partId: "starship.nose",
     matchIds: ["starship.nose"],
     blurb:
-      "Ogive nose on the ~52 m upper stage. Public articles describe a forward payload volume and a nose header tank — simple volumes here.",
+      "Ogive nose on the ~52 m upper stage. Public articles describe a forward payload volume and nose header tanks — simple volumes here.",
     history:
       "Starship does not use a Falcon-style clamshell fairing for most cargo. SpaceX has shown PEZ-style dispensers, cargo-door concepts, and crew interiors only as public renderings or test hardware. Header tanks in the nose appear in flight-article photos. This ogive is a scale stand-in.",
     function:
-      "The nose closes the stack aerodynamically, can house payload or crew volume, and includes the forward methane header used during landing burns in public descriptions (the LOX header sits aft). It is not a Starlink dispenser CAD model.",
+      "The nose closes the stack aerodynamically, can house payload or crew volume, and in public flight-article photos holds the landing header tanks — LOX at the nose tip, methane stacked just below. It is not a Starlink dispenser CAD model.",
     physics:
-      "An ogive is a low-drag nose for the boost phase; reentry heating on the nose is managed by tiles plus attitude. Public articles put the methane (CH4) landing header forward in the nose and the LOX header aft near the engines — not both in the nosecone. That split is a CG / settling story during the flip. None of that is simulated.",
+      "An ogive is a low-drag nose for the boost phase; reentry heating on the nose is managed by tiles plus attitude. Public photos and encyclopedia summaries of those photos put both landing headers in the nose: the LOX header forming the tip and the methane header under it — not a CH4-forward / LOX-aft split, and not a CAD tank map. Forward header mass is a CG story for belly-flop entry. None of that is simulated.",
     sources: [SRC.starship, SRC.updates],
   },
   {
@@ -292,7 +292,7 @@ export const CATALOG = [
     partId: "booster.staging",
     matchIds: ["booster.staging", "fullstack.ship", "fullstack.booster"],
     blurb:
-      "Starship lights the upper stage while still stacked (hot staging). Falcon uses a more conventional interstage. Both are shown as bands, not mechanisms.",
+      "Starship lights the upper stage while still stacked (hot staging). The 3D ring is a generic vented band, not a mechanism. Falcon’s composite interstage is the black band on the Falcon 9 scene — not this card.",
     history:
       "Falcon 9 stages with a composite interstage and pneumatic pushers — visible on every launch webcast. Starship’s public test flights introduced a vented hot-staging ring so the ship can fire Raptors while still on Super Heavy, a practice used historically on some Soviet vehicles and discussed by SpaceX around the 2023–2024 flight series. Hardware has changed between flights; this ring is generic.",
     function:
@@ -326,7 +326,7 @@ export const CATALOG = [
     expand: "Mechazilla tower arms that stack stages and catch Super Heavy",
     family: "starship",
     category: "Recovery",
-    domain: "vehicle",
+    domain: "ground",
     sceneId: "mechazilla",
     partId: "mechazilla.arms",
     matchIds: ["mechazilla.arms", "mechazilla.pads", "mechazilla.carriage"],
@@ -450,7 +450,7 @@ export const CATALOG = [
     blurb:
       "Autonomous spaceport drone ship — a ~90 m-class barge that catches Falcon boosters at sea.",
     history:
-      "Named vessels (Just Read the Instructions, Of Course I Still Love You, A Shortfall of Gravitas, and others) are public. SpaceX posts landing photos from these decks. Starship Super Heavy is not part of the ASDS program in the chopsticks architecture. Barge dimensions are visible in AIS and photos; this mesh uses a round 90×40 m teaching box.",
+      "Named vessels (Just Read the Instructions, Of Course I Still Love You, A Shortfall of Gravitas, and others) are public. SpaceX posts landing photos from these decks. Starship Super Heavy is not part of the ASDS program in the chopsticks architecture. Public decks are in the ~90×50 m class (AIS hulls ~92×46 m); this mesh is a round teaching box, not a lines plan.",
     function:
       "Station-keep in the landing zone, provide a marked deck, and return the booster to port. Thrusters fight sea state so the octaweb lands inside the painted target.",
     physics:

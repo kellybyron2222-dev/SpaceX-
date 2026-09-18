@@ -16,7 +16,7 @@ const PARTS = ids("starship", {
   nose: {
     name: "Nosecone / payload bay",
     blurb:
-      "An ogive nose closes the ~52 m upper stage. Public articles describe a forward payload volume and a nose header tank — shown here as simple volumes.",
+      "An ogive nose closes the ~52 m upper stage. Public articles describe a forward payload volume and nose header tanks — shown here as simple volumes.",
   },
   barrel: {
     name: "Ship barrel / tanks",

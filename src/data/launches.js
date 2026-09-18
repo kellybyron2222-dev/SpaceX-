@@ -80,16 +80,37 @@ export function relatedIdsForLaunch(vehicle, pad, site, mission = "") {
     add("strongback");
     add("asds");
   }
-  if (v.includes("heavy")) add("merlin");
   return ids;
+}
+
+/** Falcon Heavy only — Super Heavy is a Starship booster, not this filter. */
+export function isFalconHeavyText(text = "") {
+  const b = String(text).toLowerCase();
+  if (b.includes("super heavy")) return false;
+  return b.includes("falcon heavy") || (b.includes("falcon") && b.includes("heavy"));
+}
+
+export function launchMatchesFilter(launch, filter) {
+  if (filter === "all") return true;
+  const blob = `${launch?.vehicle || ""} ${launch?.mission || ""}`.toLowerCase();
+  if (filter === "starship") return blob.includes("starship") || blob.includes("super heavy");
+  if (filter === "heavy") return isFalconHeavyText(blob);
+  if (filter === "falcon9") return blob.includes("falcon 9") && !blob.includes("heavy");
+  return true;
 }
 
 export function sceneForLaunch(vehicle, pad, site, mission = "") {
   const v = `${vehicle} ${pad} ${site}`.toLowerCase();
-  if (v.includes("starship") || v.includes("starbase") || v.includes("boca") || v.includes("orbital launch")) {
+  if (
+    v.includes("starship") ||
+    v.includes("super heavy") ||
+    v.includes("starbase") ||
+    v.includes("boca") ||
+    v.includes("orbital launch")
+  ) {
     return "mechazilla";
   }
-  if (v.includes("heavy")) return "falcon-heavy";
+  if (isFalconHeavyText(v)) return "falcon-heavy";
   if (isCrewMission(vehicle, pad, site, mission) || v.includes("39a") || v.includes("kennedy")) {
     return "falcon-pad";
   }
