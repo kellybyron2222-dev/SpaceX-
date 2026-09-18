@@ -18,7 +18,7 @@
       <div id="live-stage" class="live-stage live-only" aria-label="Live Launch public stream">
         <div class="live-frame">
           <div id="live-player-host"></div>
-          <div id="live-overlay" class="live-overlay">
+          <div id="live-overlay" class="live-overlay is-hidden">
             <svg id="live-hotspots" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="false"></svg>
             <div id="live-labels" class="live-labels"></div>
           </div>
@@ -50,7 +50,7 @@
           </button>
           <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera (R)">Reset camera</button>
           <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
-          <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="true" title="Show hotspot overlays (H)">
+          <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="false" title="Show hotspot overlays (H)">
             Hotspots
           </button>
           <button type="button" id="btn-help" class="tool ghost" title="Keyboard shortcuts (?)">?</button>
@@ -142,8 +142,9 @@
         <p class="section-label">Tagged components</p>
         <nav id="live-hotspot-list" class="catalog-nav"></nav>
         <p class="hint">
-          Click a box on the video or a name in this list. Hotspot coordinates live in
-          <code>src/data/live/overlays.json</code> (0–1, top-left origin).
+          Overlays start off so the stream stays visible. Turn on <strong>Hotspots</strong> (or press H)
+          to tag the picture — outlines stay dim until hover or focus. Click a box or a name here
+          to open Learn. Coordinates live in <code>src/data/live/overlays.json</code> (0–1, top-left origin).
         </p>
       </aside>
 

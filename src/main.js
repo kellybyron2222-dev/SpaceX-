@@ -146,7 +146,7 @@ function showTeach(entry) {
     teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
     teachTitle.textContent = liveMode ? "Select a tagged component" : "Select a component";
     teachBlurb.textContent = liveMode
-      ? "Click a hotspot on the public stream (or a name in the list). Overview / History / Function / Sources / Physics use the same catalog as Learn."
+      ? "Turn on Hotspots (toolbar or H) and click a tag on the stream, or pick a name in the list. Overview / History / Function / Sources / Physics use the same catalog as Learn."
       : "Pick an entry in the catalog. The 3D view will focus that part.";
     teachBody.innerHTML = "";
     return;
