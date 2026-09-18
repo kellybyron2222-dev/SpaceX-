@@ -54,11 +54,22 @@ const state = {
   pendingCatalog: null,
 };
 
+function catalogFrameTarget(entry) {
+  if (
+    entry.id === "grid-fins" &&
+    (state.catalogFamily === "falcon" || viewer.sceneId === "falcon9" || viewer.sceneId === "falconheavy")
+  ) {
+    return { sceneId: "falcon9", partId: "falcon9.fins" };
+  }
+  return { sceneId: entry.sceneId, partId: entry.partId };
+}
+
 function frameCatalogIn3D(id) {
   const entry = catalogById(id);
   if (!entry) return;
-  if (viewer.sceneId !== entry.sceneId) selectScene(entry.sceneId, { partId: entry.partId });
-  viewer.highlightById(entry.partId, { frame: true });
+  const { sceneId, partId } = catalogFrameTarget(entry);
+  if (viewer.sceneId !== sceneId) selectScene(sceneId, { partId });
+  viewer.highlightById(partId, { frame: true });
 }
 
 function setMode(mode) {
@@ -205,11 +216,12 @@ function selectCatalog(id, { loadScene = true } = {}) {
   state.catalogId = id;
   renderCatalog();
   if (state.mode !== "live") {
+    const { sceneId, partId } = catalogFrameTarget(entry);
     if (loadScene) {
-      if (viewer.sceneId !== entry.sceneId) selectScene(entry.sceneId, { partId: entry.partId });
-      else viewer.highlightById(entry.partId, { frame: true });
+      if (viewer.sceneId !== sceneId) selectScene(sceneId, { partId });
+      else viewer.highlightById(partId, { frame: true });
     } else {
-      viewer.highlightById(entry.partId, { frame: true });
+      viewer.highlightById(partId, { frame: true });
     }
   }
   showTeach(entry);

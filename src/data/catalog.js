@@ -98,7 +98,7 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "falcon9",
     partId: "falcon9.engines",
-    matchIds: ["falcon9.engines", "falcon9.octaweb", "falcon9.second", "falcon9.interstage", "falconheavy.side"],
+    matchIds: ["falcon9.engines", "falcon9.octaweb"],
     blurb:
       "RP-1/LOX gas-generator engine. Nine Merlins on Falcon 9; 27 on Falcon Heavy. The cluster here uses round public counts and simple bells.",
     history:
@@ -107,6 +107,26 @@ export const CATALOG = [
       "The first-stage cluster lifts Falcon off the pad, then later relights for boostback (when used), reentry, and landing. The center engine is the one typically used for the final landing burn. The second stage uses a single Merlin Vacuum with a larger expansion bell. RP-1 is a refined kerosene; deep throttling and restart capability are operational facts shown in flight, while controller gains and injector design stay unpublished.",
     physics:
       "Public Block 5-era figures put a Merlin 1D in the roughly 800–900 kN sea-level thrust class per engine (check the vintage of any source). Nine engines therefore provide on the order of 7–8 MN at liftoff before throttling — enough, with a ~3.7 m vehicle, for the well-known Falcon 9 thrust-to-weight that allows RTLS or ASDS recovery after downrange missions. Gas-generator cycles dump turbine exhaust overboard, so they give up some Isp versus staged combustion; they are mechanically simpler. These are back-of-envelope relationships for a classroom, not performance guarantees.",
+    sources: [SRC.falcon9, SRC.f9guide, SRC.updates],
+  },
+  {
+    id: "merlin-vac",
+    name: "Merlin Vacuum",
+    expand: "MVac — Falcon second stage vacuum engine",
+    family: "falcon",
+    category: "Engine",
+    domain: "vehicle",
+    sceneId: "falcon9",
+    partId: "falcon9.second",
+    matchIds: ["falcon9.second", "falcon9.interstage"],
+    blurb:
+      "A single Merlin Vacuum on the Falcon second stage, with a larger expansion bell than the sea-level 1D cluster. Bell size here is a round teaching guess.",
+    history:
+      "Public Falcon flights show a single upper-stage Merlin with a larger nozzle than the nine sea-level engines. Payload User’s Guides discuss the second stage as a restartable RP-1/LOX engine for GTO, LEO, and disposal burns. Interstage hardware is the black composite band on the model — a staging interface, not a Merlin 1D.",
+    function:
+      "After staging, MVac circularizes and (when the mission needs it) restarts. The first-stage cluster does not go to orbit. Pick the upper-stage tank or vacuum bell for this entry; pick the octaweb bells for Merlin 1D.",
+    physics:
+      "A larger exit area ratio better matches vacuum, raising specific impulse versus the sea-level 1D at the cost of a bigger, thinner bell that would separate on the pad. Restart in zero-g needs settling or ullage — shown on webcasts, not modeled here. Treat guide Isp figures as vintage-specific teaching numbers.",
     sources: [SRC.falcon9, SRC.f9guide, SRC.updates],
   },
   {
@@ -127,6 +147,26 @@ export const CATALOG = [
     physics:
       "A 9 m cylinder ~72 m tall (booster) or ~52 m (ship) is a thin-walled pressure vessel plus column. Hydrostatic head of LOX is non-trivial over tens of meters, so tank pressure and baffles matter. Stainless has lower specific stiffness than the Falcon aluminum stack, which is one public rationale for the large diameter. Cryo shrinkage, buckling under thrust, and slosh during flip maneuvers are the usual textbook issues — none of which we size here. Ring spacing on the model (~1.8 m) matches the commonly photographed barrel-section height, used only as visual scale.",
     sources: [SRC.starship, SRC.updates, SRC.faa],
+  },
+  {
+    id: "falcon-tanks",
+    name: "Falcon tanks",
+    expand: "Falcon 9 / Heavy RP-1 and LOX barrels, about 3.7 m",
+    family: "falcon",
+    category: "Tanks",
+    domain: "vehicle",
+    sceneId: "falcon9",
+    partId: "falcon9.tanks",
+    matchIds: ["falcon9.tanks", "falconheavy.center", "falconheavy.side"],
+    blurb:
+      "White-painted aluminum-lithium barrels, about 3.7 m diameter, hold RP-1 and liquid oxygen on Falcon 9 and Heavy cores.",
+    history:
+      "Falcon tanks are the public aluminum-lithium barrel-and-dome stack, distinct from Starship’s stainless rings. User’s guides and factory photos are the source; weld maps and minimum gauge are not released as drawings. Falcon Heavy’s side boosters are extra Falcon-class cores — teaching stand-ins, not unique Heavy CAD.",
+    function:
+      "Tanks are the airframe: they store propellant, take thrust from the octaweb, and carry the interstage and legs. Clicking a Falcon 9 barrel, a Heavy center core, or a Heavy side booster should open this entry, not Merlin 1D.",
+    physics:
+      "A ~3.7 m thin-walled column plus hydrostatic head of LOX over tens of meters is the usual tank-sizing story. Common bulkheads and tank pressure are real design drivers; we draw painted cylinders. Ring spacing is a visual cue, not a production weld schedule.",
+    sources: [SRC.falcon9, SRC.f9guide, SRC.updates],
   },
   {
     id: "raceway",
@@ -195,7 +235,7 @@ export const CATALOG = [
     partId: "booster.fins",
     matchIds: ["booster.fins", "falcon9.fins"],
     blurb:
-      "Lattice fins steer returning boosters. Falcon 9 uses four fins; public Starship V3 Super Heavy reporting (Ars, May 2026) is three fins. This Super Heavy scene shows the three-fin V3 layout.",
+      "Lattice fins steer returning boosters. Falcon 9 uses four fins; public Starship V3 Super Heavy reporting (Ars, May 2026) is three fins. Falcon filter frames the Falcon 9 fins; All / Starship open the Super Heavy V3 three-fin scene.",
     history:
       "Falcon 9 grid fins were originally aluminum and later titanium — a change SpaceX announced after heating and stiction issues on early recovery flights. Super Heavy used four large fins on earlier flight articles; public V3 booster reporting describes three. Both systems are public, but lattice thickness, latch design, and hydraulic vs electric drive differ and are not specified here.",
     function:
@@ -459,8 +499,8 @@ export const CATALOG = [
   },
 ];
 
-if (CATALOG.length !== 22) {
-  console.warn(`Expected 22 catalog entries, found ${CATALOG.length}`);
+if (CATALOG.length !== 24) {
+  console.warn(`Expected 24 catalog entries, found ${CATALOG.length}`);
 }
 
 export function catalogById(id) {

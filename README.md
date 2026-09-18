@@ -67,7 +67,7 @@ Dependencies stay minimal: `three` and `vite`.
 | --- | --- |
 | **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live data** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
 | **Explore 3D** | Orbitable component viewer with PBR/IBL lighting. Click a mesh for a callout; **Open in Learn** deep-links the catalog. Idle rotate resumes after a few seconds. |
-| **Learn** | Searchable **22-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
+| **Learn** | Searchable **24-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
 | **Live Launch** | Public YouTube embed of Starship coverage with clickable hotspot overlays. Click a tag for the same Learn panel. Not official SpaceX telemetry or internal cameras. |
 
 ## Launch tracker API (Launch Library 2)
@@ -169,9 +169,9 @@ Click any labeled mesh for a 1–2 sentence explainer. Nothing here is a drawing
 
 ## Critical infrastructure catalog
 
-Learn mode includes **22** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**.
+Learn mode includes **24** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**.
 
-**Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, tanks, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, chopsticks, landing legs.
+**Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, **Merlin Vacuum**, Starship tanks, **Falcon tanks**, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, chopsticks, landing legs.
 
 **Ground:** OLM / launch mount, QD arm, water deluge / rainbirds, crew access arm, ASDS, Mechazilla tower, strongback / TE.
 

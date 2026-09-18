@@ -357,9 +357,12 @@ export function createPad(mats, radius = 18, { deluge = false, variant = "starsh
     tag(birds, {
       id: "pad.deluge",
       name: "Water deluge / rainbirds",
+      frameTight: 1.12,
+      frameBias: { x: 0.82, y: 0.28, z: 0.52 },
       blurb:
         "Pad water systems knock down acoustic energy and cool flame-deflector steel. Nozzle counts and flow rates here are symbolic.",
     });
+    birds.userData.frameFocus = birds.children[0] || birds;
     g.add(birds);
   }
 
@@ -374,9 +377,12 @@ export function createPad(mats, radius = 18, { deluge = false, variant = "starsh
     tag(g, {
       id: "pad.olm",
       name: "Launch mount / pad deck",
+      frameTight: 1.28,
+      frameBias: { x: 0.22, y: 0.78, z: 0.58 },
       blurb:
         "A simplified orbital launch mount (OLM): hold-down deck and ring markings. Not an OLM/OLP fabrication drawing.",
     });
+    g.userData.frameFocus = disk;
   }
   return g;
 }
