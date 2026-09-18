@@ -184,7 +184,7 @@ export class Viewer {
     this.scene.add(ground);
   }
 
-  load(id) {
+  load(id, { partId, framePart = true } = {}) {
     const spec = sceneById(id);
     this.sceneId = spec.id;
     this.clearSelection();
@@ -199,9 +199,15 @@ export class Viewer {
 
     this.root = spec.build();
     this.scene.add(this.root);
-    this._frame({ storeDefault: true, instant: this._firstLoad });
-    this._firstLoad = false;
     this._fitShadow();
+    const whole = this._prepareFrame();
+    this.defaultCam.position.copy(whole.pos);
+    this.defaultCam.target.copy(whole.target);
+    const framedPart = partId ? this.highlightById(partId, { frame: framePart }) : false;
+    if (!framedPart) {
+      this._applyFrame(whole, { instant: this._firstLoad });
+    }
+    this._firstLoad = false;
     return spec;
   }
 
@@ -290,8 +296,7 @@ export class Viewer {
     return SCENES;
   }
 
-  _frame({ storeDefault = false, instant = false } = {}) {
-    if (!this.root) return;
+  _prepareFrame() {
     boxFromObjectFiltered(this.root, tmpBox);
     tmpBox.getSize(tmpSize);
     tmpBox.getCenter(tmpCenter);
@@ -309,17 +314,27 @@ export class Viewer {
     );
     this.controls.minDistance = Math.max(1.2, maxDim * 0.12);
     this.controls.maxDistance = Math.max(80, maxDim * 8);
+    return { pos, target: tmpCenter.clone() };
+  }
+
+  _applyFrame(whole, { instant = false } = {}) {
     if (instant) {
-      this.camera.position.copy(pos);
-      this.controls.target.copy(tmpCenter);
+      this.camera.position.copy(whole.pos);
+      this.controls.target.copy(whole.target);
       this.controls.update();
       this._camTween = null;
     } else {
-      this._tweenTo(pos, tmpCenter, 0.9);
+      this._tweenTo(whole.pos, whole.target, 0.9);
     }
+  }
+
+  _frame({ storeDefault = false, instant = false } = {}) {
+    if (!this.root) return;
+    const whole = this._prepareFrame();
+    this._applyFrame(whole, { instant });
     if (storeDefault) {
-      this.defaultCam.position.copy(pos);
-      this.defaultCam.target.copy(tmpCenter);
+      this.defaultCam.position.copy(whole.pos);
+      this.defaultCam.target.copy(whole.target);
     }
   }
 

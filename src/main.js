@@ -110,7 +110,7 @@ function applyExplodeButton(spec) {
 function selectScene(id, { partId, framePart = true } = {}) {
   let spec;
   try {
-    spec = viewer.load(id);
+    spec = viewer.load(id, { partId, framePart });
   } catch (err) {
     console.error("Failed to load scene", id, err);
     renderNav(id);
@@ -122,9 +122,6 @@ function selectScene(id, { partId, framePart = true } = {}) {
   telDia.textContent = spec.diameter;
   applyExplodeButton(spec);
   hideCallout();
-  if (partId) {
-    requestAnimationFrame(() => viewer.highlightById(partId, { frame: framePart }));
-  }
   return spec;
 }
 
