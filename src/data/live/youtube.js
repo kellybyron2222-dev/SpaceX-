@@ -46,30 +46,76 @@ export async function fetchYouTubeOembed(id, timeoutMs = 6000) {
   }
 }
 
+const YT_HOSTS = new Set(["youtu.be", "youtube.com", "m.youtube.com", "youtube-nocookie.com"]);
+const YT_VIDEO_PATHS = new Set(["embed", "live", "shorts", "v", "watch"]);
+const YT_NON_VIDEO_PATHS = new Set(["playlist", "channel", "c", "user", "feed", "results", "hashtag", "podcasts"]);
+const YT_URL_RE =
+  /(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\/[^\s]*/i;
+
+export function isYouTubeVideoId(id) {
+  return YT_ID_RE.test(String(id || ""));
+}
+
+function youtubeHost(hostname) {
+  return String(hostname || "")
+    .replace(/^www\./, "")
+    .toLowerCase();
+}
+
+function idFromYouTubeUrl(rawUrl) {
+  const withProto = /:\/\//.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+  let u;
+  try {
+    u = new URL(withProto);
+  } catch {
+    return null;
+  }
+  const host = youtubeHost(u.hostname);
+  if (!YT_HOSTS.has(host)) return null;
+
+  const parts = u.pathname.split("/").filter(Boolean);
+  const head = parts[0] || "";
+  if (head.startsWith("@") || YT_NON_VIDEO_PATHS.has(head)) return null;
+
+  if (host === "youtu.be") {
+    return isYouTubeVideoId(head) ? head : null;
+  }
+
+  const v = u.searchParams.get("v");
+  if (isYouTubeVideoId(v)) return v;
+
+  const key = parts.findIndex((p) => YT_VIDEO_PATHS.has(p));
+  if (key >= 0 && isYouTubeVideoId(parts[key + 1])) return parts[key + 1];
+  return null;
+}
+
+/** Why a paste was rejected, or null if it looks like a video ID. */
+export function youtubeIdRejectReason(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return "Paste a YouTube watch URL or 11-character video ID.";
+  if (parseYouTubeId(s)) return null;
+  if (YT_URL_RE.test(s) || /(?:^|\s)(?:youtube\.com|youtu\.be)\b/i.test(s)) {
+    return "That YouTube link is not a video. Paste a watch / youtu.be / embed URL, not a playlist, channel, or handle.";
+  }
+  return "Paste a YouTube watch URL or 11-character video ID — not a playlist, channel, or scraped token.";
+}
+
 export function parseYouTubeId(raw) {
   const s = String(raw || "").trim();
   if (!s) return null;
-  if (YT_ID_RE.test(s)) return s;
-  const withProto = s.includes("://") ? s : `https://${s}`;
-  try {
-    const u = new URL(withProto);
-    const host = u.hostname.replace(/^www\./, "");
-    if (host === "youtu.be") {
-      const id = u.pathname.split("/").filter(Boolean)[0] || "";
-      return YT_ID_RE.test(id) ? id : null;
-    }
-    if (host === "youtube.com" || host === "m.youtube.com" || host === "youtube-nocookie.com") {
-      const v = u.searchParams.get("v");
-      if (v && YT_ID_RE.test(v)) return v;
-      const parts = u.pathname.split("/").filter(Boolean);
-      const key = parts.findIndex((p) => ["embed", "live", "shorts", "v", "watch"].includes(p));
-      if (key >= 0 && parts[key + 1] && YT_ID_RE.test(parts[key + 1])) return parts[key + 1];
-    }
-  } catch {
-    /* fall through */
+  if (isYouTubeVideoId(s)) return s;
+
+  const urlMatch = s.match(YT_URL_RE);
+  if (urlMatch) return idFromYouTubeUrl(urlMatch[0]);
+
+  if (/^(?:youtube\.com|youtu\.be|m\.youtube\.com|youtube-nocookie\.com)\b/i.test(s)) {
+    return idFromYouTubeUrl(s);
   }
-  const m = s.match(/[a-zA-Z0-9_-]{11}/);
-  return m && YT_ID_RE.test(m[0]) ? m[0] : null;
+
+  const tokens = s.split(/[^a-zA-Z0-9_-]+/).filter(Boolean);
+  const ids = tokens.filter((t) => isYouTubeVideoId(t));
+  if (ids.length === 1 && tokens.length <= 8) return ids[0];
+  return null;
 }
 
 export function loadStoredVideoId() {

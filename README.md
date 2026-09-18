@@ -110,7 +110,7 @@ When the in-page player is blocked, Live Launch **does not leave a broken iframe
 
 Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://www.youtube.com/watch?v=hI9HQfCAw64) recap (`hI9HQfCAw64`, 13 Oct 2024, **~3:28** — not the multi-hour webcast). Swap it for the latest public launch/test stream when one is up, **preferring an ID that allows embedding**.
 
-1. In the Live Launch sidebar, paste a YouTube URL or 11-character video ID and click **Load** (remembered in `localStorage`). The ID field is monospace and stays on one line so `hI9HQfCAw64` is not read as `h19HQ/CAw64`.
+1. In the Live Launch sidebar, paste a YouTube **watch** URL or 11-character **video** ID and click **Load** (remembered in `localStorage`). Playlist, channel, and `@handle` links are rejected — the parser will not scrape an 11-character token out of them. The ID field is monospace and stays on one line so `hI9HQfCAw64` is not read as `h19HQ/CAw64`.
 2. Or copy `.env.example` to `.env`, set `VITE_YOUTUBE_VIDEO_ID=your_id`, and restart Vite. Env is the deploy-time default when the user has not pasted an ID.
 3. **Reset to default webcast** clears the saved ID and reloads the env/JSON default.
 4. **Open on YouTube** is the primary action next to Load — use it whenever the embed is blocked.
@@ -129,9 +129,9 @@ Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.jso
 Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped presets:
 
 - **Stack on pad** — recap pad/liftoff: stack, tower, chopsticks, QD, OLM, deluge, flaps, tiles, grid fins, Raptor cluster.
-- **Catch / chopsticks** — recap catch (~1:40): arms, catch pins, grid fins, booster tanks, cluster.
+- **Catch / chopsticks** — recap catch (~1:40): arms, catch pins, grid fins, booster tanks, cluster. Picking this preset **seeks to ~1:40** (and starts playback) so the overlay is not sitting on the unplayed pad poster.
 
-`chapters` in the same file are VOD markers (`t` in seconds → `presetId`). Times are **recap timestamps**, not mission elapsed time. The Flight 5 recap is ~3:28 (`expectedDurationSeconds`); booster catch at mission **T+6:54** is about **1:40** in this upload, not `t=420`. On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers. Edit the JSON to match another video.
+`chapters` in the same file are VOD markers (`t` in seconds → `presetId`). Times are **recap timestamps**, not mission elapsed time. The Flight 5 recap is ~3:28 (`expectedDurationSeconds`); booster catch at mission **T+6:54** is about **1:40** in this upload, not `t=420`. On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers. Edit the JSON to match another video. The ID field accepts a watch / youtu.be / embed URL or an exact 11-character **video** ID — playlists, channels, and handles are rejected.
 
 Entering **Live Launch** clears leftover Learn/Tracker teach selection so a Merlin panel cannot sit beside a Starship VOD. Pick a tagged component (list or hotspot) to fill Overview / Sources again. Leaving Live Launch for **Explore 3D** or **Learn** frames that tagged part in 3D (grid fins, catch pins, chopsticks, …) instead of keeping the leftover Full stack camera.
 

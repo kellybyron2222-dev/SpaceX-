@@ -9,6 +9,7 @@ import {
   STORAGE_KEY,
   storeHotspotsVisible,
   storeVideoId,
+  youtubeIdRejectReason,
   youtubeThumbCandidates,
   youtubeWatchUrl,
 } from "./data/live/youtube.js";
@@ -158,6 +159,9 @@ export function createLiveLaunch({ onSelect } = {}) {
     nudge: { x: 0, y: 0 },
     windowLaunch: null,
     windowSource: "live",
+    pendingSeek: null,
+    pendingPlay: false,
+    seekUntil: 0,
   };
 
   function showError(msg) {
@@ -362,8 +366,9 @@ export function createLiveLaunch({ onSelect } = {}) {
       btn.addEventListener("click", () => {
         state.followChapters = true;
         follow.checked = true;
-        seekTo(ch.t);
+        seekTo(ch.t, { play: ch.t > 0 });
         selectPreset(ch.presetId, { manual: false });
+        highlightChapterAt(ch.t);
       });
       chapterNav.appendChild(btn);
     }
@@ -446,6 +451,19 @@ export function createLiveLaunch({ onSelect } = {}) {
     onSelect?.(catalogId);
   }
 
+  function chapterForPreset(presetId) {
+    return chapters.find((c) => c.presetId === presetId) || null;
+  }
+
+  function highlightChapterAt(t) {
+    chapterNav.querySelectorAll(".chip").forEach((btn) => {
+      const start = Number(btn.dataset.t);
+      const next = [...chapterNav.querySelectorAll(".chip")].find((b) => Number(b.dataset.t) > start);
+      const end = next ? Number(next.dataset.t) : Infinity;
+      btn.classList.toggle("active", t >= start && t < end);
+    });
+  }
+
   function selectPreset(id, { manual = false } = {}) {
     if (!presets.some((p) => p.id === id)) return;
     state.presetId = id;
@@ -453,18 +471,60 @@ export function createLiveLaunch({ onSelect } = {}) {
       state.followChapters = false;
       follow.checked = false;
       state.manualUntil = performance.now() + 12000;
+      seekPresetChapter(id);
     }
     renderPresets();
     renderHotspots();
     syncChrome();
   }
 
-  function seekTo(t) {
+  function seekPresetChapter(presetId) {
+    if (state.isLive) return;
+    const ch = chapterForPreset(presetId);
+    if (!ch || !Number.isFinite(ch.t) || ch.t < 0) return;
+    const duration = effectiveDuration();
+    if (duration && ch.t > duration + 1) return;
+    seekTo(ch.t, { play: ch.t > 0 });
+    highlightChapterAt(ch.t);
+  }
+
+  function seekTo(t, { play = false } = {}) {
+    if (!Number.isFinite(t) || t < 0) return;
+    state.pendingSeek = t;
+    state.pendingPlay = play;
+    state.seekUntil = performance.now() + 8000;
+    flushSeek();
+  }
+
+  function flushSeek() {
+    if (state.pendingSeek == null) return;
+    if (state.seekUntil && performance.now() > state.seekUntil) {
+      state.pendingSeek = null;
+      state.pendingPlay = false;
+      return;
+    }
     try {
-      state.player?.seekTo?.(t, true);
+      if (!state.player?.seekTo) return;
+      // Unplayed posters ignore seekTo until playback starts — Catch must play.
+      if (state.pendingPlay) state.player.playVideo?.();
+      state.player.seekTo(state.pendingSeek, true);
     } catch {
       /* player not ready */
     }
+  }
+
+  function clearPendingSeekIfClose(t) {
+    if (state.pendingSeek == null || !Number.isFinite(t)) return;
+    if (Math.abs(t - state.pendingSeek) <= 1.5) {
+      state.pendingSeek = null;
+      state.pendingPlay = false;
+    }
+  }
+
+  function clearPendingSeek() {
+    state.pendingSeek = null;
+    state.pendingPlay = false;
+    state.seekUntil = 0;
   }
 
   function applyChapterAt(t) {
@@ -477,12 +537,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     if (match && match.presetId !== state.presetId) {
       selectPreset(match.presetId, { manual: false });
     }
-    chapterNav.querySelectorAll(".chip").forEach((btn) => {
-      const start = Number(btn.dataset.t);
-      const next = [...chapterNav.querySelectorAll(".chip")].find((b) => Number(b.dataset.t) > start);
-      const end = next ? Number(next.dataset.t) : Infinity;
-      btn.classList.toggle("active", t >= start && t < end);
-    });
+    highlightChapterAt(t);
   }
 
   function pollTime() {
@@ -496,6 +551,8 @@ export function createLiveLaunch({ onSelect } = {}) {
         ? `Live public stream · ${formatTime(t)}`
         : `VOD · ${formatTime(t)} / ${formatTime(effectiveDuration())}`;
       if (d && Math.abs(d - prev) > 1) renderChapters();
+      clearPendingSeekIfClose(t);
+      if (state.pendingSeek != null) flushSeek();
       applyChapterAt(t);
     } catch {
       /* ignore */
@@ -547,6 +604,8 @@ export function createLiveLaunch({ onSelect } = {}) {
     syncChrome();
     renderChapters();
     resizePlayer();
+    flushSeek();
+    if (state.pendingSeek != null) highlightChapterAt(state.pendingSeek);
   }
 
   function onPlayerError(ev) {
@@ -565,14 +624,18 @@ export function createLiveLaunch({ onSelect } = {}) {
         : `${short} YouTube may also show a sign-in / bot check inside the embed. Use Open on YouTube if the in-page player stays unavailable.`,
       thumb: state.oembed?.thumbnail,
     });
+    clearPendingSeek();
     syncChrome();
   }
 
-  function onPlayerState() {
+  function onPlayerState(ev) {
     state.isLive = detectLive();
     applyLiveFitIfNeeded();
     syncChrome();
     renderChapters();
+    if (state.pendingSeek != null) highlightChapterAt(state.pendingSeek);
+    const playing = ev?.data === 1 || ev?.data === 3;
+    if (playing && state.pendingSeek != null) flushSeek();
   }
 
   function resizePlayer() {
@@ -618,6 +681,18 @@ export function createLiveLaunch({ onSelect } = {}) {
     const result = await fetchYouTubeOembed(id);
     if (gen !== state.oembedGen) return;
     state.oembed = result;
+    if ((result.status === 404 || result.status === 400) && !state.playerReady) {
+      destroyPlayer();
+      showError("YouTube has no public video with that ID.");
+      showFallback({
+        title: "Not a YouTube video",
+        detail:
+          "That ID is not a public YouTube video (oEmbed 404/400). Playlists, channels, and private or made-up IDs are rejected. Paste a watch URL or the 11-character video ID.",
+        thumb: result.thumbnail,
+      });
+      syncChrome();
+      return;
+    }
     if (result.embeddable === false && !state.playerReady && !state.embedBlockedManual) {
       destroyPlayer();
       showFallback({
@@ -679,13 +754,14 @@ export function createLiveLaunch({ onSelect } = {}) {
   function loadVideo(raw, { persist = true } = {}) {
     const id = parseYouTubeId(raw);
     if (!id) {
-      showError("Paste a YouTube URL or 11-character video ID.");
+      showError(youtubeIdRejectReason(raw));
       return;
     }
     state.videoId = id;
     state.triedNocookie = false;
     state.oembed = null;
     state.isLive = false;
+    clearPendingSeek();
     if (!state.fitManual) state.fitId = pictureFits.find((f) => f.id === "recap")?.id || state.fitId;
     if (persist) storeVideoId(id);
     renderFits();
