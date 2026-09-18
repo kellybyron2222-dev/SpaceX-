@@ -4,6 +4,48 @@ export const YT_ID_RE = /^[a-zA-Z0-9_-]{11}$/;
 export const STORAGE_KEY = "scv-live-youtube-id";
 export const HOTSPOT_STORAGE_KEY = "scv-live-hotspots";
 
+export function youtubeWatchUrl(id) {
+  return `https://www.youtube.com/watch?v=${id}`;
+}
+
+export function youtubeThumbCandidates(id) {
+  return [
+    `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/sddefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+  ];
+}
+
+/**
+ * Public oEmbed probe. 401 usually means the uploader disabled embedding.
+ * Success does not guarantee the IFrame player will play (bot-check walls).
+ */
+export async function fetchYouTubeOembed(id, timeoutMs = 6000) {
+  const parsed = parseYouTubeId(id);
+  if (!parsed) return { ok: false, embeddable: null, status: 0 };
+  const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(youtubeWatchUrl(parsed))}&format=json`;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: ctrl.signal });
+    if (res.status === 401) return { ok: false, embeddable: false, status: 401 };
+    if (!res.ok) return { ok: false, embeddable: null, status: res.status };
+    const data = await res.json();
+    return {
+      ok: true,
+      embeddable: true,
+      status: res.status,
+      title: data.title || "",
+      author: data.author_name || "",
+      thumbnail: data.thumbnail_url || "",
+    };
+  } catch {
+    return { ok: false, embeddable: null, status: 0 };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function parseYouTubeId(raw) {
   const s = String(raw || "").trim();
   if (!s) return null;

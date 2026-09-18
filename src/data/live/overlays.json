@@ -3,7 +3,21 @@
   "defaultVideoTitle": "Starship's Fifth Flight Test",
   "defaultVideoNote": "SpaceX public recap (13 Oct 2024, ~3:28). Placeholder for the latest public Starship launch/test stream — not official telemetry or an internal camera. YouTube may still block in-page play (bot check). Some SpaceX webcast IDs disable embedding entirely (player errors 101/150) — prefer IDs that allow embeds, or use Open on YouTube.",
   "expectedDurationSeconds": 208,
-  "notes": "Coordinates are normalized 0–1 with origin at the top-left of the 16:9 player. shape=rect uses x,y,w,h. shape=polygon uses points:[[x,y],...]. catalogId must match src/data/catalog.js. Boxes are surveyed against the default Flight 5 recap frames (Starbase gulf-side camera: Mechazilla left, vehicle to the right of the tower — not a centered pad plate). Chapter times are recap timestamps, not mission T+. The recap is ~3:28; T+6:54 catch is about 1:40 in this upload, not 7:00. Some SpaceX video IDs block embeds even when oEmbed succeeds.",
+  "notes": "Coordinates are normalized 0–1 with origin at the top-left of the 16:9 player. shape=rect uses x,y,w,h. shape=polygon uses points:[[x,y],...]. catalogId must match src/data/catalog.js. Boxes are surveyed against the default Flight 5 recap frames (Starbase gulf-side camera: Mechazilla left, vehicle to the right of the tower — not a centered pad plate). pictureFits inset the overlay for YouTube chrome / lower-thirds on live webcasts — educational approximation, not a surveyed camera model. Chapter times are recap timestamps, not mission T+. The recap is ~3:28; T+6:54 catch is about 1:40 in this upload, not 7:00. Some SpaceX video IDs block embeds even when oEmbed succeeds.",
+  "pictureFits": [
+    {
+      "id": "recap",
+      "name": "Recap frames",
+      "blurb": "Surveyed against the default Flight 5 recap (tower left, stack just right of Mechazilla). Use on that VOD.",
+      "inset": { "top": 0, "right": 0, "bottom": 0, "left": 0 }
+    },
+    {
+      "id": "live-wide",
+      "name": "Live webcast",
+      "blurb": "Educational approximation for a typical Starbase gulf-side live shot. Insets YouTube chrome and lower-thirds. Not a surveyed camera — nudge if the webcast angle differs.",
+      "inset": { "top": 0.05, "right": 0.04, "bottom": 0.15, "left": 0.03 }
+    }
+  ],
   "chapters": [
     {
       "t": 0,

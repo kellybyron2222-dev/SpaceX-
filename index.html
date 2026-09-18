@@ -18,10 +18,17 @@
       <div id="live-stage" class="live-stage live-only" aria-label="Live Launch public stream">
         <div class="live-frame">
           <div id="live-player-host"></div>
-          <div id="live-overlay" class="live-overlay is-hidden">
+          <div id="live-overlay" class="live-overlay is-hidden hotspots-off">
             <svg id="live-hotspots" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="false"></svg>
             <div id="live-labels" class="live-labels"></div>
           </div>
+          <a
+            id="live-frame-yt"
+            class="live-frame-yt"
+            href="https://www.youtube.com/watch?v=hI9HQfCAw64"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Open on YouTube</a>
           <div id="live-fallback" class="live-fallback hidden" hidden>
             <img id="live-fallback-thumb" alt="" />
             <div class="live-fallback-body">
@@ -31,14 +38,16 @@
                 YouTube may block embeds (sign-in / bot check), or the uploader may disable embedding.
                 Some SpaceX video IDs cannot play in-page.
               </p>
-              <a
-                id="live-fallback-open"
-                class="tool primary live-fallback-cta"
-                href="https://www.youtube.com/watch?v=hI9HQfCAw64"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Open on YouTube</a>
-              <button type="button" id="live-fallback-retry" class="text-btn">Retry embed</button>
+              <div class="live-fallback-actions">
+                <a
+                  id="live-fallback-open"
+                  class="tool primary live-fallback-cta"
+                  href="https://www.youtube.com/watch?v=hI9HQfCAw64"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >Open on YouTube</a>
+                <button type="button" id="live-fallback-retry" class="text-btn">Retry embed</button>
+              </div>
             </div>
           </div>
           <p id="live-player-error" class="live-error hidden" role="alert"></p>
@@ -140,6 +149,15 @@
       <aside class="panel live-panel live-only" aria-label="Live Launch controls">
         <p class="side-label">Live Launch</p>
         <h2 class="live-heading">Public stream embed</h2>
+        <section id="live-countdown" class="live-countdown hidden" hidden>
+          <p id="live-countdown-kicker" class="live-countdown-kicker">Next public Starship window</p>
+          <div class="live-countdown-row">
+            <p id="live-countdown-mission">—</p>
+            <span id="live-countdown-status" class="status scheduled">NET</span>
+          </div>
+          <p id="live-countdown-t" class="live-countdown-t">T−</p>
+          <p id="live-countdown-meta" class="hint">Public Launch Library 2 time — not official SpaceX countdown.</p>
+        </section>
         <p id="live-banner" class="banner">Public YouTube embed — not official SpaceX telemetry or internal cameras.</p>
         <label class="field-label" for="live-url">YouTube URL or video ID</label>
         <div class="live-url-row">
@@ -165,6 +183,16 @@
         <p class="section-label">Overlay preset</p>
         <div class="filters" id="live-presets"></div>
         <p id="live-preset-blurb" class="hint"></p>
+        <p class="section-label">Picture fit</p>
+        <div class="filters" id="live-fits"></div>
+        <p id="live-fit-blurb" class="hint"></p>
+        <div class="live-nudge" role="group" aria-label="Nudge overlay">
+          <button type="button" id="live-nudge-left" class="tool ghost" title="Nudge overlay left">←</button>
+          <button type="button" id="live-nudge-up" class="tool ghost" title="Nudge overlay up">↑</button>
+          <button type="button" id="live-nudge-down" class="tool ghost" title="Nudge overlay down">↓</button>
+          <button type="button" id="live-nudge-right" class="tool ghost" title="Nudge overlay right">→</button>
+          <button type="button" id="live-nudge-reset" class="text-btn">Reset align</button>
+        </div>
         <p class="section-label">VOD chapters</p>
         <label class="follow-row">
           <input type="checkbox" id="live-follow-chapters" checked />
@@ -176,10 +204,11 @@
         <nav id="live-hotspot-list" class="catalog-nav"></nav>
         <p class="hint">
           Overlays start off so the stream stays visible. Turn on <strong>Hotspots</strong> (or press H)
-          to tag the picture — outlines stay dim until hover or focus. On phones, pick a name in this
-          list (44px rows); overlay boxes are visual only so they do not steal the YouTube play control.
-          Click a box or a name here to open Learn. Coordinates live in
-          <code>src/data/live/overlays.json</code> (0–1, top-left origin).
+          to tag the picture — outlines stay dim until hover or focus. Use <strong>Live webcast</strong>
+          fit plus nudge when a real stream’s camera does not match the Flight 5 recap. Alignment does
+          not turn hotspots on. On phones, pick a name in this list (44px rows); overlay boxes are visual
+          only so they do not steal the YouTube play control. Click a box or a name here to open Learn.
+          Coordinates live in <code>src/data/live/overlays.json</code> (0–1, top-left origin).
         </p>
       </aside>
 
