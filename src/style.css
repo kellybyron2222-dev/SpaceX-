@@ -526,10 +526,26 @@ body,
   line-height: 1.4;
 }
 
-.banner.sample {
-  background: rgba(245, 193, 108, 0.08);
-  border-color: rgba(245, 193, 108, 0.3);
-  color: var(--accent);
+.banner.live {
+  background: rgba(134, 239, 172, 0.08);
+  border-color: rgba(134, 239, 172, 0.28);
+  color: #86efac;
+}
+
+.sources {
+  margin: 8px 0 0 18px;
+  color: var(--steel);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.sources a {
+  color: var(--cyan);
+  text-underline-offset: 2px;
+}
+
+.sources li + li {
+  margin-top: 6px;
 }
 
 .filters {

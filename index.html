@@ -30,6 +30,9 @@
         </nav>
         <div class="toolbar">
           <button type="button" id="btn-refresh" class="tool tracker-only" title="Refresh launches">Refresh</button>
+          <button type="button" id="btn-idle" class="tool explore-learn" aria-pressed="true" title="Idle rotate (I)">
+            Idle rotate
+          </button>
           <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Exploded view (E)">
             Explode
           </button>
@@ -58,6 +61,10 @@
           </div>
         </header>
         <p id="tracker-banner" class="banner">Loading public launch data…</p>
+        <div class="filters" id="tracker-source" aria-label="Launch data source">
+          <button type="button" class="chip active" data-source="live">Live LL2</button>
+          <button type="button" class="chip" data-source="sample">Sample</button>
+        </div>
         <div class="filters" id="launch-filters">
           <button type="button" class="chip active" data-filter="all">All</button>
           <button type="button" class="chip" data-filter="starship">Starship</button>
@@ -102,6 +109,7 @@
           <button type="button" class="tab active" data-tab="overview">Overview</button>
           <button type="button" class="tab" data-tab="history">History</button>
           <button type="button" class="tab" data-tab="function">Function</button>
+          <button type="button" class="tab" data-tab="sources">Sources</button>
           <button type="button" class="tab" data-tab="physics" id="tab-physics">Physics</button>
         </div>
         <div id="teach-body" class="teach-body"></div>
@@ -113,7 +121,8 @@
           <h2 id="help-title">Controls</h2>
           <ul>
             <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn</li>
-            <li><kbd>R</kbd> Reset camera</li>
+            <li><kbd>R</kbd> Reset camera (tween)</li>
+            <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
             <li><kbd>E</kbd> Toggle exploded view</li>
             <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> Switch 3D scene</li>

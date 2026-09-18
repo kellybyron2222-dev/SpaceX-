@@ -14,6 +14,7 @@ const calloutBody = document.getElementById("callout-body");
 const btnTeach = document.getElementById("btn-teach");
 const help = document.getElementById("help");
 const btnExplode = document.getElementById("btn-explode");
+const btnIdle = document.getElementById("btn-idle");
 const btnReset = document.getElementById("btn-reset");
 const btnShot = document.getElementById("btn-shot");
 const btnHelp = document.getElementById("btn-help");
@@ -40,6 +41,7 @@ const state = {
   physicsUnlocked: false,
   launches: null,
   launchFilter: "all",
+  launchSource: "live",
   catalogFamily: "all",
   catalogQuery: "",
   pendingCatalog: null,
@@ -139,6 +141,18 @@ function showTeach(entry) {
   });
   tabPhysics.disabled = !state.physicsUnlocked;
   btnPhysics.classList.toggle("hidden", state.physicsUnlocked);
+  if (tab === "sources") {
+    const items = (entry.sources || [])
+      .map(
+        (s) =>
+          `<li><a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a></li>`,
+      )
+      .join("");
+    teachBody.innerHTML = items
+      ? `<p>Public architecture references — not drawings of flight hardware.</p><ul class="sources">${items}</ul>`
+      : `<p>No public sources recorded for this entry.</p>`;
+    return;
+  }
   const text =
     tab === "history" ? entry.history : tab === "function" ? entry.function : tab === "physics" ? entry.physics : entry.blurb;
   teachBody.innerHTML = `<p>${text}</p>`;
@@ -257,18 +271,24 @@ function selectLaunch(launch) {
 }
 
 async function refreshLaunches() {
-  trackerBanner.textContent = "Refreshing Launch Library 2…";
-  trackerBanner.classList.remove("sample");
+  const prefer = state.launchSource === "sample" ? "sample" : "live";
+  trackerBanner.textContent = prefer === "sample" ? "Loading sample missions…" : "Refreshing Launch Library 2…";
+  trackerBanner.classList.remove("sample", "live");
   btnRefresh.disabled = true;
   try {
-    const data = await loadLaunches();
+    const data = await loadLaunches({ prefer });
     state.launches = data;
     if (data.source === "live") {
-      trackerBanner.textContent = `Live public data from Launch Library 2 (The Space Devs). Updated ${formatUtc(data.fetchedAt)}. Not official SpaceX telemetry.`;
+      trackerBanner.textContent = `Live LL2 · public data from Launch Library 2 (The Space Devs). Updated ${formatUtc(data.fetchedAt)}. Not official SpaceX telemetry.`;
+      trackerBanner.classList.add("live");
       trackerBanner.classList.remove("sample");
+    } else if (prefer === "sample") {
+      trackerBanner.textContent =
+        "Sample · cached teaching missions (not live). Switch to Live LL2 to query Launch Library 2.";
+      trackerBanner.classList.add("sample");
     } else {
       trackerBanner.textContent =
-        "Showing cached sample data — live Launch Library 2 was unavailable (network, CORS, or free-tier rate limit). Optional VITE_LL2_API_KEY raises the paid-tier rate limit.";
+        "Sample fallback · live Launch Library 2 was unavailable (network, CORS, or free-tier rate limit). Optional VITE_LL2_API_KEY raises the paid-tier rate limit.";
       trackerBanner.classList.add("sample");
     }
     renderLaunches();
@@ -305,6 +325,12 @@ btnExplode.addEventListener("click", () => {
   btnExplode.setAttribute("aria-pressed", allowed && next ? "true" : "false");
 });
 
+btnIdle.addEventListener("click", () => {
+  const next = btnIdle.getAttribute("aria-pressed") !== "true";
+  const on = viewer.setIdleRotate(next);
+  btnIdle.setAttribute("aria-pressed", on ? "true" : "false");
+});
+
 btnReset.addEventListener("click", () => viewer.resetCamera());
 btnShot.addEventListener("click", () => viewer.screenshot());
 btnHelp.addEventListener("click", () => help.classList.toggle("hidden"));
@@ -318,6 +344,14 @@ btnTeach.addEventListener("click", () => {
   if (!state.pendingCatalog) return;
   setMode("learn");
   selectCatalog(state.pendingCatalog.id);
+});
+
+document.querySelectorAll("#tracker-source .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    state.launchSource = chip.dataset.source;
+    document.querySelectorAll("#tracker-source .chip").forEach((c) => c.classList.toggle("active", c === chip));
+    refreshLaunches();
+  });
 });
 
 document.querySelectorAll("#launch-filters .chip").forEach((chip) => {
@@ -362,6 +396,7 @@ window.addEventListener("keydown", (event) => {
   if (key === "v") setMode("explore");
   if (key === "l") setMode("learn");
   if (key === "r") viewer.resetCamera();
+  if (key === "i") btnIdle.click();
   if (key === "s") {
     event.preventDefault();
     viewer.screenshot();

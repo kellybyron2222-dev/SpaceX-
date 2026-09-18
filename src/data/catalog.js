@@ -1,5 +1,24 @@
 /** Critical infrastructure catalog — public-architecture teaching notes only. */
 
+const SRC = {
+  starship: { label: "SpaceX Starship", url: "https://www.spacex.com/vehicles/starship/" },
+  falcon9: { label: "SpaceX Falcon 9", url: "https://www.spacex.com/vehicles/falcon-9/" },
+  updates: { label: "SpaceX updates", url: "https://www.spacex.com/updates" },
+  f9guide: {
+    label: "Falcon 9 User’s Guide",
+    url: "https://www.spacex.com/media/falcon-users-guide-2021-09.pdf",
+  },
+  nasaCct: {
+    label: "NASA Commercial Crew",
+    url: "https://www.nasa.gov/humans-in-space/commercial-space/commercial-crew-program/",
+  },
+  faa: {
+    label: "FAA Starship environmental reviews",
+    url: "https://www.faa.gov/space/stakeholder_engagement/spacex_starship",
+  },
+  ll2: { label: "Launch Library 2 (The Space Devs)", url: "https://ll.thespacedevs.com/" },
+};
+
 export const CATALOG = [
   {
     id: "raptor",
@@ -16,9 +35,7 @@ export const CATALOG = [
       "raptor.gimbal",
       "raptor.oxPre",
       "raptor.fuelPre",
-      "booster.engines",
       "starship.sl",
-      "starship.vac",
     ],
     blurb:
       "Methane/LOX full-flow staged-combustion engine that powers Super Heavy and Starship. Geometry in this app is a parametric teaching model.",
@@ -28,6 +45,45 @@ export const CATALOG = [
       "Each Raptor burns liquid methane with liquid oxygen to produce thrust. Super Heavy uses a large sea-level cluster (publicly 33 engines). Starship uses a mixed set of gimbaling sea-level engines and larger-bell vacuum engines. Full-flow means both turbopumps are driven by preburner gas of their own propellant species, a cycle discussed openly in propulsion textbooks and SpaceX talks. On the pad, engines also provide the hold-down / start transient the launch mount must survive.",
     physics:
       "Order-of-magnitude teaching notes, not a datasheet. Public Raptor remarks put chamber pressure in the hundreds of bar — much higher than gas-generator RP-1 engines such as Merlin. Higher Pc shrinks throat area for a given thrust and helps specific impulse, at the cost of turbomachinery power and heat flux. A round vehicle diameter of ~9 m sets the cluster packing problem: 33 sea-level bells must fit under Super Heavy with gimbal clearance. Regenerative cooling moves heat into the methane jacket before it reaches the wall’s structural limit; the rings on the 3D bell only hint at that jacket. Treat any numeric thrust or Isp you see in press as approximate and era-specific.",
+    sources: [SRC.starship, SRC.updates, SRC.faa],
+  },
+  {
+    id: "vacuum-raptor",
+    name: "Vacuum Raptor",
+    family: "starship",
+    category: "Engine",
+    domain: "vehicle",
+    sceneId: "starship",
+    partId: "starship.vac",
+    matchIds: ["starship.vac"],
+    blurb:
+      "Larger-expansion vacuum Raptors on Starship. Three sit around the sea-level trio; bell size here is a round teaching guess.",
+    history:
+      "SpaceX has shown vacuum Raptors with much larger nozzles than the sea-level engines on the same ship. Public stacking and static-fire photos distinguish the two families. Expansion ratio and flight-by-flight nozzle hardware have changed; this mesh is not a production bell.",
+    function:
+      "Vacuum engines make most of their thrust in thin air or vacuum, where a large expansion ratio raises specific impulse. They are typically less gimbaled than the center sea-level engines used for landing. The 3D scene keeps them tagged separately from the Raptor close-up so Learn can frame the aft bay.",
+    physics:
+      "Ideal-rocket expansion: a larger exit area ratio better matches a near-zero ambient pressure, reducing underexpansion losses. The sea-level engines would overexpand (and risk flow separation) with the same bell on the pad. Treat the 3D bells as scale cartoons — expansion ratio is not measured from this model.",
+    sources: [SRC.starship, SRC.updates],
+  },
+  {
+    id: "booster-cluster",
+    name: "33-Raptor cluster",
+    family: "starship",
+    category: "Engine",
+    domain: "vehicle",
+    sceneId: "booster",
+    partId: "booster.engines",
+    matchIds: ["booster.engines", "booster.octaweb"],
+    blurb:
+      "Widely reported Super Heavy layout: 33 sea-level Raptors in three rings (3 + 10 + 20). Bells and spacing are round-number approximations.",
+    history:
+      "Public booster photos and webcasts count a 33-engine sea-level cluster. SpaceX has discussed center, middle, and outer rings and engine-out capability at a high level. The aft “octaweb” nickname is commentary, not a released drawing. Cluster count and shielding have been iterative across flight articles.",
+    function:
+      "The cluster is the booster’s only propulsion: liftoff, boostback (when used), landing / catch burn. Inner engines gimbal for TVC; outer engines pack the 9 m aft bay. The teaching model drops the cluster in explode view so the three rings are readable.",
+    physics:
+      "Packing 33 ~1 m-class bells under a 9 m cylinder is a geometry constraint as much as a thrust one. Engine-out means the remaining set must still provide the required Δv and control. Acoustic and thermal load on the launch mount scales with the whole cluster, which is why deluge and a water-cooled deck showed up in public pad upgrades after early integrated tests.",
+    sources: [SRC.starship, SRC.updates, SRC.faa],
   },
   {
     id: "merlin",
@@ -46,6 +102,7 @@ export const CATALOG = [
       "The first-stage cluster lifts Falcon off the pad, then later relights for boostback (when used), reentry, and landing. The center engine is the one typically used for the final landing burn. The second stage uses a single Merlin Vacuum with a larger expansion bell. RP-1 is a refined kerosene; deep throttling and restart capability are operational facts shown in flight, while controller gains and injector design stay unpublished.",
     physics:
       "Public Block 5-era figures put a Merlin 1D in the roughly 800–900 kN sea-level thrust class per engine (check the vintage of any source). Nine engines therefore provide on the order of 7–8 MN at liftoff before throttling — enough, with a ~3.7 m vehicle, for the well-known Falcon 9 thrust-to-weight that allows RTLS or ASDS recovery after downrange missions. Gas-generator cycles dump turbine exhaust overboard, so they give up some Isp versus staged combustion; they are mechanically simpler. These are back-of-envelope relationships for a classroom, not performance guarantees.",
+    sources: [SRC.falcon9, SRC.f9guide, SRC.updates],
   },
   {
     id: "starship-tanks",
@@ -55,7 +112,7 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "booster",
     partId: "booster.barrel",
-    matchIds: ["booster.barrel", "starship.barrel", "booster.raceway", "starship.raceway"],
+    matchIds: ["booster.barrel", "starship.barrel"],
     blurb:
       "Stainless ring-stack barrels, about 9 m diameter, form methane and liquid-oxygen tanks on both stages.",
     history:
@@ -64,6 +121,45 @@ export const CATALOG = [
       "Tanks store cryogenic CH4 and LOX, feed the engines, and are the primary airframe. Common domes and downcomers (the raceway on the model) move propellant. During flight the tanks are structural: they carry axial compression, bending from aero and TVC, and internal pressure. On reentry the windward skin is tiled; the leeward side is mostly bare stainless in public photos.",
     physics:
       "A 9 m cylinder ~71 m tall (booster) or ~50 m (ship) is a thin-walled pressure vessel plus column. Hydrostatic head of LOX is non-trivial over tens of meters, so tank pressure and baffles matter. Stainless has lower specific stiffness than the Falcon aluminum stack, which is one public rationale for the large diameter. Cryo shrinkage, buckling under thrust, and slosh during flip maneuvers are the usual textbook issues — none of which we size here. Ring spacing on the model (~1.8 m) matches the commonly photographed barrel-section height, used only as visual scale.",
+    sources: [SRC.starship, SRC.updates, SRC.faa],
+  },
+  {
+    id: "raceway",
+    name: "Downcomer raceway",
+    family: "starship",
+    category: "Tanks",
+    domain: "vehicle",
+    sceneId: "booster",
+    partId: "booster.raceway",
+    matchIds: ["booster.raceway", "starship.raceway"],
+    blurb:
+      "A raised cable-and-propellant raceway runs the length of the booster and ship. Simplified fairing, not a routing diagram.",
+    history:
+      "Public rollouts show a longitudinal raceway on Super Heavy and Starship, distinct from Falcon’s cable trays. SpaceX has discussed downcomers that carry propellant between tanks. Photographs are the source; line IDs and insulation are not published.",
+    function:
+      "The raceway is the external trunk for pressurant, avionics, and transfer lines that cannot live only inside the tanks. Clicking it in 3D should select this entry, not the barrel tanks.",
+    physics:
+      "A downcomer over tens of meters sees hydrostatic head, two-phase flow during fill, and thermal contraction. We draw a box. Fill-rate sizing is not in this viewer.",
+    sources: [SRC.starship, SRC.updates],
+  },
+  {
+    id: "payload-bay",
+    name: "Nosecone / payload bay",
+    family: "starship",
+    category: "Payload",
+    domain: "vehicle",
+    sceneId: "starship",
+    partId: "starship.nose",
+    matchIds: ["starship.nose"],
+    blurb:
+      "Ogive nose on the ~50 m upper stage. Public articles describe a forward payload volume and a nose header tank — simple volumes here.",
+    history:
+      "Starship does not use a Falcon-style clamshell fairing for most cargo. SpaceX has shown PEZ-style dispensers, cargo-door concepts, and crew interiors only as public renderings or test hardware. Header tanks in the nose appear in flight-article photos. This ogive is a scale stand-in.",
+    function:
+      "The nose closes the stack aerodynamically, can house payload or crew volume, and includes a header tank used during landing burns in public descriptions. It is not a Starlink dispenser CAD model.",
+    physics:
+      "An ogive is a low-drag nose for the boost phase; reentry heating on the nose is managed by tiles plus attitude. Header-tank location near the nose is a CG / settling story during the flip. None of that is simulated.",
+    sources: [SRC.starship, SRC.updates],
   },
   {
     id: "flaps",
@@ -82,6 +178,7 @@ export const CATALOG = [
       "During hypersonic and supersonic descent the vehicle flies at high angle of attack. Forward flaps (canards) and larger aft flaps trim pitch and roll so the heat shield stays windward. Near the pad the flaps help set up the landing flip, after which engines take over. They are thermal and structural parts as much as aero surfaces.",
     physics:
       "At high alpha, lift and drag are dominated by the barrel plus flap deflection, not a slender-rocket formula. Hinge moment scales with dynamic pressure × area × chord; aft flaps are larger because they sit farther from the center of mass and see a different local flow. Public videos of flap flutter or peeling are reminders that unsteady loads and heating at the hinge line are design drivers. The 3D plates here have no hinge-moment model.",
+    sources: [SRC.starship, SRC.updates],
   },
   {
     id: "grid-fins",
@@ -97,9 +194,29 @@ export const CATALOG = [
     history:
       "Falcon 9 grid fins were originally aluminum and later titanium — a change SpaceX announced after heating and stiction issues on early recovery flights. Super Heavy uses much larger fins, shown folding against the tank in stacking footage. Both systems are public, but lattice thickness, latch design, and hydraulic vs electric drive differ and are not specified here.",
     function:
-      "After entry burn, grid fins provide roll, pitch, and yaw so the booster can hit a droneship or chopsticks with engine residual. They fold or stow for ascent. On Super Heavy they also interact with the catch-arm keep-out zone.",
+      "After entry burn, grid fins provide roll, pitch, and yaw so the booster can hit a droneship or chopsticks with engine residual. They fold or stow for ascent. On Super Heavy they also interact with the catch-arm keep-out zone — but they are not the catch pins. Pick the waffle lattice for this entry; pick the gold pins for Catch hardpoints.",
     physics:
       "A grid fin is a lattice of small lifting surfaces that stalls more gently and packs against a cylinder better than a planar fin of equal control power. Hinge moment still grows with q-bar. Titanium’s melting point and stiffness are the usual public explanation for the Falcon upgrade. Super Heavy’s ~9 m body means fin area must grow roughly with the moment of inertia and aero lever arm — the model fins are scaled for look, not a CFD-derived area.",
+    sources: [SRC.starship, SRC.falcon9, SRC.updates],
+  },
+  {
+    id: "catch-pins",
+    name: "Catch hardpoints",
+    family: "starship",
+    category: "Recovery",
+    domain: "vehicle",
+    sceneId: "booster",
+    partId: "booster.hardpoints",
+    matchIds: ["booster.hardpoints"],
+    blurb:
+      "Lift/catch pins near the top of Super Heavy — the publicly shown interfaces for Mechazilla’s arms. Not the grid fins.",
+    history:
+      "Public Super Heavy articles show prominent pins / hardpoints near the grid-fin elevation that the tower arms close on during catch and stack. SpaceX webcasts of the 2024 catch made the load path obvious: arms to pins, not to the waffle fins. Hardware shape has iterated; these cylinders are stand-ins.",
+    function:
+      "Pins take stacking and catch loads into the barrel and into the chopsticks. Grid fins steer; pins carry. This catalog split exists so a click on a pin does not open Grid fins, and a click on a lattice does not open Catch hardpoints.",
+    physics:
+      "A caught booster is a concentrated load at two (or more) lugs high on a thin cylinder. Even a small lateral offset is a large moment at the tower root and a local bearing stress in the pin. We do not quote margins. Invisible pick proxies sit on the pins so the thin hardware wins against the nearby fin lattice in the raycaster.",
+    sources: [SRC.starship, SRC.updates],
   },
   {
     id: "tiles",
@@ -118,6 +235,7 @@ export const CATALOG = [
       "Tiles reject or absorb reentry heat so the stainless tank stays below structural limits. Gaps, felt, and a carrier structure manage thermal expansion. The ship relies on this TPS plus attitude control (flaps) to keep the hottest flow on the tiled face.",
     physics:
       "Leeside vs windward heating at high alpha is a classic blunt-body result: stagnation and acreage heat flux on the belly, much lower on the back. Ceramic tiles work by low conductivity and high emissivity; the metal behind them is a heat sink. A round 9 m radius sets the curvature the tile grid must follow — the explode view lifts tiles along surface normals to show that packing. Bond-line temperature and gap-heating are real issues; we do not compute them.",
+    sources: [SRC.starship, SRC.updates, SRC.faa],
   },
   {
     id: "hot-stage",
@@ -136,6 +254,7 @@ export const CATALOG = [
       "Staging must separate two pressurized vehicles without recontact, while starting the upper-stage engines. Hot staging vents ship exhaust through a ring instead of waiting for a clean physical gap. Falcon’s interstage also hides the second-stage Merlin at ignition.",
     physics:
       "Hot staging trades a plume-in-the-interstage problem for a shorter unpowered gap and residual booster thrust. Loads on the ring are acoustic, thermal, and compressive. Falcon’s cold-ish staging still has ullage and pusher-force requirements. Neither is sized here; the explode view on Full stack simply lifts the ship to show the interface.",
+    sources: [SRC.starship, SRC.falcon9, SRC.updates],
   },
   {
     id: "fairing",
@@ -154,6 +273,7 @@ export const CATALOG = [
       "Fairings keep acoustic and aero loads off the payload until the atmosphere is thin enough. They jettison on a public, mission-specific timeline. Inner acoustic blankets and dispenser hardware are omitted.",
     physics:
       "Fairing volume is set by payload dynamic envelope, not rocket aesthetics. Jettison happens when dynamic pressure × heating is low enough that the exposed payload survives. Half-shells in explode view separate laterally — the real hinge/piston kinematics are more specific and not modeled.",
+    sources: [SRC.falcon9, SRC.f9guide, SRC.updates],
   },
   {
     id: "chopsticks",
@@ -163,15 +283,16 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "mechazilla",
     partId: "mechazilla.arms",
-    matchIds: ["mechazilla.arms", "mechazilla.pads", "mechazilla.carriage", "booster.hardpoints"],
+    matchIds: ["mechazilla.arms", "mechazilla.pads", "mechazilla.carriage"],
     blurb:
       "Mechanical arms on the launch tower that stack stages and, as publicly demonstrated, catch returning Super Heavy boosters.",
     history:
       "The Starbase tower arms — nicknamed chopsticks — were shown stacking Starship and later catching Super Heavy on a public test flight in 2024, a first for an orbital-class booster. SpaceX has discussed catch vs landing-leg mass. Arm speed, compliance, and fail-safes are not published. Kennedy’s Starship pad is a separate public construction story.",
     function:
-      "Arms open around a 9 m vehicle, close on hardpoints, and ride a carriage up the tower to stack or after catch. They replace landing legs on the booster in the current public architecture. The model includes a ghost booster so the catch bay is readable.",
+      "Arms open around a 9 m vehicle, close on hardpoints, and ride a carriage up the tower to stack or after catch. They replace landing legs on the booster in the current public architecture. The model includes a ghost booster so the catch bay is readable. Vehicle-side pins are a separate catalog entry (Catch hardpoints).",
     physics:
       "Catch is a relative-navigation and energy-absorption problem: a ~71 m, 9 m-diameter booster arrives with residual vertical rate that the arms and pins must take as a load path into the tower. Even a small lateral offset becomes a large moment at the tower root. Public videos are the right intuition; we do not quote structural margins. Exploded view opens the arms so the keep-out cylinder is obvious.",
+    sources: [SRC.starship, SRC.updates],
   },
   {
     id: "landing-legs",
@@ -190,6 +311,7 @@ export const CATALOG = [
       "Legs absorb residual vertical kinetic energy, keep engines off the deck, and provide tip-over stability in wind and sea state. They stow along the tank during ascent.",
     physics:
       "Touchdown energy is ½mv² plus any tip-over moment from deck tilt (ASDS) or engine-out. Four outriggers increase the support polygon. Deployed length is a trade against engine-bell clearance and mass. The explode view kicks the legs outward so the polygon is visible; stroke and honeycomb ratings are not shown.",
+    sources: [SRC.falcon9, SRC.updates],
   },
   {
     id: "olm",
@@ -208,6 +330,7 @@ export const CATALOG = [
       "The mount holds the vehicle, routes flame away from the tank, and supports QD and tower interfaces. Hold-down releases at T-0. It is the structural interface between a 33-engine plume and Texas (or Florida) soil.",
     physics:
       "Acoustic load and convective heat from a 33-Raptor cluster are the reason for steel decks, water, and trenches. Overpressure scales poorly if you just “add engines” without a flame deflector — IFT-1 made that public. We draw a disk and ring, not a deflector CFD.",
+    sources: [SRC.starship, SRC.faa, SRC.updates],
   },
   {
     id: "qd-arm",
@@ -226,6 +349,7 @@ export const CATALOG = [
       "Load CH4 and LOX, provide vents, electrical, and other ground services, then disconnect and swing clear before liftoff. A stuck QD is a scrub; a late disconnect is a pad hazard. The ghost barrel shows reach to a 9 m vehicle.",
     physics:
       "Cryogenic QD design is about alignment, ice, seals, and the force to break away with residual pressure. Line diameter sets fill time for tanks of tens of meters height. The teaching pipes are not sized for fill rate.",
+    sources: [SRC.starship, SRC.updates],
   },
   {
     id: "deluge",
@@ -244,6 +368,7 @@ export const CATALOG = [
       "Water absorbs acoustic energy, protects concrete and steel, and reduces recirculation of hot gas onto the vehicle. Nozzles fire in the seconds around T-0.",
     physics:
       "Sound suppression is largely about putting mass (water) into the shear layer of the plume so acoustic sources weaken before they reach the vehicle and ground systems. Cooling is convective: steel that would otherwise see a methane/LOX exhaust environment. Nozzle count on the model is symbolic.",
+    sources: [SRC.faa, SRC.nasaCct, SRC.updates],
   },
   {
     id: "crew-access",
@@ -262,6 +387,7 @@ export const CATALOG = [
       "Get crew into Dragon (or a future cabin) late in the count, then swing away. It must not recontact a lifting vehicle and must support abort egress timelines.",
     physics:
       "The boom is a moving mass on a tower: slew time vs wind vs clearance envelope. Docking of the white room to a pressurized spacecraft is an alignment-and-seal problem. We model a boom and cab only.",
+    sources: [SRC.nasaCct, SRC.falcon9],
   },
   {
     id: "asds",
@@ -280,6 +406,7 @@ export const CATALOG = [
       "Station-keep in the landing zone, provide a marked deck, and return the booster to port. Thrusters fight sea state so the octaweb lands inside the painted target.",
     physics:
       "Landing on a barge is a moving-target problem: heave, roll, and yaw of the deck plus booster residual rates. The painted octagon is about the size of the engine cluster, giving a visual tolerance. We do not simulate waves.",
+    sources: [SRC.falcon9, SRC.updates],
   },
   {
     id: "mechazilla-tower",
@@ -298,6 +425,7 @@ export const CATALOG = [
       "The tower is the vertical rail for the arm carriage, the attach point for QD, and the load path for a caught booster. It also supports work platforms for stacking.",
     physics:
       "A caught Super Heavy applies a large, slightly off-axis load at carriage height. Tower bending stiffness and foundation design dominate; adding height for stacking clearance increases moment arm. Round 146 m is scale only.",
+    sources: [SRC.starship, SRC.faa, SRC.updates],
   },
   {
     id: "strongback",
@@ -316,8 +444,13 @@ export const CATALOG = [
       "Transport, erect, hold the vehicle, route some umbilicals, then get out of the plume. Hold-down is on the TE deck / mount.",
     physics:
       "A ~70 m vehicle on a hinge is a crane problem: wind, stiffness, and a controlled rotate. At T-0 the strongback must clear a rapidly rising stack. The explode view pulls the mast back to show that clearance.",
+    sources: [SRC.falcon9, SRC.nasaCct, SRC.f9guide],
   },
 ];
+
+if (CATALOG.length !== 22) {
+  console.warn(`Expected 22 catalog entries, found ${CATALOG.length}`);
+}
 
 export function catalogById(id) {
   return CATALOG.find((e) => e.id === id) ?? null;
@@ -326,7 +459,9 @@ export function catalogById(id) {
 export function findCatalogByPart(part) {
   if (!part) return null;
   if (part.id) {
-    const hit = CATALOG.find((e) => e.partId === part.id || e.matchIds?.includes(part.id));
+    const exact = CATALOG.find((e) => e.partId === part.id);
+    if (exact) return exact;
+    const hit = CATALOG.find((e) => e.matchIds?.includes(part.id));
     if (hit) return hit;
   }
   if (part.name) {
@@ -345,7 +480,8 @@ export function searchCatalog(query, family = "all") {
       if (e.domain !== family) return false;
     }
     if (!q) return true;
-    const blob = `${e.name} ${e.family} ${e.category} ${e.blurb} ${e.history}`.toLowerCase();
+    const src = (e.sources || []).map((s) => s.label).join(" ");
+    const blob = `${e.name} ${e.family} ${e.category} ${e.blurb} ${e.history} ${src}`.toLowerCase();
     return blob.includes(q);
   });
 }

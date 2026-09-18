@@ -1,12 +1,17 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createStarfield, disposeHierarchy } from "./models/helpers.js";
 import { SCENES, sceneById } from "./models/index.js";
 
 const tmpBox = new THREE.Box3();
 const tmpSize = new THREE.Vector3();
 const tmpCenter = new THREE.Vector3();
-const tmpVec = new THREE.Vector3();
+const IDLE_RESUME_S = 5.5;
+
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
 
 export class Viewer {
   constructor(canvas) {
@@ -19,6 +24,11 @@ export class Viewer {
     this.baseEmissive = new WeakMap();
     this.clock = new THREE.Clock();
     this.defaultCam = { position: new THREE.Vector3(), target: new THREE.Vector3() };
+    this._camTween = null;
+    this._firstLoad = true;
+    this.idleRotateEnabled = true;
+    this._userInteracting = false;
+    this._lastInteract = 0;
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
@@ -31,12 +41,18 @@ export class Viewer {
     this.renderer.setSize(canvas.clientWidth || window.innerWidth, canvas.clientHeight || window.innerHeight, false);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 1.08;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x070b10);
+
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    pmrem.compileEquirectangularShader();
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.scene.environmentIntensity = 0.62;
+    pmrem.dispose();
 
     this.camera = new THREE.PerspectiveCamera(42, 1, 0.1, 2000);
     this.camera.position.set(40, 55, 90);
@@ -47,6 +63,17 @@ export class Viewer {
     this.controls.minDistance = 1.5;
     this.controls.maxDistance = 600;
     this.controls.target.set(0, 40, 0);
+    this.controls.autoRotate = true;
+    this.controls.autoRotateSpeed = 0.42;
+    this.controls.addEventListener("start", () => {
+      this._userInteracting = true;
+      this.controls.autoRotate = false;
+      this._camTween = null;
+    });
+    this.controls.addEventListener("end", () => {
+      this._userInteracting = false;
+      this._lastInteract = this.clock.getElapsedTime();
+    });
 
     this._lights();
     this.scene.add(createStarfield());
@@ -79,11 +106,18 @@ export class Viewer {
     this.renderer.setAnimationLoop(this._loop);
   }
 
+  setIdleRotate(on) {
+    this.idleRotateEnabled = Boolean(on);
+    if (!this.idleRotateEnabled) this.controls.autoRotate = false;
+    else if (!this._userInteracting && !this._camTween) this.controls.autoRotate = true;
+    return this.idleRotateEnabled;
+  }
+
   _lights() {
-    const hemi = new THREE.HemisphereLight(0xb9c9e0, 0x1a140f, 0.55);
+    const hemi = new THREE.HemisphereLight(0xb9c9e0, 0x1a140f, 0.38);
     this.scene.add(hemi);
 
-    const key = new THREE.DirectionalLight(0xfff2df, 2.35);
+    const key = new THREE.DirectionalLight(0xfff2df, 1.85);
     key.position.set(48, 90, 40);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -97,17 +131,24 @@ export class Viewer {
     this.scene.add(key);
     this.keyLight = key;
 
-    const fill = new THREE.DirectionalLight(0x8fb7ff, 0.55);
+    const fill = new THREE.DirectionalLight(0x8fb7ff, 0.42);
     fill.position.set(-60, 30, -20);
     this.scene.add(fill);
 
-    const rim = new THREE.DirectionalLight(0xffd4a8, 0.7);
+    const rim = new THREE.DirectionalLight(0xffd4a8, 0.55);
     rim.position.set(-10, 40, -70);
     this.scene.add(rim);
 
     const ground = new THREE.Mesh(
       new THREE.CircleGeometry(220, 48),
-      new THREE.MeshStandardMaterial({ color: 0x0b0e13, metalness: 0.05, roughness: 1, transparent: true, opacity: 0.9 }),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x0b0e13,
+        metalness: 0.08,
+        roughness: 0.95,
+        envMapIntensity: 0.35,
+        transparent: true,
+        opacity: 0.9,
+      }),
     );
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.8;
@@ -130,7 +171,8 @@ export class Viewer {
 
     this.root = spec.build();
     this.scene.add(this.root);
-    this._frame(true);
+    this._frame({ storeDefault: true, instant: this._firstLoad });
+    this._firstLoad = false;
     this._fitShadow();
     return spec;
   }
@@ -143,14 +185,16 @@ export class Viewer {
   }
 
   resetCamera() {
-    this.camera.position.copy(this.defaultCam.position);
-    this.controls.target.copy(this.defaultCam.target);
-    this.controls.update();
+    this._tweenTo(this.defaultCam.position, this.defaultCam.target, 0.85);
   }
 
   findByPartId(id) {
     if (!this.root || !id) return null;
     let found = null;
+    this.root.traverse((o) => {
+      if (!found && o.userData?.part?.id === id && !o.userData.pickProxy) found = o;
+    });
+    if (found) return found;
     this.root.traverse((o) => {
       if (!found && o.userData?.part?.id === id) found = o;
     });
@@ -170,18 +214,29 @@ export class Viewer {
     return true;
   }
 
+  _tweenTo(position, target, duration = 0.8) {
+    this.controls.autoRotate = false;
+    this._camTween = {
+      t: 0,
+      duration,
+      fromPos: this.camera.position.clone(),
+      toPos: position.clone(),
+      fromTarget: this.controls.target.clone(),
+      toTarget: target.clone(),
+    };
+  }
+
   _frameObject(obj, storeDefault) {
     tmpBox.setFromObject(obj);
     tmpBox.getSize(tmpSize);
     tmpBox.getCenter(tmpCenter);
     const maxDim = Math.max(tmpSize.x, tmpSize.y, tmpSize.z, 1.2);
     const dist = Math.max(4.5, (maxDim / (2 * Math.tan((this.camera.fov * Math.PI) / 360))) * 1.7);
-    this.camera.position.set(tmpCenter.x + dist * 0.7, tmpCenter.y + dist * 0.22, tmpCenter.z + dist * 0.85);
-    this.controls.target.copy(tmpCenter);
-    this.controls.update();
+    const pos = new THREE.Vector3(tmpCenter.x + dist * 0.7, tmpCenter.y + dist * 0.22, tmpCenter.z + dist * 0.85);
+    this._tweenTo(pos, tmpCenter, 0.7);
     if (storeDefault) {
-      this.defaultCam.position.copy(this.camera.position);
-      this.defaultCam.target.copy(this.controls.target);
+      this.defaultCam.position.copy(pos);
+      this.defaultCam.target.copy(tmpCenter);
     }
   }
 
@@ -198,7 +253,7 @@ export class Viewer {
     return SCENES;
   }
 
-  _frame(storeDefault) {
+  _frame({ storeDefault = false, instant = false } = {}) {
     if (!this.root) return;
     tmpBox.setFromObject(this.root);
     tmpBox.getSize(tmpSize);
@@ -208,14 +263,20 @@ export class Viewer {
     this.camera.near = Math.max(0.05, dist / 140);
     this.camera.far = Math.max(400, dist * 40);
     this.camera.updateProjectionMatrix();
-    this.camera.position.set(tmpCenter.x + dist * 0.62, tmpCenter.y + dist * 0.18, tmpCenter.z + dist * 0.82);
-    this.controls.target.copy(tmpCenter);
+    const pos = new THREE.Vector3(tmpCenter.x + dist * 0.62, tmpCenter.y + dist * 0.18, tmpCenter.z + dist * 0.82);
     this.controls.minDistance = Math.max(1.2, maxDim * 0.12);
     this.controls.maxDistance = Math.max(80, maxDim * 8);
-    this.controls.update();
+    if (instant) {
+      this.camera.position.copy(pos);
+      this.controls.target.copy(tmpCenter);
+      this.controls.update();
+      this._camTween = null;
+    } else {
+      this._tweenTo(pos, tmpCenter, 0.9);
+    }
     if (storeDefault) {
-      this.defaultCam.position.copy(this.camera.position);
-      this.defaultCam.target.copy(this.controls.target);
+      this.defaultCam.position.copy(pos);
+      this.defaultCam.target.copy(tmpCenter);
     }
   }
 
@@ -250,15 +311,45 @@ export class Viewer {
     this.raycaster.setFromCamera(this.pointer, this.camera);
     if (!this.root) return;
     const hits = this.raycaster.intersectObject(this.root, true);
-    const hit = hits.find((h) => this._partOf(h.object));
-    if (!hit) {
+    const obj = this._pickBest(hits);
+    if (!obj) {
       this.clearSelection();
       this.onSelect?.(null);
       return;
     }
-    const obj = this._partOf(hit.object);
     this._highlight(obj);
     this.onSelect?.(obj.userData.part, obj);
+  }
+
+  /**
+   * Prefer catch pins / small hardware over nearby grid-fin lattice hits.
+   * Among hits close to the nearest surface, score pickPriority then smaller bounds.
+   */
+  _pickBest(hits) {
+    if (!hits.length) return null;
+    const nearest = hits[0].distance;
+    let best = null;
+    let bestScore = -Infinity;
+    const seen = new Set();
+    for (const hit of hits) {
+      if (hit.distance - nearest > 2.4) break;
+      const obj = this._partOf(hit.object);
+      if (!obj?.userData?.part) continue;
+      const key = obj.userData.part.id;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      tmpBox.setFromObject(obj);
+      tmpBox.getSize(tmpSize);
+      const size = Math.max(tmpSize.x, tmpSize.y, tmpSize.z, 0.2);
+      const prio = obj.userData.part.pickPriority ?? 0;
+      const proxy = hit.object.userData.pickProxy || obj.userData.pickProxy ? 6 : 0;
+      const score = prio * 6 + proxy - size * 0.18 - hit.distance * 0.35;
+      if (score > bestScore) {
+        bestScore = score;
+        best = obj;
+      }
+    }
+    return best;
   }
 
   _partOf(obj) {
@@ -274,7 +365,7 @@ export class Viewer {
     this.clearSelection();
     this.selected = obj;
     obj.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
+      if (!child.isMesh || !child.material || child.userData.pickProxy) return;
       const orig = child.material;
       this.baseEmissive.set(child, orig);
       const mat = orig.clone();
@@ -312,8 +403,27 @@ export class Viewer {
 
   _loop() {
     const dt = this.clock.getDelta();
+    const elapsed = this.clock.getElapsedTime();
     this.explodeT += (this.explodeTarget - this.explodeT) * Math.min(1, dt * 6);
     this._applyExplode();
+
+    if (this._camTween) {
+      this._camTween.t += dt;
+      const u = easeInOutCubic(Math.min(1, this._camTween.t / this._camTween.duration));
+      this.camera.position.lerpVectors(this._camTween.fromPos, this._camTween.toPos, u);
+      this.controls.target.lerpVectors(this._camTween.fromTarget, this._camTween.toTarget, u);
+      if (u >= 1) {
+        this._camTween = null;
+        this._lastInteract = elapsed;
+      }
+    } else if (
+      this.idleRotateEnabled &&
+      !this._userInteracting &&
+      elapsed - this._lastInteract > IDLE_RESUME_S
+    ) {
+      this.controls.autoRotate = true;
+    }
+
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }

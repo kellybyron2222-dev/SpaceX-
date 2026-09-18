@@ -10,6 +10,7 @@ import {
   homeAndExplode,
   ids,
   tag,
+  addPickProxy,
 } from "./helpers.js";
 
 const PARTS = ids("booster", {
@@ -30,6 +31,7 @@ const PARTS = ids("booster", {
   },
   fins: {
     name: "Grid fins",
+    pickPriority: 4,
     blurb:
       "Four grid fins near the top provide aerodynamic control during booster return. The waffle is a teaching lattice, not a production forging.",
   },
@@ -45,6 +47,7 @@ const PARTS = ids("booster", {
   },
   hardpoints: {
     name: "Catch hardpoints",
+    pickPriority: 14,
     blurb:
       "Lift/catch pins near the top are the publicly shown interfaces for the tower arms. Blocky stand-ins only.",
   },
@@ -125,13 +128,15 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
 
   const pins = new THREE.Group();
   for (const sign of [-1, 1]) {
-    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 2.4, 16), mats.caution);
+    const pinY = h - 7.4;
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 2.6, 16), mats.caution);
     pin.rotation.z = Math.PI / 2;
-    pin.position.set(0, h - 8.5, sign * (r + 0.7));
+    pin.position.set(0, pinY, sign * (r + 0.85));
     pins.add(pin);
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 0.35), mats.darkSteel);
-    pad.position.set(0, h - 8.5, sign * (r + 0.15));
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.4, 0.4), mats.darkSteel);
+    pad.position.set(0, pinY, sign * (r + 0.18));
     pins.add(pad);
+    addPickProxy(pins, new THREE.Vector3(0, pinY, sign * (r + 0.7)), 1.85, PARTS.hardpoints);
   }
   tag(pins, PARTS.hardpoints);
   g.add(pins);

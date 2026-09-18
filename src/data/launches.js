@@ -31,6 +31,8 @@ export function relatedIdsForLaunch(vehicle, pad, site) {
   if (v.includes("starship") || v.includes("super heavy") || v.includes("starbase") || v.includes("boca")) {
     add("raptor");
     add("chopsticks");
+    add("catch-pins");
+    add("grid-fins");
     add("mechazilla-tower");
     add("qd-arm");
     add("olm");
@@ -152,7 +154,8 @@ export function sampleBundle() {
   };
 }
 
-export async function loadLaunches() {
+export async function loadLaunches({ prefer = "live" } = {}) {
+  if (prefer === "sample") return sampleBundle();
   const bases = [LL2, PROXY];
   for (const base of bases) {
     try {

@@ -9,105 +9,124 @@ export const SCALE = {
   ring: 1.8,
 };
 
-export function createMaterials() {
-  const stainless = new THREE.MeshStandardMaterial({
-    color: 0xc5ccd4,
-    metalness: 0.88,
-    roughness: 0.32,
+function pbr(opts) {
+  return new THREE.MeshPhysicalMaterial({
+    envMapIntensity: 1,
+    ...opts,
   });
-  const stainlessDark = new THREE.MeshStandardMaterial({
+}
+
+export function createMaterials() {
+  const stainless = pbr({
+    color: 0xc5ccd4,
+    metalness: 0.92,
+    roughness: 0.22,
+    clearcoat: 0.42,
+    clearcoatRoughness: 0.22,
+  });
+  const stainlessDark = pbr({
     color: 0x8e969e,
-    metalness: 0.86,
+    metalness: 0.9,
+    roughness: 0.32,
+    clearcoat: 0.28,
+    clearcoatRoughness: 0.3,
+  });
+  const soot = pbr({
+    color: 0x5c6168,
+    metalness: 0.72,
+    roughness: 0.52,
+  });
+  const weld = pbr({
+    color: 0x9aa3ab,
+    metalness: 0.94,
+    roughness: 0.16,
+    clearcoat: 0.35,
+    clearcoatRoughness: 0.18,
+  });
+  const darkSteel = pbr({
+    color: 0x2a3038,
+    metalness: 0.8,
     roughness: 0.4,
   });
-  const soot = new THREE.MeshStandardMaterial({
-    color: 0x5c6168,
-    metalness: 0.7,
-    roughness: 0.55,
+  const tile = pbr({
+    color: 0x1c1916,
+    metalness: 0.06,
+    roughness: 0.86,
   });
-  const weld = new THREE.MeshStandardMaterial({
-    color: 0x9aa3ab,
+  const nozzle = pbr({
+    color: 0xa8a198,
     metalness: 0.9,
     roughness: 0.22,
+    clearcoat: 0.2,
+    clearcoatRoughness: 0.35,
   });
-  const darkSteel = new THREE.MeshStandardMaterial({
-    color: 0x2a3038,
-    metalness: 0.75,
-    roughness: 0.45,
-  });
-  const tile = new THREE.MeshStandardMaterial({
-    color: 0x1c1916,
-    metalness: 0.08,
-    roughness: 0.82,
-  });
-  const nozzle = new THREE.MeshStandardMaterial({
-    color: 0xa8a198,
-    metalness: 0.85,
-    roughness: 0.28,
-  });
-  const nozzleInner = new THREE.MeshStandardMaterial({
+  const nozzleInner = pbr({
     color: 0x4a3428,
-    metalness: 0.7,
-    roughness: 0.35,
+    metalness: 0.74,
+    roughness: 0.32,
     side: THREE.BackSide,
   });
-  const copper = new THREE.MeshStandardMaterial({
+  const copper = pbr({
     color: 0x8a5a3a,
-    metalness: 0.85,
-    roughness: 0.3,
+    metalness: 0.9,
+    roughness: 0.24,
   });
-  const pipeFuel = new THREE.MeshStandardMaterial({
+  const pipeFuel = pbr({
     color: 0xc4cdd6,
-    metalness: 0.82,
-    roughness: 0.28,
+    metalness: 0.86,
+    roughness: 0.22,
   });
-  const pipeOx = new THREE.MeshStandardMaterial({
+  const pipeOx = pbr({
     color: 0x6a8aa0,
-    metalness: 0.78,
-    roughness: 0.32,
+    metalness: 0.82,
+    roughness: 0.26,
   });
-  const caution = new THREE.MeshStandardMaterial({
+  const caution = pbr({
     color: 0xd4a017,
-    metalness: 0.25,
-    roughness: 0.55,
+    metalness: 0.28,
+    roughness: 0.48,
+    clearcoat: 0.15,
+    clearcoatRoughness: 0.45,
   });
-  const ghost = new THREE.MeshStandardMaterial({
+  const ghost = pbr({
     color: 0xb9c2cc,
-    metalness: 0.7,
-    roughness: 0.35,
+    metalness: 0.74,
+    roughness: 0.3,
     transparent: true,
     opacity: 0.22,
     depthWrite: false,
   });
-  const pad = new THREE.MeshStandardMaterial({
+  const pad = pbr({
     color: 0x14181e,
-    metalness: 0.15,
-    roughness: 0.9,
-  });
-  const carbon = new THREE.MeshStandardMaterial({
-    color: 0x171717,
-    metalness: 0.2,
-    roughness: 0.7,
-  });
-  const whitePaint = new THREE.MeshStandardMaterial({
-    color: 0xe6eaee,
-    metalness: 0.12,
-    roughness: 0.48,
-  });
-  const blackPaint = new THREE.MeshStandardMaterial({
-    color: 0x141414,
     metalness: 0.18,
-    roughness: 0.62,
+    roughness: 0.88,
   });
-  const merlinBell = new THREE.MeshStandardMaterial({
+  const carbon = pbr({
+    color: 0x171717,
+    metalness: 0.18,
+    roughness: 0.68,
+  });
+  const whitePaint = pbr({
+    color: 0xe6eaee,
+    metalness: 0.1,
+    roughness: 0.44,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.28,
+  });
+  const blackPaint = pbr({
+    color: 0x141414,
+    metalness: 0.16,
+    roughness: 0.58,
+  });
+  const merlinBell = pbr({
     color: 0x6e675c,
-    metalness: 0.72,
-    roughness: 0.42,
+    metalness: 0.78,
+    roughness: 0.36,
   });
-  const deck = new THREE.MeshStandardMaterial({
+  const deck = pbr({
     color: 0x3a4148,
-    metalness: 0.2,
-    roughness: 0.85,
+    metalness: 0.22,
+    roughness: 0.82,
   });
 
   return {
@@ -144,13 +163,33 @@ export function ids(prefix, dict) {
 export function tag(object, part) {
   object.userData.part = part;
   object.traverse((child) => {
-    if (child.isMesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
-      if (part && !child.userData.part) child.userData.part = part;
-    }
+    if (!child.isMesh) return;
+    if (child.userData.pickProxy) return;
+    child.castShadow = true;
+    child.receiveShadow = true;
+    if (part && !child.userData.part) child.userData.part = part;
   });
   return object;
+}
+
+/** Invisible sphere used to make thin hardware easier to pick. */
+export function addPickProxy(parent, position, radius, part) {
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(radius, 12, 10),
+    new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      colorWrite: false,
+    }),
+  );
+  mesh.position.copy(position);
+  mesh.userData.part = part;
+  mesh.userData.pickProxy = true;
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+  parent.add(mesh);
+  return mesh;
 }
 
 export function homeAndExplode(object, offset) {
@@ -161,7 +200,7 @@ export function homeAndExplode(object, offset) {
 
 export function enableShadows(root) {
   root.traverse((child) => {
-    if (child.isMesh) {
+    if (child.isMesh && !child.userData.pickProxy) {
       child.castShadow = true;
       child.receiveShadow = true;
     }
