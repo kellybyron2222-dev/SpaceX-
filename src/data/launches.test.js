@@ -4,6 +4,7 @@ import {
   relatedIdsForLaunch,
   sceneForLaunch,
   launchMatchesFilter,
+  normalizeLaunch,
   trackerCountdown,
   trackerWhenLine,
 } from "./launches.js";
@@ -96,6 +97,33 @@ describe("Crew mapping uses mission name, not pad only", () => {
       sceneForLaunch("Super Heavy", "Launch Complex 39A", "Kennedy Space Center, FL", "Starship"),
       "mechazilla",
     );
+  });
+});
+
+describe("LL2 webcast rows", () => {
+  it("keeps YouTube vid_urls on a detailed launch", () => {
+    const launch = normalizeLaunch({
+      id: "f13",
+      name: "Starship | Flight 13",
+      net: "2026-07-24T22:51:00Z",
+      webcast_live: false,
+      status: { abbrev: "Success", name: "Launch Successful" },
+      rocket: { configuration: { full_name: "Starship" } },
+      pad: { name: "OLP-2", location: { name: "Starbase, TX" } },
+      mission: { name: "Starship Flight 13", description: "" },
+      vid_urls: [
+        {
+          publisher: "NASASpaceflight",
+          type: { name: "Unofficial Webcast" },
+          title: "Flight 13",
+          url: "https://www.youtube.com/watch?v=lC3RDO7tdLc",
+          live: false,
+          start_time: "2026-07-24T19:45:42Z",
+        },
+      ],
+    });
+    assert.equal(launch.webcasts[0].youtubeId, "lC3RDO7tdLc");
+    assert.equal(launch.webcastLive, false);
   });
 });
 

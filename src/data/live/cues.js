@@ -40,10 +40,15 @@ export function normalizeBeat(raw = {}, index = 0) {
 export function normalizeSheet(raw = {}) {
   const beats = Array.isArray(raw.beats) ? raw.beats.map(normalizeBeat) : [];
   const videoId = raw.video?.youtubeId || raw.videoId || null;
+  const aliases = [videoId, ...(raw.video?.aliases || raw.video?.youtubeIds || [])]
+    .map((id) => String(id || ""))
+    .filter(Boolean);
   return {
     id: String(raw.id || "sheet"),
     title: String(raw.title || raw.id || "Cue sheet"),
     videoId: videoId ? String(videoId) : null,
+    videoIds: [...new Set(aliases)],
+    t0OffsetSeconds: finiteNumber(raw.video?.t0OffsetSeconds ?? raw.t0OffsetSeconds),
     clockKind: String(raw.clockKind || ""),
     expectedDurationSeconds: finiteNumber(raw.expectedDurationSeconds || raw.video?.expectedDurationSeconds),
     note: String(raw.note || ""),
@@ -65,11 +70,13 @@ export function sheetById(pack, id) {
   return pack?.sheets?.find((s) => s.id === id) || null;
 }
 
-/** Flight 5 recap when the video matches; otherwise generic launch/test phases. */
+/** Known VOD sheet when the video matches; otherwise generic T+ phases. */
 export function pickSheet(pack, videoId) {
   if (!pack?.sheets?.length) return null;
   const id = String(videoId || "");
-  const matched = pack.sheets.find((s) => s.videoId && s.videoId === id);
+  const matched = pack.sheets.find(
+    (s) => (s.videoId && s.videoId === id) || (s.videoIds || []).includes(id),
+  );
   if (matched) return matched;
   return (
     sheetById(pack, "generic-launch-test") ||
@@ -78,6 +85,14 @@ export function pickSheet(pack, videoId) {
     pack.sheets.find((s) => s.id !== "flight-5") ||
     pack.sheets[0]
   );
+}
+
+export function latestSheetVideoId(pack) {
+  const latest =
+    sheetById(pack, "flight-13") ||
+    sheetById(pack, pack?.defaultSheet) ||
+    pack?.sheets?.find((s) => s.id !== "generic-launch-test" && s.videoId);
+  return latest?.videoId || null;
 }
 
 export function beatById(sheet, id) {

@@ -1,7 +1,7 @@
 {
   "defaultVideoId": "hI9HQfCAw64",
   "defaultVideoTitle": "Starship's Fifth Flight Test",
-  "defaultVideoNote": "SpaceX public recap (13 Oct 2024, ~3:28). Placeholder for the latest public Starship launch/test stream — not official telemetry or an internal camera. YouTube may still block in-page play (bot check). Some SpaceX webcast IDs disable embedding entirely (player errors 101/150) — prefer IDs that allow embeds, or use Open on YouTube.",
+  "defaultVideoNote": "When nothing is live, Live Launch prefills the latest completed public Starship (or Falcon) webcast from Launch Library 2. Flight 5 recap (hI9HQfCAw64) is the last-resort teaching VOD. Not official telemetry. YouTube may still block in-page play — prefer IDs that allow embeds, or use Open on YouTube.",
   "expectedDurationSeconds": 208,
   "notes": "Coordinates are normalized 0–1 with origin at the top-left of the 16:9 player. shape=rect uses x,y,w,h. shape=polygon uses points:[[x,y],...]. catalogId must match src/data/catalog.js. Boxes are surveyed against the default Flight 5 recap frames (Starbase gulf-side camera: Mechazilla left, vehicle to the right of the tower — not a centered pad plate). pictureFits inset the overlay for YouTube chrome / lower-thirds on live webcasts — educational approximation, not a surveyed camera model. Chapter times are recap timestamps, not mission T+. The recap is ~3:28; T+6:54 catch is about 1:40 in this upload, not 7:00. Picking the Catch preset seeks to that chapter so the overlay is not on the unplayed pad poster. Some SpaceX video IDs block embeds even when oEmbed succeeds.",
   "pictureFits": [

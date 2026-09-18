@@ -1,10 +1,20 @@
 import overlayConfig from "./data/live/overlays.json";
 import { catalogById } from "./data/catalog.js";
 import { countdownClock, formatUtc } from "./data/launches.js";
-import { beatAtClock, beatById, fetchCuePack, missionBeats, pickSheet, recapBeats } from "./data/live/cues.js";
+import {
+  beatAtClock,
+  beatById,
+  fetchCuePack,
+  latestSheetVideoId,
+  missionBeats,
+  pickSheet,
+  recapBeats,
+} from "./data/live/cues.js";
+import { isStaleDefaultId, resolveAutoWebcast } from "./data/live/webcast.js";
 import {
   fetchYouTubeOembed,
   loadHotspotsVisible,
+  loadStoredVideoId,
   oembedMeansMissingVideo,
   parseYouTubeId,
   resolveDefaultVideoId,
@@ -173,6 +183,9 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     nudge: { x: 0, y: 0 },
     windowLaunch: null,
     windowSource: "live",
+    launchBundle: null,
+    webcastPick: null,
+    t0Offset: null,
     pendingSeek: null,
     pendingPlay: false,
     seekUntil: 0,
@@ -246,8 +259,38 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
 
   function bindSheet() {
     state.sheet = pickSheet(state.cuePack, state.videoId);
+    if (recapBeats(state.sheet).length) {
+      state.t0Offset = null;
+    } else if (state.webcastPick?.youtubeId === state.videoId && state.webcastPick.t0Offset != null) {
+      state.t0Offset = state.webcastPick.t0Offset;
+    } else if (state.sheet?.t0OffsetSeconds != null) {
+      state.t0Offset = state.sheet.t0OffsetSeconds;
+    } else {
+      state.t0Offset = 0;
+    }
     renderPhasePicker();
     if (state.commentaryOn) renderCommentator();
+  }
+
+  function vodMissionSeconds() {
+    if (state.t0Offset == null) return null;
+    return playerSeconds() - state.t0Offset;
+  }
+
+  function beatSeekSeconds(beat) {
+    if (!beat || state.isLive) return null;
+    if (beat.recapSeconds != null) return Math.max(0, beat.recapSeconds);
+    if (beat.clockSeconds != null && state.t0Offset != null) {
+      return Math.max(0, state.t0Offset + beat.clockSeconds);
+    }
+    return null;
+  }
+
+  function startOriginSeconds() {
+    const recap = recapFollowBeats();
+    if (recap.length) return recap[0].recapSeconds || 0;
+    if (state.t0Offset != null) return state.t0Offset;
+    return 0;
   }
 
   function playerSeconds() {
@@ -274,6 +317,8 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   function followBeatAtClock() {
     const recap = recapFollowBeats();
     if (recap.length) return beatAtClock(recap, playerSeconds(), "recapSeconds");
+    const vodMission = vodMissionSeconds();
+    if (vodMission != null) return beatAtClock(missionBeats(state.sheet), vodMission, "clockSeconds");
     const elapsed = missionElapsedSeconds();
     if (elapsed == null) return null;
     return beatAtClock(missionBeats(state.sheet), elapsed, "clockSeconds");
@@ -282,6 +327,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   function autoAdvanceEnabled() {
     if (!state.commentaryOn || state.pauseAdvance || !state.sheet) return false;
     if (recapFollowBeats().length) return true;
+    if (state.t0Offset != null && missionBeats(state.sheet).length > 0) return true;
     return missionElapsedSeconds() != null && missionBeats(state.sheet).length > 0;
   }
 
@@ -302,8 +348,9 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (beat.presetId) selectPreset(beat.presetId, { manual: false });
     const learnId = learnIdForBeat(beat);
     if (learnId) selectHotspot(learnId);
-    if (seek && !state.isLive && beat.recapSeconds != null) {
-      seekTo(Math.max(0, beat.recapSeconds), { play: beat.recapSeconds > 0 });
+    const jump = beatSeekSeconds(beat);
+    if (seek && jump != null) {
+      seekTo(jump, { play: jump > 0 || state.commentaryOn });
     }
     renderCommentator({ pulse: !same });
     if (speak && !same) speakCue(beat.cue);
@@ -407,6 +454,30 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     }
     let next = beat || currentBeat();
     if (!next && state.pendingPhase) next = beatById(state.sheet, state.pendingPhase);
+    if (!state.isLive) {
+      const origin = startOriginSeconds();
+      const t = playerSeconds();
+      if (t < origin - 2) {
+        seekTo(origin, { play: true });
+        if (!next) {
+          next =
+            beatAtClock(missionBeats(state.sheet), 0, "clockSeconds") ||
+            beatById(state.sheet, "liftoff") ||
+            recapFollowBeats()[0] ||
+            null;
+        }
+        state.pendingPhase = null;
+        renderCommentator();
+        if (next) applyBeat(next, { seek: false, speak: true });
+        else syncShareQuery();
+        return;
+      }
+      try {
+        state.player?.playVideo?.();
+      } catch {
+        /* ignore */
+      }
+    }
     if (!next && autoAdvanceEnabled()) next = followBeatAtClock();
     if (!next) next = state.sheet?.beats?.[0] || null;
     state.pendingPhase = null;
@@ -552,12 +623,19 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   }
 
   function bannerText() {
+    const pick = state.webcastPick;
+    if (pick?.reason === "live") {
+      return `${pick.mission || pick.title} looks live on Launch Library 2. Prefilling that public YouTube webcast — not official telemetry. Paste another ID if this is the wrong stream.`;
+    }
+    if (pick?.reason === "latest-completed") {
+      return `Nothing live on Launch Library 2 / YouTube. Prefilling the latest completed public webcast: ${pick.mission || pick.title}. Educational embed — not official telemetry.`;
+    }
     const launch = state.windowLaunch;
     if (launch?.status === "in-flight") {
       return `${launch.mission} is in flight on the public Launch Library 2 list — not official SpaceX. Paste a webcast ID if this recap is not the live stream.`;
     }
     if (launch) {
-      return `Public Starship window on the manifest: ${launch.mission}. This tab still embeds a public YouTube recap until you paste a webcast ID — not official telemetry.`;
+      return `Public Starship window on the manifest: ${launch.mission}. Showing a public YouTube VOD until a live webcast appears — not official telemetry.`;
     }
     return overlayConfig.defaultVideoNote;
   }
@@ -660,10 +738,16 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     return 0;
   }
 
+  function recapChapters() {
+    if (state.sheet?.id === "flight-5" || state.videoId === fallbackId) return chapters;
+    return [];
+  }
+
   function renderChapters() {
     chapterNav.innerHTML = "";
     const duration = effectiveDuration();
-    const usable = state.isLive ? [] : chapters.filter((c) => !duration || c.t <= duration + 1);
+    const list = recapChapters();
+    const usable = state.isLive ? [] : list.filter((c) => !duration || c.t <= duration + 1);
     if (!usable.length) {
       chapterNav.innerHTML = `<p class="hint">${
         state.isLive ? "Live stream — pick a camera-angle preset and Live webcast overlay fit." : "No VOD chapter markers for this video."
@@ -767,7 +851,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   }
 
   function chapterForPreset(presetId) {
-    return chapters.find((c) => c.presetId === presetId) || null;
+    return recapChapters().find((c) => c.presetId === presetId) || null;
   }
 
   function highlightChapterAt(t) {
@@ -855,7 +939,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   }
 
   function applyChapterAt(t) {
-    if (!state.followChapters || state.isLive) return;
+    if (!state.followChapters || state.isLive || !recapChapters().length) return;
     if (performance.now() < state.manualUntil) return;
     let match = chapters[0];
     for (const ch of chapters) {
@@ -1109,13 +1193,23 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     }
   }
 
-  function loadVideo(raw, { persist = true } = {}) {
+  function queueStartSeconds(startSeconds) {
+    if (!Number.isFinite(startSeconds) || startSeconds <= 0) return;
+    state.pendingSeek = startSeconds;
+    state.pendingPlay = false;
+    state.seekReload = false;
+    state.seekUntil = performance.now() + 12000;
+  }
+
+  function loadVideo(raw, { persist = true, startSeconds } = {}) {
     const id = parseYouTubeId(raw);
     if (!id) {
       showError(youtubeIdRejectReason(raw));
       return;
     }
     clearPendingSeek();
+    queueStartSeconds(startSeconds);
+    if (persist) state.webcastPick = null;
     if (state.active) {
       createPlayer(id, { persist });
       return;
@@ -1132,6 +1226,31 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       bindSheet();
       syncChrome();
     });
+  }
+
+  async function applyAutoWebcast(bundle, { force = false } = {}) {
+    if (bundle) state.launchBundle = bundle;
+    if (state.fromQueryYoutube && !force) return;
+    const stored = loadStoredVideoId();
+    if (stored && !isStaleDefaultId(stored, fallbackId) && !force) return;
+    await ensureCues();
+    const pick = resolveAutoWebcast({
+      bundle: state.launchBundle,
+      fallbackId,
+      latestSheetVideoId: latestSheetVideoId(state.cuePack),
+    });
+    if (!pick?.youtubeId) return;
+    state.webcastPick = pick;
+    if (pick.t0Offset != null) state.t0Offset = pick.t0Offset;
+    const start = pick.t0Offset > 0 ? pick.t0Offset : undefined;
+    if (pick.youtubeId !== state.videoId) {
+      loadVideo(pick.youtubeId, { persist: false, startSeconds: start });
+    } else {
+      queueStartSeconds(start);
+      if (state.active && state.playerReady) applyJump();
+      bindSheet();
+      syncChrome();
+    }
   }
 
   function startPoll() {
@@ -1231,8 +1350,9 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     }
     state.fitManual = false;
     state.nudge = { x: 0, y: 0 };
-    const id = parseYouTubeId(import.meta.env.VITE_YOUTUBE_VIDEO_ID || "") || fallbackId;
-    loadVideo(id, { persist: false });
+    state.fromQueryYoutube = false;
+    state.webcastPick = null;
+    applyAutoWebcast(state.launchBundle, { force: true });
     onShareChange?.();
   });
   btnHotspots.addEventListener("click", () => toggleHotspots());
@@ -1297,9 +1417,11 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       };
     },
     clearSelection,
-    setLaunchWindow(launch, { source } = {}) {
+    applyAutoWebcast,
+    setLaunchWindow(launch, { source, bundle } = {}) {
       state.windowLaunch = launch || null;
       state.windowSource = source || "live";
+      if (bundle) applyAutoWebcast(bundle);
       if (state.active) {
         syncChrome();
         followCommentary();

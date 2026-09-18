@@ -8,13 +8,12 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33): broadcast cue sheet
-- [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34): bot deep-links
-- [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35): Live Launch **Commentator** — beats from the cue sheet, hotspot + Learn, Start / phase / mute. Video stays clear until Start.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33) cue sheet · [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34) deep-links · [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35) Commentator
+- Latest-stream: if LL2/YouTube has no live Starship/Falcon webcast, Live Launch prefills the **latest completed** official-style VOD (Flight 13 as of 2026-09-18). Commentator syncs that VOD clock (Flight 5 catch + Flight 13 T+ sheet). Video stays clear until Start.
 
 ## Open PRs
 
-**None.**
+This PR (latest-stream commentary). After merge: **none.**
 
 ## Next
 
