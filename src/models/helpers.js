@@ -172,17 +172,19 @@ export function tag(object, part) {
   return object;
 }
 
+function pickProxyMaterial() {
+  return new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    colorWrite: false,
+    side: THREE.DoubleSide,
+  });
+}
+
 /** Invisible sphere used to make thin hardware easier to pick. */
 export function addPickProxy(parent, position, radius, part) {
-  const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(radius, 12, 10),
-    new THREE.MeshBasicMaterial({
-      transparent: true,
-      opacity: 0,
-      depthWrite: false,
-      colorWrite: false,
-    }),
-  );
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 12, 10), pickProxyMaterial());
   mesh.position.copy(position);
   mesh.userData.part = part;
   mesh.userData.pickProxy = true;
@@ -292,20 +294,18 @@ export function createGridFin(mats, w = 3.2, h = 4.2, t = 0.22) {
   const hinge = new THREE.Mesh(new THREE.BoxGeometry(w * 0.35, 0.35, 0.5), mats.darkSteel);
   hinge.position.set(0, -h / 2 - 0.1, 0.1);
   g.add(hinge);
-  // Solid invisible plate so waffle cells do not leak picks through to the tank.
-  const proxy = new THREE.Mesh(
-    new THREE.BoxGeometry(w * 1.08, h * 1.12, Math.max(0.62, t * 2.4)),
-    new THREE.MeshBasicMaterial({
-      transparent: true,
-      opacity: 0,
-      depthWrite: false,
-      colorWrite: false,
-    }),
-  );
-  proxy.userData.pickProxy = true;
-  proxy.castShadow = false;
-  proxy.receiveShadow = false;
-  g.add(proxy);
+  // Solid invisible plate + sphere so waffle cells do not leak picks through to the tank.
+  const proxyMat = pickProxyMaterial();
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(w * 1.12, h * 1.16, Math.max(1.8, t * 6)), proxyMat);
+  plate.userData.pickProxy = true;
+  plate.castShadow = false;
+  plate.receiveShadow = false;
+  g.add(plate);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(Math.max(w, h) * 0.42, 12, 10), proxyMat);
+  ball.userData.pickProxy = true;
+  ball.castShadow = false;
+  ball.receiveShadow = false;
+  g.add(ball);
   return g;
 }
 

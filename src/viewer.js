@@ -375,7 +375,7 @@ export class Viewer {
     let bestScore = -Infinity;
     const seen = new Set();
     for (const hit of hits) {
-      if (hit.distance - nearest > 2.4) break;
+      if (hit.distance - nearest > 6.5) break;
       const obj = this._partOf(hit.object);
       if (!obj?.userData?.part) continue;
       const key = obj.userData.part.id;
@@ -397,6 +397,11 @@ export class Viewer {
 
   _partOf(obj) {
     let o = obj;
+    while (o) {
+      if (o.userData?.part && !o.userData.pickProxy) return o;
+      o = o.parent;
+    }
+    o = obj;
     while (o) {
       if (o.userData?.part) return o;
       o = o.parent;
