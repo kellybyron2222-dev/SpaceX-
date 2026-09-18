@@ -425,7 +425,13 @@ body,
 @media (max-width: 860px) {
   :root {
     --footer-gap: max(8px, var(--safe-bottom));
-    --chrome-bottom: calc(var(--footer-gap) + 38px);
+    --footer-h: 2.85rem;
+    --chrome-bottom: calc(var(--footer-gap) + var(--footer-h) + 8px);
+    --learn-3d-min: max(12.5rem, 26vh);
+    --learn-teach-h: min(22vh, 10rem);
+    --learn-catalog-max: 9.75rem;
+    --learn-top-chrome: 11.25rem;
+    --row-fade: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.25rem), transparent 100%);
   }
 
   .topbar {
@@ -444,7 +450,21 @@ body,
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
+    overscroll-behavior-x: contain;
+    padding-inline-end: 0;
+    min-width: 0;
+    max-width: 100%;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
+  }
+
+  .scene-nav {
+    padding-inline-end: 1.75rem;
+  }
+
+  .modes {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 
   .modes::-webkit-scrollbar,
@@ -455,16 +475,23 @@ body,
 
   .mode-btn {
     flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
     white-space: nowrap;
+    overflow: visible;
   }
 
   .toolbar {
     justify-content: flex-start;
+    gap: 6px;
   }
 
   .tool {
     flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
     white-space: nowrap;
+    overflow: visible;
   }
 
   .sidebar {
@@ -578,6 +605,18 @@ body,
   }
 
   .brand p {
+    display: none;
+  }
+
+  .modes {
+    gap: 4px;
+  }
+
+  .toolbar {
+    gap: 4px;
+  }
+
+  .tool-more {
     display: none;
   }
 }
@@ -911,7 +950,7 @@ body,
 
   #app[data-mode="tracker"] .tracker-panel {
     bottom: var(--chrome-bottom);
-    max-height: min(38vh, 340px);
+    max-height: min(44vh, 380px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -938,6 +977,8 @@ body,
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    scroll-padding-bottom: 12px;
   }
 
   #app[data-mode="tracker"] .launch-card,
@@ -945,12 +986,15 @@ body,
     flex-shrink: 0;
   }
 
-  /* Learn: compact horizontal catalog above a scrolling teach sheet — 3D stays on top. */
+  /* Learn: compact catalog + shorter teach sheet so a min 3D band stays visible. */
   #app[data-mode="learn"] .catalog-panel {
-    bottom: calc(var(--chrome-bottom) + 30vh);
-    max-height: none;
+    bottom: calc(var(--chrome-bottom) + var(--learn-teach-h));
+    max-height: min(
+      var(--learn-catalog-max),
+      max(4.5rem, calc(100dvh - var(--learn-3d-min) - var(--learn-teach-h) - var(--chrome-bottom) - var(--learn-top-chrome)))
+    );
     height: auto;
-    padding: 8px 10px;
+    padding: 6px 8px;
     overflow: hidden;
   }
 
@@ -969,7 +1013,10 @@ body,
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
+    overscroll-behavior-x: contain;
+    padding-inline-end: 1.75rem;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
     gap: 6px;
   }
 
@@ -987,7 +1034,23 @@ body,
   #app[data-mode="learn"] .teach-panel {
     bottom: var(--chrome-bottom);
     top: auto;
-    max-height: 30vh;
+    max-height: var(--learn-teach-h);
+  }
+
+  #app[data-mode="learn"] .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    padding-inline-end: 1.5rem;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
+  }
+
+  #app[data-mode="learn"] .tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   #app[data-mode="learn"] .teach-panel h2,
@@ -1006,19 +1069,41 @@ body,
     overflow: hidden;
   }
 
+  #app[data-mode="live"] {
+    --live-topbar: 11.75rem;
+    --live-sheet: min(36vh, 17rem);
+    --live-teach: min(18vh, 9rem);
+  }
+
   #app[data-mode="live"] .live-panel {
     top: auto;
     bottom: var(--chrome-bottom);
-    max-height: 30vh;
+    max-height: var(--live-sheet);
+  }
+
+  /* Empty Learn copy on Live phone until a tagged component is picked. */
+  #app[data-mode="live"] .teach-panel:has(#teach-body:empty) {
+    display: none !important;
   }
 
   #app[data-mode="live"] .teach-panel {
-    bottom: calc(var(--chrome-bottom) + 30vh);
-    max-height: 18vh;
+    bottom: calc(var(--chrome-bottom) + var(--live-sheet));
+    max-height: var(--live-teach);
   }
 
   #app[data-mode="live"] .live-stage {
-    padding: calc(96px + var(--safe-top)) 8px calc(var(--chrome-bottom) + 48vh);
+    padding:
+      calc(var(--safe-top) + 8px + var(--live-topbar) + 8px)
+      8px
+      calc(var(--chrome-bottom) + var(--live-sheet));
+  }
+
+  #app[data-mode="live"]:has(#teach-body:not(:empty)) .live-stage {
+    padding-bottom: calc(var(--chrome-bottom) + var(--live-sheet) + var(--live-teach));
+  }
+
+  #app[data-mode="live"] .live-frame {
+    max-height: 100%;
   }
 }
 
@@ -1036,13 +1121,15 @@ body,
   }
 
   .mode-btn {
-    padding: 12px 14px;
+    padding: 12px 8px;
+    letter-spacing: 0.045em;
   }
 
   .tool,
   .tool.ghost {
     min-width: 44px;
-    padding: 12px 14px;
+    padding: 12px 8px;
+    letter-spacing: 0.03em;
   }
 
   .chip {
