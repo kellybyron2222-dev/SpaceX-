@@ -11,7 +11,7 @@
 
 ## Open PRs
 
-None.
+- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19) — this STATUS.md snapshot
 
 ## Next
 
