@@ -9,12 +9,13 @@
 - [#24](https://github.com/kellybyron2222-dev/SpaceX-/pull/24): contest-ready README — 120s booth script, viewer vs Starship Render Lab
 - [#23](https://github.com/kellybyron2222-dev/SpaceX-/pull/23): Live Launch **Catch auto-seek** + stricter YouTube IDs
 - [#25](https://github.com/kellybyron2222-dev/SpaceX-/pull/25): Falcon **Merlin Vacuum** + **Falcon tanks** catalog rows
+- [#22](https://github.com/kellybyron2222-dev/SpaceX-/pull/22): mobile tabs / Learn 3D band / Tracker footer / Live phone player chrome
+- This PR [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26): Tracker auto-frames the first card (Sample does not keep leftover Heavy); **Crew-13** at SLC-40 maps Crew access arm from the mission name; window/NET line; Physics tab label; empty Learn search clears the teach sheet
 
 ## Open PRs
 
-- This PR [#22](https://github.com/kellybyron2222-dev/SpaceX-/pull/22) — mobile tabs / Learn 3D band / Tracker footer / Live phone player chrome
-- [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26) — Tracker first-mission frame / Crew-13 chips
+- [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27) (draft) — prefer Starship flap picks over the barrel
 
 ## Next
 
-Land this mobile polish or [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26) Tracker auto-frame. Template export + X quote-tweet later (~Sep 29). Do not submit the contest.
+Flap pick framing in [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27). Template export + X quote-tweet later (~Sep 29). Do not submit the contest.

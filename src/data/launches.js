@@ -22,7 +22,19 @@ function mapStatus(status) {
   return { status: "scheduled", statusLabel: status?.abbrev || status?.name || "Scheduled" };
 }
 
-export function relatedIdsForLaunch(vehicle, pad, site) {
+/** Crew Dragon / Commercial Crew — not Cargo Dragon / CRS. */
+export function isCrewMission(vehicle, pad, site, mission = "") {
+  const blob = `${vehicle} ${pad} ${site} ${mission}`.toLowerCase();
+  return (
+    /crew[-\s]?\d/.test(blob) ||
+    blob.includes("commercial crew") ||
+    blob.includes("crew dragon") ||
+    blob.includes("dragon crew") ||
+    blob.includes("crew rotation")
+  );
+}
+
+export function relatedIdsForLaunch(vehicle, pad, site, mission = "") {
   const v = `${vehicle} ${pad} ${site}`.toLowerCase();
   const ids = [];
   const add = (id) => {
@@ -49,8 +61,12 @@ export function relatedIdsForLaunch(vehicle, pad, site) {
     add("strongback");
     add("asds");
   }
-  if (v.includes("39a") || v.includes("kennedy")) {
+  if (isCrewMission(vehicle, pad, site, mission)) {
     add("crew-access");
+    add("strongback");
+    add("deluge");
+  }
+  if (v.includes("39a") || v.includes("kennedy")) {
     add("strongback");
     add("deluge");
     if (v.includes("starship")) add("olm");
@@ -68,13 +84,15 @@ export function relatedIdsForLaunch(vehicle, pad, site) {
   return ids;
 }
 
-export function sceneForLaunch(vehicle, pad, site) {
+export function sceneForLaunch(vehicle, pad, site, mission = "") {
   const v = `${vehicle} ${pad} ${site}`.toLowerCase();
   if (v.includes("starship") || v.includes("starbase") || v.includes("boca") || v.includes("orbital launch")) {
     return "mechazilla";
   }
   if (v.includes("heavy")) return "falcon-heavy";
-  if (v.includes("39a") || v.includes("kennedy")) return "falcon-pad";
+  if (isCrewMission(vehicle, pad, site, mission) || v.includes("39a") || v.includes("kennedy")) {
+    return "falcon-pad";
+  }
   if (v.includes("droneship") || v.includes("asds")) return "asds";
   return "falcon9";
 }
@@ -83,8 +101,8 @@ export function normalizeLaunch(raw) {
   if (raw.mission && raw.vehicle && raw.status && raw.pad && !raw.rocket) {
     return {
       ...raw,
-      relatedIds: relatedIdsForLaunch(raw.vehicle, raw.pad, raw.site),
-      sceneId: sceneForLaunch(raw.vehicle, raw.pad, raw.site),
+      relatedIds: relatedIdsForLaunch(raw.vehicle, raw.pad, raw.site, raw.mission),
+      sceneId: sceneForLaunch(raw.vehicle, raw.pad, raw.site, raw.mission),
     };
   }
   const mapped = mapStatus(raw.status);
@@ -104,8 +122,8 @@ export function normalizeLaunch(raw) {
     status: mapped.status,
     statusLabel: mapped.statusLabel,
     description: raw.mission?.description || "",
-    relatedIds: relatedIdsForLaunch(vehicle, pad, site),
-    sceneId: sceneForLaunch(vehicle, pad, site),
+    relatedIds: relatedIdsForLaunch(vehicle, pad, site, mission),
+    sceneId: sceneForLaunch(vehicle, pad, site, mission),
   };
 }
 
@@ -167,15 +185,64 @@ export async function loadLaunches({ prefer = "live" } = {}) {
   return sampleBundle();
 }
 
-export function formatUtc(iso) {
-  if (!iso) return "NET TBD";
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function utcParts(iso) {
+  if (!iso) return null;
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "NET TBD";
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  const hh = String(d.getUTCHours()).padStart(2, "0");
-  const mm = String(d.getUTCMinutes()).padStart(2, "0");
-  return `${dd} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()} · ${hh}:${mm} UTC`;
+  if (Number.isNaN(d.getTime())) return null;
+  return {
+    date: `${String(d.getUTCDate()).padStart(2, "0")} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`,
+    time: `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`,
+    monthYear: `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`,
+    midnight: d.getUTCHours() === 0 && d.getUTCMinutes() === 0 && d.getUTCSeconds() === 0,
+  };
+}
+
+export function formatUtc(iso) {
+  const p = utcParts(iso);
+  if (!p) return "NET TBD";
+  return `${p.date} · ${p.time} UTC`;
+}
+
+export function isVagueSchedule(statusLabel = "") {
+  const label = String(statusLabel).trim().toUpperCase();
+  return (
+    label === "TBD" ||
+    label === "TBC" ||
+    label.includes("TO BE DETERMINED") ||
+    label.includes("TO BE CONFIRMED")
+  );
+}
+
+/** TBD/TBC midnight UTC is a date floor, not a real T-0. */
+export function isPlaceholderNet(launch) {
+  if (!launch || !isVagueSchedule(launch.statusLabel)) return false;
+  const p = utcParts(launch.net);
+  return !p || p.midnight;
+}
+
+/** One Tracker meta line — no duplicated date, no lone wrapped `UTC`. */
+export function trackerWhenLine(launch) {
+  if (isPlaceholderNet(launch)) {
+    const p = utcParts(launch.net);
+    return p ? `NET ${p.monthYear}` : "NET TBD";
+  }
+  const net = utcParts(launch?.net);
+  if (!net) return "NET TBD";
+  const start = utcParts(launch.windowStart);
+  const end = utcParts(launch.windowEnd);
+  if (start && end && launch.windowStart !== launch.windowEnd) {
+    return `${net.date} · Window ${start.time}–${end.time} UTC`;
+  }
+  return `${net.date} · ${net.time} UTC`;
+}
+
+export function trackerCountdown(launch) {
+  if (!launch?.net) return "";
+  if (launch.status === "success" || launch.status === "failure" || launch.status === "scrub") return "";
+  if (isPlaceholderNet(launch)) return "";
+  return countdown(launch.net);
 }
 
 const STATUS_TIPS = {
@@ -216,7 +283,8 @@ export function countdown(iso) {
   const m = Math.floor((abs % 3600000) / 60000);
   if (d > 0) return `T${sign}${d}d ${h}h`;
   if (h > 0) return `T${sign}${h}h ${m}m`;
-  return `T${sign}${m}m`;
+  const s = Math.floor((abs % 60000) / 1000);
+  return `T${sign}${m}m ${s}s`;
 }
 
 /** Second-resolution T− / T+ for Live Launch. Public LL2 NET, not official range time. */
