@@ -1,7 +1,7 @@
 import "./style.css";
 import { Viewer } from "./viewer.js";
 import { CATALOG, catalogById, findCatalogByPart, searchCatalog } from "./data/catalog.js";
-import { countdown, formatUtc, loadLaunches, REFRESH_MS } from "./data/launches.js";
+import { countdown, formatUtc, loadLaunches, REFRESH_MS, statusTip } from "./data/launches.js";
 import { createLiveLaunch } from "./live.js";
 
 const app = document.getElementById("app");
@@ -54,6 +54,13 @@ const state = {
   pendingCatalog: null,
 };
 
+function frameCatalogIn3D(id) {
+  const entry = catalogById(id);
+  if (!entry) return;
+  if (viewer.sceneId !== entry.sceneId) selectScene(entry.sceneId, { partId: entry.partId });
+  viewer.highlightById(entry.partId, { frame: true });
+}
+
 function setMode(mode) {
   const prev = state.mode;
   state.mode = mode;
@@ -71,6 +78,10 @@ function setMode(mode) {
   } else if (prev === "live") {
     live.deactivate();
     viewer.setPaused(false);
+    // Hotspot picks skip 3D while Live is open; frame the tagged part when leaving.
+    if (state.catalogId && mode === "explore") {
+      frameCatalogIn3D(state.catalogId);
+    }
   }
   if (mode === "learn") {
     renderCatalog();
@@ -93,7 +104,7 @@ function renderNav(activeId, relatedSceneIds = []) {
     if (scene.id === activeId) btn.classList.add("active");
     if (relatedSceneIds.includes(scene.id)) btn.classList.add("related");
     btn.dataset.id = scene.id;
-    const key = index < 9 ? String(index + 1) : index === 9 ? "0" : "";
+    const key = index < 9 ? String(index + 1) : index === 9 ? "0" : index === 10 ? "-" : "";
     btn.innerHTML = `${scene.name}<small>${key ? `${key} · ` : ""}${scene.summary}</small>`;
     if (scene.expand) btn.title = scene.expand;
     btn.addEventListener("click", () => selectScene(scene.id));
@@ -178,8 +189,13 @@ function showTeach(entry) {
       : `<p>No public sources recorded for this entry.</p>`;
     return;
   }
-  const text =
-    tab === "history" ? entry.history : tab === "function" ? entry.function : tab === "physics" ? entry.physics : entry.blurb;
+  if (tab === "overview") {
+    const extra = entry.expand ? ` — ${entry.expand}` : "";
+    teachBody.innerHTML = `<p>At a glance: <strong>${entry.category}</strong> · ${entry.family} · ${entry.domain}${extra}.</p>
+      <p>The lede above is the short briefing. Open <strong>History</strong> for the public timeline, <strong>Function</strong> for what the hardware does, and <strong>Sources</strong> for citations. Physics notes stay collapsed until you opt in.</p>`;
+    return;
+  }
+  const text = tab === "history" ? entry.history : tab === "function" ? entry.function : entry.physics;
   teachBody.innerHTML = `<p>${text}</p>`;
 }
 
@@ -267,11 +283,14 @@ function renderLaunches() {
             : "";
         })
         .join("");
+      const tip = statusTip(launch.status, launch.statusLabel);
+      const netTitle =
+        "NET means No Earlier Than — the vehicle will not launch before this time.";
       card.innerHTML = `
-        <div class="row"><strong>${launch.mission}</strong><span class="status ${launch.status}">${launch.statusLabel}</span></div>
+        <div class="row"><strong>${launch.mission}</strong><span class="status ${launch.status}" title="${tip}" aria-label="${tip}">${launch.statusLabel}</span></div>
         <span class="meta">${launch.vehicle} · ${launch.pad}</span>
         <span class="meta">${launch.site}${t ? ` · ${t}` : ""}</span>
-        <span class="meta">${when} · ${window}</span>
+        <span class="meta" title="${netTitle}">${when} · ${window}</span>
         <div class="related">${chips}</div>
       `;
       card.addEventListener("click", (ev) => {
@@ -299,6 +318,25 @@ function selectLaunch(launch) {
   renderNav(launch.sceneId, relatedScenes);
 }
 
+function syncLiveSampleChips(source, prefer) {
+  const liveBtn = document.querySelector('#tracker-source [data-source="live"]');
+  const sampleBtn = document.querySelector('#tracker-source [data-source="sample"]');
+  if (!liveBtn || !sampleBtn) return;
+  liveBtn.classList.toggle("active", prefer === "live");
+  sampleBtn.classList.toggle("active", prefer === "sample");
+  const fallback = prefer === "live" && source !== "live";
+  liveBtn.classList.toggle("is-fallback", fallback);
+  if (fallback) {
+    liveBtn.textContent = "Live (offline)";
+    liveBtn.title =
+      "Launch Library 2 was unreachable. Showing the sample teaching set — not live data. Tap Refresh to retry.";
+  } else {
+    liveBtn.textContent = "Live data";
+    liveBtn.title =
+      "Live upcoming and recent SpaceX launches from Launch Library 2 (The Space Devs) — not official SpaceX telemetry.";
+  }
+}
+
 async function refreshLaunches() {
   const prefer = state.launchSource === "sample" ? "sample" : "live";
   trackerBanner.textContent = prefer === "sample" ? "Loading sample missions…" : "Refreshing Launch Library 2…";
@@ -308,18 +346,19 @@ async function refreshLaunches() {
     const data = await loadLaunches({ prefer });
     state.launches = data;
     if (data.source === "live") {
-      trackerBanner.textContent = `Live LL2 · public data from Launch Library 2 (The Space Devs). Updated ${formatUtc(data.fetchedAt)}. Not official SpaceX telemetry.`;
+      trackerBanner.textContent = `Live data · Launch Library 2 (The Space Devs). Updated ${formatUtc(data.fetchedAt)}. Not official SpaceX telemetry.`;
       trackerBanner.classList.add("live");
       trackerBanner.classList.remove("sample");
     } else if (prefer === "sample") {
       trackerBanner.textContent =
-        "Sample · cached teaching missions (not live). Switch to Live LL2 to query Launch Library 2.";
+        "Sample · cached teaching missions (not live). Switch to Live data to query Launch Library 2.";
       trackerBanner.classList.add("sample");
     } else {
       trackerBanner.textContent =
-        "Sample fallback · live Launch Library 2 was unavailable (network, CORS, or free-tier rate limit). Optional VITE_LL2_API_KEY raises the paid-tier rate limit.";
+        "Live data unavailable · showing the sample teaching set (network, CORS, or free-tier rate limit). Optional VITE_LL2_API_KEY raises the paid-tier rate limit.";
       trackerBanner.classList.add("sample");
     }
+    syncLiveSampleChips(data.source, prefer);
     renderLaunches();
   } finally {
     btnRefresh.disabled = false;
@@ -458,6 +497,10 @@ window.addEventListener("keydown", (event) => {
   if (key === "e") btnExplode.click();
   if (key === "0") {
     const scene = viewer.scenes()[9];
+    if (scene) selectScene(scene.id);
+  }
+  if (key === "-" || key === "_") {
+    const scene = viewer.scenes()[10];
     if (scene) selectScene(scene.id);
   }
   if (key >= "1" && key <= "9") {

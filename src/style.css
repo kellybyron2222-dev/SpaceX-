@@ -12,6 +12,12 @@
   --radius: 14px;
   --font: "Segoe UI", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --footer-gap: 12px;
+  --chrome-bottom: 72px;
 }
 
 * {
@@ -417,23 +423,33 @@ body,
 }
 
 @media (max-width: 860px) {
+  :root {
+    --footer-gap: max(8px, var(--safe-bottom));
+    --chrome-bottom: calc(var(--footer-gap) + 38px);
+  }
+
   .topbar {
     flex-direction: column;
     align-items: stretch;
-    top: 8px;
-    left: 8px;
-    right: 8px;
+    top: max(8px, var(--safe-top));
+    left: max(8px, var(--safe-left));
+    right: max(8px, var(--safe-right));
     padding: 10px 12px;
   }
 
-  .modes {
+  .modes,
+  .toolbar,
+  .scene-nav {
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
   }
 
-  .modes::-webkit-scrollbar {
+  .modes::-webkit-scrollbar,
+  .toolbar::-webkit-scrollbar,
+  .scene-nav::-webkit-scrollbar {
     display: none;
   }
 
@@ -444,14 +460,6 @@ body,
 
   .toolbar {
     justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .toolbar::-webkit-scrollbar {
-    display: none;
   }
 
   .tool {
@@ -461,9 +469,9 @@ body,
 
   .sidebar {
     top: auto;
-    bottom: 54px;
-    left: 8px;
-    right: 8px;
+    bottom: var(--chrome-bottom);
+    left: max(8px, var(--safe-left));
+    right: max(8px, var(--safe-right));
     width: auto;
     max-height: none;
     padding: 10px;
@@ -471,37 +479,96 @@ body,
 
   .scene-nav {
     flex-direction: row;
-    overflow-x: auto;
     padding-bottom: 4px;
   }
 
   .scene-btn {
     flex: 0 0 auto;
-    min-width: 148px;
+    min-width: 168px;
+    white-space: nowrap;
+  }
+
+  .scene-btn small {
+    white-space: nowrap;
   }
 
   .telemetry,
-  .hint {
+  .sidebar > .hint,
+  .tracker-panel > .hint {
     display: none;
   }
 
   .callout {
     top: auto;
-    bottom: 168px;
-    right: 8px;
-    left: 8px;
+    bottom: calc(var(--chrome-bottom) + 76px);
+    right: max(8px, var(--safe-right));
+    left: max(8px, var(--safe-left));
     width: auto;
+    padding: 12px 14px 10px;
   }
 
   .footer {
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    padding: 6px 8px;
+    left: max(8px, var(--safe-left));
+    right: max(8px, var(--safe-right));
+    bottom: var(--footer-gap);
+    padding: 4px 8px;
   }
 
   .footer p {
     font-size: 10px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .orbit-hint {
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    max-width: calc(100vw - 24px);
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 99px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: center;
+    pointer-events: none;
+    box-shadow: var(--shadow);
+  }
+
+  #app[data-mode="explore"] .orbit-hint {
+    bottom: calc(var(--chrome-bottom) + 112px);
+  }
+
+  #app[data-mode="learn"] #catalog-filters,
+  #app[data-mode="tracker"] #tracker-source,
+  #app[data-mode="tracker"] #launch-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  #app[data-mode="learn"] #catalog-filters::-webkit-scrollbar,
+  #app[data-mode="tracker"] #tracker-source::-webkit-scrollbar,
+  #app[data-mode="tracker"] #launch-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  #app[data-mode="learn"] .orbit-hint {
+    display: none;
+  }
+
+  #app[data-mode="tracker"] .orbit-hint,
+  #app[data-mode="live"] .orbit-hint {
+    display: none;
   }
 }
 
@@ -729,7 +796,7 @@ body,
   top: 118px;
   width: min(360px, calc(100vw - 28px));
   max-height: calc(100% - 176px);
-  overflow: auto;
+  overflow: hidden;
   padding: 16px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -737,6 +804,8 @@ body,
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
   border-left: 3px solid var(--cyan);
+  display: flex;
+  flex-direction: column;
 }
 
 .lede {
@@ -780,6 +849,30 @@ body,
   color: var(--steel);
   font-size: 13px;
   line-height: 1.55;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 4rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs,
+.teach-panel .callout-kicker,
+.teach-panel h2,
+.teach-panel .lede,
+.teach-panel .text-btn {
+  flex-shrink: 0;
+}
+
+@media (min-width: 861px) {
+  .orbit-hint {
+    display: none;
+  }
+}
+
+.chip.is-fallback {
+  border-color: rgba(253, 186, 116, 0.55);
+  color: #fdba74;
+  background: rgba(253, 186, 116, 0.1);
 }
 
 .teach-body p + p {
@@ -807,43 +900,167 @@ body,
   .catalog-panel,
   .teach-panel {
     top: auto;
-    bottom: 54px;
-    left: 8px;
-    right: 8px;
+    left: max(8px, var(--safe-left));
+    right: max(8px, var(--safe-right));
     width: auto;
-    max-height: 42vh;
   }
 
-  .teach-panel {
-    /* Sit above the bottom sheet so wrapped/stacked chrome cannot cover mode tabs. */
-    bottom: calc(54px + 34vh);
-    top: auto;
-    max-height: 26vh;
-  }
-
-  #app[data-mode="learn"] .catalog-panel {
-    top: auto;
-    bottom: 54px;
-    max-height: 34vh;
+  #app[data-mode="explore"] .sidebar {
+    bottom: var(--chrome-bottom);
   }
 
   #app[data-mode="tracker"] .tracker-panel {
-    max-height: 48vh;
+    bottom: var(--chrome-bottom);
+    max-height: min(38vh, 340px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #app[data-mode="tracker"] .tracker-panel .panel-head {
+    display: none;
+  }
+
+  #app[data-mode="tracker"] .banner {
+    font-size: 10px;
+    margin: 4px 0 8px;
+    padding: 6px 8px;
+    flex-shrink: 0;
+  }
+
+  #app[data-mode="tracker"] #tracker-source,
+  #app[data-mode="tracker"] #launch-filters {
+    flex-shrink: 0;
+  }
+
+  #app[data-mode="tracker"] .launch-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #app[data-mode="tracker"] .launch-card,
+  #app[data-mode="tracker"] .section-label {
+    flex-shrink: 0;
+  }
+
+  /* Learn: compact horizontal catalog above a scrolling teach sheet — 3D stays on top. */
+  #app[data-mode="learn"] .catalog-panel {
+    bottom: calc(var(--chrome-bottom) + 30vh);
+    max-height: none;
+    height: auto;
+    padding: 8px 10px;
+    overflow: hidden;
+  }
+
+  #app[data-mode="learn"] .catalog-panel .side-label {
+    display: none;
+  }
+
+  #app[data-mode="learn"] #catalog-search {
+    margin-bottom: 6px;
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+
+  #app[data-mode="learn"] .catalog-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
+    gap: 6px;
+  }
+
+  #app[data-mode="learn"] .catalog-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  #app[data-mode="learn"] .cat-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 148px;
+    min-height: 44px;
+  }
+
+  #app[data-mode="learn"] .teach-panel {
+    bottom: var(--chrome-bottom);
+    top: auto;
+    max-height: 30vh;
+  }
+
+  #app[data-mode="learn"] .teach-panel h2,
+  #app[data-mode="live"] .teach-panel h2 {
+    font-size: 16px;
+    margin: 4px 0;
+  }
+
+  #app[data-mode="learn"] .teach-panel .lede,
+  #app[data-mode="live"] .teach-panel .lede {
+    font-size: 12px;
+    margin: 4px 0 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   #app[data-mode="live"] .live-panel {
     top: auto;
-    bottom: 54px;
+    bottom: var(--chrome-bottom);
     max-height: 30vh;
   }
 
   #app[data-mode="live"] .teach-panel {
-    bottom: calc(54px + 30vh);
-    max-height: 20vh;
+    bottom: calc(var(--chrome-bottom) + 30vh);
+    max-height: 18vh;
   }
 
   #app[data-mode="live"] .live-stage {
-    padding: 96px 8px 54vh;
+    padding: calc(96px + var(--safe-top)) 8px calc(var(--chrome-bottom) + 48vh);
+  }
+}
+
+@media (max-width: 860px), (hover: none) and (pointer: coarse) {
+  .mode-btn,
+  .tool,
+  .chip,
+  .tab,
+  .scene-btn,
+  .cat-btn,
+  .launch-card,
+  .mini-chip,
+  .text-btn {
+    min-height: 44px;
+  }
+
+  .mode-btn {
+    padding: 12px 14px;
+  }
+
+  .tool,
+  .tool.ghost {
+    min-width: 44px;
+    padding: 12px 14px;
+  }
+
+  .chip {
+    padding: 10px 14px;
+  }
+
+  .mini-chip {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .tab {
+    padding: 10px 12px;
+  }
+
+  .text-btn {
+    margin-top: 8px;
+    padding: 10px 8px;
   }
 }
 
