@@ -7,7 +7,24 @@ import { SCENES, sceneById } from "./models/index.js";
 const tmpBox = new THREE.Box3();
 const tmpSize = new THREE.Vector3();
 const tmpCenter = new THREE.Vector3();
+const tmpGeomBox = new THREE.Box3();
 const IDLE_RESUME_S = 5.5;
+
+/** Bounding box that skips decorative ground / sea meshes (userData.skipFrame). */
+function boxFromObjectFiltered(object, target) {
+  target.makeEmpty();
+  object.updateWorldMatrix(true, true);
+  object.traverse((node) => {
+    if (node.userData.skipFrame || !node.isMesh || !node.geometry) return;
+    const geom = node.geometry;
+    if (!geom.boundingBox) geom.computeBoundingBox();
+    if (!geom.boundingBox) return;
+    tmpGeomBox.copy(geom.boundingBox).applyMatrix4(node.matrixWorld);
+    target.union(tmpGeomBox);
+  });
+  if (target.isEmpty()) target.setFromObject(object);
+  return target;
+}
 
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
@@ -167,7 +184,7 @@ export class Viewer {
     this.scene.add(ground);
   }
 
-  load(id) {
+  load(id, { partId, framePart = true } = {}) {
     const spec = sceneById(id);
     this.sceneId = spec.id;
     this.clearSelection();
@@ -182,9 +199,15 @@ export class Viewer {
 
     this.root = spec.build();
     this.scene.add(this.root);
-    this._frame({ storeDefault: true, instant: this._firstLoad });
-    this._firstLoad = false;
     this._fitShadow();
+    const whole = this._prepareFrame();
+    this.defaultCam.position.copy(whole.pos);
+    this.defaultCam.target.copy(whole.target);
+    const framedPart = partId ? this.highlightById(partId, { frame: framePart }) : false;
+    if (!framedPart) {
+      this._applyFrame(whole, { instant: this._firstLoad });
+    }
+    this._firstLoad = false;
     return spec;
   }
 
@@ -196,6 +219,7 @@ export class Viewer {
   }
 
   resetCamera() {
+    this.explodeTarget = 0;
     this._tweenTo(this.defaultCam.position, this.defaultCam.target, 0.85);
   }
 
@@ -238,12 +262,20 @@ export class Viewer {
   }
 
   _frameObject(obj, storeDefault) {
-    tmpBox.setFromObject(obj);
+    const focus = obj.userData.frameFocus || obj;
+    boxFromObjectFiltered(focus, tmpBox);
     tmpBox.getSize(tmpSize);
     tmpBox.getCenter(tmpCenter);
+    const part = obj.userData.part || focus.userData.part;
     const maxDim = Math.max(tmpSize.x, tmpSize.y, tmpSize.z, 1.2);
-    const dist = Math.max(4.5, (maxDim / (2 * Math.tan((this.camera.fov * Math.PI) / 360))) * 1.7);
-    const pos = new THREE.Vector3(tmpCenter.x + dist * 0.7, tmpCenter.y + dist * 0.22, tmpCenter.z + dist * 0.85);
+    const tight = part?.frameTight ?? 1.7;
+    const dist = Math.max(4.5, (maxDim / (2 * Math.tan((this.camera.fov * Math.PI) / 360))) * tight);
+    const bias = part?.frameBias ?? { x: 0.7, y: 0.22, z: 0.85 };
+    const pos = new THREE.Vector3(
+      tmpCenter.x + dist * bias.x,
+      tmpCenter.y + dist * bias.y,
+      tmpCenter.z + dist * bias.z,
+    );
     this._tweenTo(pos, tmpCenter, 0.7);
     if (storeDefault) {
       this.defaultCam.position.copy(pos);
@@ -264,36 +296,51 @@ export class Viewer {
     return SCENES;
   }
 
-  _frame({ storeDefault = false, instant = false } = {}) {
-    if (!this.root) return;
-    tmpBox.setFromObject(this.root);
+  _prepareFrame() {
+    boxFromObjectFiltered(this.root, tmpBox);
     tmpBox.getSize(tmpSize);
     tmpBox.getCenter(tmpCenter);
     const maxDim = Math.max(tmpSize.x, tmpSize.y, tmpSize.z, 1);
-    const dist = (maxDim / (2 * Math.tan((this.camera.fov * Math.PI) / 360))) * 1.35;
+    const tight = this.root.userData.frameTight ?? 1.35;
+    const dist = (maxDim / (2 * Math.tan((this.camera.fov * Math.PI) / 360))) * tight;
     this.camera.near = Math.max(0.05, dist / 140);
     this.camera.far = Math.max(400, dist * 40);
     this.camera.updateProjectionMatrix();
-    const pos = new THREE.Vector3(tmpCenter.x + dist * 0.62, tmpCenter.y + dist * 0.18, tmpCenter.z + dist * 0.82);
+    const bias = this.root.userData.frameBias ?? { x: 0.62, y: 0.18, z: 0.82 };
+    const pos = new THREE.Vector3(
+      tmpCenter.x + dist * bias.x,
+      tmpCenter.y + dist * bias.y,
+      tmpCenter.z + dist * bias.z,
+    );
     this.controls.minDistance = Math.max(1.2, maxDim * 0.12);
     this.controls.maxDistance = Math.max(80, maxDim * 8);
+    return { pos, target: tmpCenter.clone() };
+  }
+
+  _applyFrame(whole, { instant = false } = {}) {
     if (instant) {
-      this.camera.position.copy(pos);
-      this.controls.target.copy(tmpCenter);
+      this.camera.position.copy(whole.pos);
+      this.controls.target.copy(whole.target);
       this.controls.update();
       this._camTween = null;
     } else {
-      this._tweenTo(pos, tmpCenter, 0.9);
+      this._tweenTo(whole.pos, whole.target, 0.9);
     }
+  }
+
+  _frame({ storeDefault = false, instant = false } = {}) {
+    if (!this.root) return;
+    const whole = this._prepareFrame();
+    this._applyFrame(whole, { instant });
     if (storeDefault) {
-      this.defaultCam.position.copy(pos);
-      this.defaultCam.target.copy(tmpCenter);
+      this.defaultCam.position.copy(whole.pos);
+      this.defaultCam.target.copy(whole.target);
     }
   }
 
   _fitShadow() {
     if (!this.root) return;
-    tmpBox.setFromObject(this.root);
+    boxFromObjectFiltered(this.root, tmpBox);
     tmpBox.getSize(tmpSize);
     tmpBox.getCenter(tmpCenter);
     const extent = Math.max(tmpSize.x, tmpSize.z, tmpSize.y * 0.4) * 0.7 + 8;
@@ -343,7 +390,7 @@ export class Viewer {
     let bestScore = -Infinity;
     const seen = new Set();
     for (const hit of hits) {
-      if (hit.distance - nearest > 2.4) break;
+      if (hit.distance - nearest > 6.5) break;
       const obj = this._partOf(hit.object);
       if (!obj?.userData?.part) continue;
       const key = obj.userData.part.id;
@@ -365,6 +412,11 @@ export class Viewer {
 
   _partOf(obj) {
     let o = obj;
+    while (o) {
+      if (o.userData?.part && !o.userData.pickProxy) return o;
+      o = o.parent;
+    }
+    o = obj;
     while (o) {
       if (o.userData?.part) return o;
       o = o.parent;

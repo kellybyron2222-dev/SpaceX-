@@ -62,10 +62,6 @@ function setMode(mode) {
     btn.classList.toggle("active", btn.dataset.mode === mode);
   });
   if (mode !== "explore") hideCallout();
-  if (mode === "learn") {
-    renderCatalog();
-    showTeach(state.catalogId ? catalogById(state.catalogId) : null);
-  }
   if (mode === "live") {
     live.activate();
     viewer.setPaused(true);
@@ -75,6 +71,16 @@ function setMode(mode) {
   } else if (prev === "live") {
     live.deactivate();
     viewer.setPaused(false);
+  }
+  if (mode === "learn") {
+    renderCatalog();
+    if (state.catalogId) {
+      // Re-frame the highlighted row when arriving from Tracker / Explore / Live.
+      if (prev !== "learn") selectCatalog(state.catalogId);
+      else showTeach(catalogById(state.catalogId));
+    } else {
+      showTeach(null);
+    }
   }
 }
 
@@ -89,6 +95,7 @@ function renderNav(activeId, relatedSceneIds = []) {
     btn.dataset.id = scene.id;
     const key = index < 9 ? String(index + 1) : index === 9 ? "0" : "";
     btn.innerHTML = `${scene.name}<small>${key ? `${key} · ` : ""}${scene.summary}</small>`;
+    if (scene.expand) btn.title = scene.expand;
     btn.addEventListener("click", () => selectScene(scene.id));
     nav.appendChild(btn);
   });
@@ -104,7 +111,7 @@ function applyExplodeButton(spec) {
 function selectScene(id, { partId, framePart = true } = {}) {
   let spec;
   try {
-    spec = viewer.load(id);
+    spec = viewer.load(id, { partId, framePart });
   } catch (err) {
     console.error("Failed to load scene", id, err);
     renderNav(id);
@@ -116,9 +123,6 @@ function selectScene(id, { partId, framePart = true } = {}) {
   telDia.textContent = spec.diameter;
   applyExplodeButton(spec);
   hideCallout();
-  if (partId) {
-    requestAnimationFrame(() => viewer.highlightById(partId, { frame: framePart }));
-  }
   return spec;
 }
 
@@ -206,7 +210,8 @@ function renderCatalog() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = `cat-btn${entry.id === state.catalogId ? " active" : ""}`;
-    btn.innerHTML = `${entry.name}<small>${entry.family} · ${entry.category}</small>`;
+    btn.innerHTML = `${entry.name}<small>${entry.expand || `${entry.family} · ${entry.category}`}</small>`;
+    btn.title = entry.expand || `${entry.family} · ${entry.category}`;
     btn.addEventListener("click", () => {
       setMode("learn");
       selectCatalog(entry.id);
@@ -257,7 +262,9 @@ function renderLaunches() {
       const chips = launch.relatedIds
         .map((id) => {
           const e = catalogById(id);
-          return e ? `<span class="mini-chip" data-cat="${e.id}">${e.name}</span>` : "";
+          return e
+            ? `<span class="mini-chip" data-cat="${e.id}" title="${e.expand || e.name}">${e.name}</span>`
+            : "";
         })
         .join("");
       card.innerHTML = `
@@ -287,10 +294,9 @@ function selectLaunch(launch) {
   state.launchId = launch.id;
   renderLaunches();
   const relatedScenes = [...new Set(launch.relatedIds.map((id) => catalogById(id)?.sceneId).filter(Boolean))];
+  // Frame the whole vehicle / pad — never zoom into the first related engine mesh.
   selectScene(launch.sceneId);
   renderNav(launch.sceneId, relatedScenes);
-  const match = launch.relatedIds.map(catalogById).find((e) => e && e.sceneId === launch.sceneId);
-  if (match) requestAnimationFrame(() => viewer.highlightById(match.partId, { frame: true }));
 }
 
 async function refreshLaunches() {
@@ -354,7 +360,11 @@ btnIdle.addEventListener("click", () => {
   btnIdle.setAttribute("aria-pressed", on ? "true" : "false");
 });
 
-btnReset.addEventListener("click", () => viewer.resetCamera());
+function resetView() {
+  viewer.resetCamera();
+  btnExplode.setAttribute("aria-pressed", "false");
+}
+btnReset.addEventListener("click", () => resetView());
 btnShot.addEventListener("click", () => viewer.screenshot());
 btnHelp.addEventListener("click", () => help.classList.toggle("hidden"));
 btnRefresh.addEventListener("click", () => refreshLaunches());
@@ -439,7 +449,7 @@ window.addEventListener("keydown", (event) => {
     if (key === "h") live.toggleHotspots();
     return;
   }
-  if (key === "r") viewer.resetCamera();
+  if (key === "r") resetView();
   if (key === "i") btnIdle.click();
   if (key === "s") {
     event.preventDefault();

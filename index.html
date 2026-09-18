@@ -67,7 +67,7 @@
           <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Exploded view (E)">
             Explode
           </button>
-          <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera (R)">Reset camera</button>
+          <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera and collapse explode (R)">Reset camera</button>
           <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
           <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="false" title="Show hotspot overlays (H)">
             Hotspots
@@ -96,8 +96,8 @@
         </header>
         <p id="tracker-banner" class="banner">Loading public launch data…</p>
         <div class="filters" id="tracker-source" aria-label="Launch data source">
-          <button type="button" class="chip active" data-source="live">Live LL2</button>
-          <button type="button" class="chip" data-source="sample">Sample</button>
+          <button type="button" class="chip active" data-source="live" title="Launch Library 2 (The Space Devs) — live public SpaceX launch list, not official SpaceX telemetry">Live LL2</button>
+          <button type="button" class="chip" data-source="sample" title="Cached teaching missions with distinct names and dates — not a copy of the live list">Sample</button>
         </div>
         <div class="filters" id="launch-filters">
           <button type="button" class="chip active" data-filter="all">All</button>
@@ -202,7 +202,7 @@
           <ul>
             <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn · <kbd>Y</kbd> Live Launch</li>
             <li><kbd>H</kbd> Toggle Live Launch hotspots</li>
-            <li><kbd>R</kbd> Reset camera (tween)</li>
+            <li><kbd>R</kbd> Reset camera and explode</li>
             <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
             <li><kbd>E</kbd> Toggle exploded view</li>

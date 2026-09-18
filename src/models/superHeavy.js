@@ -17,7 +17,7 @@ const PARTS = ids("booster", {
   barrel: {
     name: "Stainless barrel / tanks",
     blurb:
-      "Public descriptions put Super Heavy at about 9 m diameter and ~71 m tall, stacked from steel ring sections that form the methane and liquid-oxygen tanks.",
+      "Public descriptions put Super Heavy at about 9 m diameter and ~72 m tall, stacked from steel ring sections that form the methane and liquid-oxygen tanks.",
   },
   raceway: {
     name: "Downcomer raceway",
@@ -31,9 +31,9 @@ const PARTS = ids("booster", {
   },
   fins: {
     name: "Grid fins",
-    pickPriority: 4,
+    pickPriority: 8,
     blurb:
-      "Four grid fins near the top provide aerodynamic control during booster return. The waffle is a teaching lattice, not a production forging.",
+      "Grid fins near the top provide aerodynamic control during booster return. Public Starship V3 Super Heavy reporting is three fins (Falcon 9 still uses four). The waffle is a teaching lattice, not a production forging.",
   },
   engines: {
     name: "33-Raptor cluster",
@@ -48,8 +48,10 @@ const PARTS = ids("booster", {
   hardpoints: {
     name: "Catch hardpoints",
     pickPriority: 14,
+    frameTight: 1.22,
+    frameBias: { x: 0.95, y: 0.12, z: 0.35 },
     blurb:
-      "Lift/catch pins near the top are the publicly shown interfaces for the tower arms. Blocky stand-ins only.",
+      "Lift/catch pins near the top are the publicly shown interfaces for the tower arms. Gold lugs — not the grid-fin waffle.",
   },
 });
 
@@ -110,8 +112,8 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
   g.add(staging);
 
   const fins = new THREE.Group();
-  for (let i = 0; i < 4; i++) {
-    const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2;
     const fin = createGridFin(mats);
     fin.position.set(Math.cos(a) * (r + 0.35), h - 12, Math.sin(a) * (r + 0.35));
     fin.lookAt(new THREE.Vector3(Math.cos(a) * 20, h - 12, Math.sin(a) * 20));
@@ -127,18 +129,24 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
   g.add(race);
 
   const pins = new THREE.Group();
+  let pinFocus = null;
   for (const sign of [-1, 1]) {
     const pinY = h - 7.4;
-    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 2.6, 16), mats.caution);
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.62, 3.6, 20), mats.caution);
     pin.rotation.z = Math.PI / 2;
-    pin.position.set(0, pinY, sign * (r + 0.85));
+    pin.position.set(0, pinY, sign * (r + 1.15));
     pins.add(pin);
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.4, 0.4), mats.darkSteel);
-    pad.position.set(0, pinY, sign * (r + 0.18));
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.82, 0.14, 8, 22), mats.caution);
+    collar.position.set(0, pinY, sign * (r + 0.55));
+    pins.add(collar);
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(2.1, 3.1, 0.55), mats.darkSteel);
+    pad.position.set(0, pinY, sign * (r + 0.22));
     pins.add(pad);
-    addPickProxy(pins, new THREE.Vector3(0, pinY, sign * (r + 0.7)), 1.85, PARTS.hardpoints);
+    addPickProxy(pins, new THREE.Vector3(0, pinY, sign * (r + 0.9)), 2.15, PARTS.hardpoints);
+    if (!pinFocus) pinFocus = pin;
   }
   tag(pins, PARTS.hardpoints);
+  pins.userData.frameFocus = pinFocus;
   g.add(pins);
 
   if (withPad && !forStack) {
