@@ -20,7 +20,7 @@ Booth walkthrough (~120s) — keep the footer disclaimer on screen the whole tim
 2. **Tracker (20s).** Switch to **Tracker**. Point at Live data vs Sample and the “not official SpaceX telemetry” banner. Click a Starship Flight 14 row if listed, otherwise a Falcon 9 card. Use one related chip to jump into Learn.
 3. **Learn + physics (30s).** Select **Raptor**. Flip Overview → **Sources**, then opt in to physics notes. Search **`ASDS`** or **`catch hardpoints`** — not bare `catch` (that substring is noisy).
 4. **Falcon 9 (15s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Skip Mechazilla if time is tight (or swap this beat for Mechazilla, not both).
-5. **Live Launch (30s).** Public-stream disclaimer + **T−** card (LL2, not official). If the embed is blocked: **Open on YouTube**. Else: leave **Hotspots** off, pick one tagged name, then click the **`1:40 · Catch` chapter** (the Catch preset does not seek — the clock stays on the pad poster). Do not paste IDs or use Live webcast fit/nudge unless a real webcast is up.
+5. **Live Launch (30s).** Public-stream disclaimer + **T−** card (LL2, not official). If the embed is blocked: **Open on YouTube**. Else: leave **Hotspots** off, pick one tagged name, then **Catch / chopsticks** (seeks to ~1:40 so the overlay is not on the pad poster). Do not paste junk IDs or use Live webcast fit/nudge unless a real webcast is up.
 
 If LL2 or YouTube fails: Sample banner + 3D path; keep talking.
 

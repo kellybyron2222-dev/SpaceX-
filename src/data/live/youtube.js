@@ -8,6 +8,12 @@ export function youtubeWatchUrl(id) {
   return `https://www.youtube.com/watch?v=${id}`;
 }
 
+/** oEmbed 400/404 means this is not a public YouTube video (junk IDs, private, etc.). */
+export function oembedMeansMissingVideo(result) {
+  const status = result?.status;
+  return status === 400 || status === 404;
+}
+
 export function youtubeThumbCandidates(id) {
   return [
     `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
@@ -112,9 +118,6 @@ export function parseYouTubeId(raw) {
     return idFromYouTubeUrl(s);
   }
 
-  const tokens = s.split(/[^a-zA-Z0-9_-]+/).filter(Boolean);
-  const ids = tokens.filter((t) => isYouTubeVideoId(t));
-  if (ids.length === 1 && tokens.length <= 8) return ids[0];
   return null;
 }
 

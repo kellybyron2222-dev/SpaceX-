@@ -4,6 +4,7 @@ import { countdownClock, formatUtc } from "./data/launches.js";
 import {
   fetchYouTubeOembed,
   loadHotspotsVisible,
+  oembedMeansMissingVideo,
   parseYouTubeId,
   resolveDefaultVideoId,
   STORAGE_KEY,
@@ -162,6 +163,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     pendingSeek: null,
     pendingPlay: false,
     seekUntil: 0,
+    seekReload: false,
   };
 
   function showError(msg) {
@@ -492,32 +494,43 @@ export function createLiveLaunch({ onSelect } = {}) {
     if (!Number.isFinite(t) || t < 0) return;
     state.pendingSeek = t;
     state.pendingPlay = play;
-    state.seekUntil = performance.now() + 8000;
-    flushSeek();
+    // Unplayed posters ignore seekTo. Reload the ID at t so Catch is not the pad poster.
+    state.seekReload = play;
+    state.seekUntil = performance.now() + 12000;
+    applyJump();
   }
 
-  function flushSeek() {
-    if (state.pendingSeek == null) return;
+  function applyJump() {
+    const t = state.pendingSeek;
+    if (t == null) return;
     if (state.seekUntil && performance.now() > state.seekUntil) {
-      state.pendingSeek = null;
-      state.pendingPlay = false;
+      clearPendingSeek();
       return;
     }
     try {
-      if (!state.player?.seekTo) return;
-      // Unplayed posters ignore seekTo until playback starts — Catch must play.
-      if (state.pendingPlay) state.player.playVideo?.();
-      state.player.seekTo(state.pendingSeek, true);
+      if (state.seekReload && typeof state.player?.loadVideoById === "function") {
+        state.seekReload = false;
+        state.player.loadVideoById({ videoId: state.videoId, startSeconds: t });
+        return;
+      }
+      if (typeof state.player?.seekTo === "function") {
+        if (state.pendingPlay) state.player.playVideo?.();
+        state.player.seekTo(t, true);
+        return;
+      }
     } catch {
       /* player not ready */
+    }
+    if (state.seekReload) {
+      state.seekReload = false;
+      mountIframeFallback(state.videoId, { startSeconds: t, autoplay: true });
     }
   }
 
   function clearPendingSeekIfClose(t) {
     if (state.pendingSeek == null || !Number.isFinite(t)) return;
     if (Math.abs(t - state.pendingSeek) <= 1.5) {
-      state.pendingSeek = null;
-      state.pendingPlay = false;
+      clearPendingSeek();
     }
   }
 
@@ -525,6 +538,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     state.pendingSeek = null;
     state.pendingPlay = false;
     state.seekUntil = 0;
+    state.seekReload = false;
   }
 
   function applyChapterAt(t) {
@@ -552,7 +566,7 @@ export function createLiveLaunch({ onSelect } = {}) {
         : `VOD · ${formatTime(t)} / ${formatTime(effectiveDuration())}`;
       if (d && Math.abs(d - prev) > 1) renderChapters();
       clearPendingSeekIfClose(t);
-      if (state.pendingSeek != null) flushSeek();
+      if (state.pendingSeek != null) applyJump();
       applyChapterAt(t);
     } catch {
       /* ignore */
@@ -604,7 +618,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     syncChrome();
     renderChapters();
     resizePlayer();
-    flushSeek();
+    applyJump();
     if (state.pendingSeek != null) highlightChapterAt(state.pendingSeek);
   }
 
@@ -635,7 +649,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     renderChapters();
     if (state.pendingSeek != null) highlightChapterAt(state.pendingSeek);
     const playing = ev?.data === 1 || ev?.data === 3;
-    if (playing && state.pendingSeek != null) flushSeek();
+    if (playing && state.pendingSeek != null) applyJump();
   }
 
   function resizePlayer() {
@@ -663,37 +677,53 @@ export function createLiveLaunch({ onSelect } = {}) {
     host.innerHTML = "";
   }
 
-  function mountIframeFallback(id, { nocookie = false } = {}) {
+  function mountIframeFallback(id, { nocookie = false, startSeconds = 0, autoplay = false } = {}) {
     host.innerHTML = "";
     const iframe = document.createElement("iframe");
     iframe.id = "live-player";
     iframe.title = overlayConfig.defaultVideoTitle || "Public Starship stream";
     const hostName = nocookie ? "www.youtube-nocookie.com" : "www.youtube.com";
-    iframe.src = `https://${hostName}/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+    const params = new URLSearchParams({ rel: "0", modestbranding: "1", playsinline: "1" });
+    const start = Math.max(0, Math.floor(startSeconds || 0));
+    if (start > 0) params.set("start", String(start));
+    if (autoplay || start > 0) params.set("autoplay", "1");
+    iframe.src = `https://${hostName}/embed/${id}?${params}`;
     iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = "strict-origin-when-cross-origin";
     host.appendChild(iframe);
   }
 
-  async function probeOembed(id) {
+  function showMissingVideoFallback() {
+    destroyPlayer();
+    showError("YouTube has no public video with that ID (oEmbed 400/404).");
+    showFallback({
+      title: "Not a YouTube video",
+      detail:
+        "YouTube oEmbed returned 400/404. That is not a public video — made-up IDs, playlists, channels, and private clips fail. Paste a watch URL or a real 11-character video ID.",
+      thumb: state.oembed?.thumbnail,
+    });
+    syncChrome();
+  }
+
+  async function createPlayer(id, { nocookie = false, persist = false } = {}) {
     const gen = ++state.oembedGen;
     const result = await fetchYouTubeOembed(id);
     if (gen !== state.oembedGen) return;
     state.oembed = result;
-    if ((result.status === 404 || result.status === 400) && !state.playerReady) {
-      destroyPlayer();
-      showError("YouTube has no public video with that ID.");
-      showFallback({
-        title: "Not a YouTube video",
-        detail:
-          "That ID is not a public YouTube video (oEmbed 404/400). Playlists, channels, and private or made-up IDs are rejected. Paste a watch URL or the 11-character video ID.",
-        thumb: result.thumbnail,
-      });
-      syncChrome();
+    if (oembedMeansMissingVideo(result)) {
+      if (id === state.videoId && id !== fallbackId) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* ignore */
+        }
+        state.videoId = fallbackId;
+      }
+      showMissingVideoFallback();
       return;
     }
-    if (result.embeddable === false && !state.playerReady && !state.embedBlockedManual) {
+    if (result.embeddable === false && !state.embedBlockedManual) {
       destroyPlayer();
       showFallback({
         title: result.title || "Open on YouTube",
@@ -702,31 +732,44 @@ export function createLiveLaunch({ onSelect } = {}) {
         thumb: result.thumbnail,
       });
       syncChrome();
+      return;
     }
-  }
 
-  async function createPlayer(id, { nocookie = false } = {}) {
+    const start = Math.max(0, Math.floor(state.pendingSeek || 0));
     destroyPlayer();
     showError("");
     hideFallback({ force: true });
-    probeOembed(id);
+    state.videoId = id;
+    state.triedNocookie = nocookie;
+    state.isLive = false;
+    if (persist) storeVideoId(id);
+    if (!state.fitManual) state.fitId = pictureFits.find((f) => f.id === "recap")?.id || state.fitId;
+    renderFits();
+    syncChrome();
     try {
       const YT = await loadYouTubeApi();
+      if (gen !== state.oembedGen) return;
       const slot = document.createElement("div");
       slot.id = "live-player";
       host.appendChild(slot);
+      const playerVars = {
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        origin: window.location.origin,
+        enablejsapi: 1,
+      };
+      if (start > 0) {
+        playerVars.start = start;
+        playerVars.autoplay = 1;
+        state.seekReload = false;
+      }
       state.player = new YT.Player("live-player", {
         videoId: id,
         width: "100%",
         height: "100%",
         host: nocookie ? "https://www.youtube-nocookie.com" : "https://www.youtube.com",
-        playerVars: {
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          origin: window.location.origin,
-          enablejsapi: 1,
-        },
+        playerVars,
         events: {
           onReady: onPlayerReady,
           onError: onPlayerError,
@@ -746,7 +789,7 @@ export function createLiveLaunch({ onSelect } = {}) {
       }, READY_TIMEOUT_MS);
     } catch (err) {
       console.warn(err);
-      mountIframeFallback(id, { nocookie: state.triedNocookie });
+      mountIframeFallback(id, { nocookie: state.triedNocookie, startSeconds: start, autoplay: start > 0 });
       showError("YouTube API unavailable — using a basic embed. If you see a sign-in / bot check, Open on YouTube.");
     }
   }
@@ -757,16 +800,22 @@ export function createLiveLaunch({ onSelect } = {}) {
       showError(youtubeIdRejectReason(raw));
       return;
     }
-    state.videoId = id;
-    state.triedNocookie = false;
-    state.oembed = null;
-    state.isLive = false;
     clearPendingSeek();
-    if (!state.fitManual) state.fitId = pictureFits.find((f) => f.id === "recap")?.id || state.fitId;
-    if (persist) storeVideoId(id);
-    renderFits();
-    syncChrome();
-    if (state.active) createPlayer(id);
+    if (state.active) {
+      createPlayer(id, { persist });
+      return;
+    }
+    fetchYouTubeOembed(id).then((result) => {
+      if (oembedMeansMissingVideo(result)) {
+        state.oembed = result;
+        showError("YouTube has no public video with that ID (oEmbed 400/404).");
+        return;
+      }
+      state.videoId = id;
+      state.oembed = result;
+      if (persist) storeVideoId(id);
+      syncChrome();
+    });
   }
 
   function startPoll() {

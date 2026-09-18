@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { parseYouTubeId, youtubeIdRejectReason } from "./youtube.js";
+import {
+  fetchYouTubeOembed,
+  oembedMeansMissingVideo,
+  parseYouTubeId,
+  youtubeIdRejectReason,
+} from "./youtube.js";
 
 const VIDEO = "hI9HQfCAw64";
 
@@ -40,11 +45,34 @@ describe("parseYouTubeId", () => {
 
   it("does not take the first 11 characters of a longer blob", () => {
     assert.equal(parseYouTubeId("UCsCoitvLFVBn3CnbgRZH0qQ"), null);
+    assert.equal(parseYouTubeId("helloworld1XXXX"), null);
+    assert.equal(parseYouTubeId("xxhelloworld1"), null);
+    assert.equal(parseYouTubeId("not-a-video-id"), null);
     assert.equal(parseYouTubeId("not a youtube link at all"), null);
+    assert.equal(parseYouTubeId(`Flight 5 recap ${VIDEO}`), null);
   });
 
-  it("still finds a single video-id token in short prose", () => {
-    assert.equal(parseYouTubeId(`Flight 5 recap ${VIDEO}`), VIDEO);
+  it("still finds a watch URL inside surrounding text", () => {
+    assert.equal(parseYouTubeId(`Watch https://youtu.be/${VIDEO} tonight`), VIDEO);
+  });
+});
+
+describe("oembedMeansMissingVideo", () => {
+  it("treats 400 and 404 as missing videos", () => {
+    assert.equal(oembedMeansMissingVideo({ status: 400 }), true);
+    assert.equal(oembedMeansMissingVideo({ status: 404 }), true);
+    assert.equal(oembedMeansMissingVideo({ status: 200 }), false);
+    assert.equal(oembedMeansMissingVideo({ status: 401 }), false);
+    assert.equal(oembedMeansMissingVideo({ status: 0 }), false);
+  });
+});
+
+describe("fetchYouTubeOembed", () => {
+  it("returns 400/404 for junk 11-character IDs", async () => {
+    const hello = await fetchYouTubeOembed("helloworld1");
+    const words = await fetchYouTubeOembed("not-a-video");
+    assert.equal(oembedMeansMissingVideo(hello), true);
+    assert.equal(oembedMeansMissingVideo(words), true);
   });
 });
 
