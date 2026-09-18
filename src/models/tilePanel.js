@@ -9,6 +9,8 @@ const PARTS = ids("tiles", {
   },
   tiles: {
     name: "Thermal-protection tiles",
+    frameTight: 1.18,
+    frameBias: { x: 0.18, y: 0.06, z: 1.08 },
     blurb:
       "Hexagonal (and a few rectangular edge) tiles in a public heat-shield style. Gaps, thickness, and numbering are educational, not a flight map.",
   },
