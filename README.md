@@ -90,7 +90,7 @@ This is **not** official SpaceX telemetry, range video, or an internal camera pr
 
 YouTube often **blocks in-page playback**: a sign-in / “confirm you’re not a bot” wall, or player errors **101 / 150** when the uploader disabled embedding. **Some SpaceX video IDs cannot play in an embed even though the watch page works.** The default recap (`hI9HQfCAw64`) is oEmbed-allowed, but a datacenter or logged-out embed can still fail.
 
-When the in-page player is blocked, Live Launch **does not leave a broken iframe plus hotspots as the only UI**. It shows a fallback card: thumbnail, a short explanation, and a large **Open on YouTube** button. **Can't play here?** in the sidebar forces the same fallback (bot wall with no error code). Prefer IDs that allow embedding when changing the default.
+When the in-page player is blocked, Live Launch **does not leave a broken iframe plus hotspots as the only UI**. It shows a fallback card: thumbnail (max-res when available), a short explanation, and a large **Open on YouTube** button. A compact **Open on YouTube** chip also sits on the player so a bot-check wall still has an exit. **Can't play here?** in the sidebar forces the same fallback (bot wall with no error code). The app probes YouTube oEmbed: a **401** means embedding is disabled and skips the broken player. If the IFrame API never becomes ready, the fallback appears after a few seconds. Prefer IDs that allow embedding when changing the default.
 
 ### Set the YouTube ID
 
@@ -104,6 +104,8 @@ Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://
 ### Overlay presets (JSON)
 
 Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.json) so you can retune them **without changing app code**. Coordinates are normalized **0–1**, origin at the **top-left** of the 16:9 player. Shipped boxes are aligned to the **default Flight 5 recap frames** (gulf-side Starbase camera: **tower left, vehicle to the right of the tower** — not a centered pad plate).
+
+**Picture fit** is a separate inset so the same boxes can sit on a **live webcast** (YouTube chrome + lower-thirds) without rewriting coordinates. Recap frames stay the default on the Flight 5 VOD; a detected live stream switches to **Live webcast**. Arrow **nudge** (session-only, ±12%) is for booth alignment when the camera is not the recap shot. Fit and nudge **do not turn Hotspots on**.
 
 | Shape | Fields |
 | --- | --- |
@@ -120,6 +122,10 @@ Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped p
 Entering **Live Launch** clears leftover Learn/Tracker teach selection so a Merlin panel cannot sit beside a Starship VOD. Pick a tagged component (list or hotspot) to fill Overview / Sources again. Leaving Live Launch for **Explore 3D** or **Learn** frames that tagged part in 3D (grid fins, catch pins, chopsticks, …) instead of keeping the leftover Full stack camera.
 
 Overlays start **off** so the webcast is watchable. Toggle them with the **Hotspots** toolbar button or **H**. When they are on, boxes stay dim (transparent fill, faint outline) until hover or keyboard focus; click still opens Learn. **On phones / coarse pointers, overlay boxes are visual only** (they do not steal the YouTube play control). Use the **Tagged components** list — rows are at least **44px** tall. The selected hotspot stays highlighted. Names in the sidebar work even when overlays are hidden.
+
+### Starship countdown (public LL2)
+
+If Launch Library 2 (or the sample teaching set) lists a Starship / Super Heavy / Starbase window, Live Launch shows a **T− / T+** card: mission, status, pad, and NET. That clock is a **public educational approximation** from [The Space Devs](https://thespacedevs.com/llapi) — **not** official SpaceX countdown, range status, or telemetry. The YouTube embed stays the Flight 5 recap until you paste a webcast ID. In-flight public reports are labeled as such.
 
 ### Phase 2 (not in this MVP)
 
@@ -178,7 +184,7 @@ Booth walkthrough — keep the footer disclaimer on screen the whole time.
 3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
 5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
-6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer. If the embed is blocked, show **Open on YouTube**. Otherwise show **Stack on pad**, click a tagged name (or a hotspot on desktop), flip Learn tabs. Switch to **Catch / chopsticks** (chapter ~1:40 on the default recap). Optionally paste the current public webcast ID — prefer one that allows embedding.
+6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer and, if a Starship window is on the public list, the **T−** card (LL2, not official). If the embed is blocked, show **Open on YouTube**. Otherwise show **Stack on pad**, click a tagged name (or a hotspot on desktop), flip Learn tabs. Switch to **Catch / chopsticks** (chapter ~1:40 on the default recap). For a live webcast, use **Live webcast** fit + nudge — leave **Hotspots** off until you want tags. Optionally paste the current public webcast ID — prefer one that allows embedding.
 
 If live launches fail, the sample-data banner is expected — keep talking; the 3D path is the demo.
 

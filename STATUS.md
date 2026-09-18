@@ -1,19 +1,18 @@
 # Status — 2026-09-18
 
-[Live site](https://kellybyron2222-dev.github.io/SpaceX-/) · public educational approximations only (not SpaceX CAD / not official telemetry).
+[Live site](https://kellybyron2222-dev.github.io/SpaceX-/) · public educational approximations only (not SpaceX CAD / not official telemetry). Contest **not submitted**.
 
-## Shipped (through [PR #18](https://github.com/kellybyron2222-dev/SpaceX-/pull/18))
+## Shipped
 
-- Hardened Starship Component Viewer + GitHub Pages (`vite` base `/SpaceX-/`)
-- Live Launch MVP (public YouTube embed + component hotspots)
-- Hotspots default-off · Open in Learn · Sources 404 (Falcon User’s Guide)
-- Explore / Tracker / Learn QA · mobile polish
+- Through [#18](https://github.com/kellybyron2222-dev/SpaceX-/pull/18): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, Explore/Tracker/Learn QA
+- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md` on main
+- Live-site audit: **no critical Pages regression**
+- This PR [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): Live Launch YouTube fallback, **Live webcast** overlay fit + nudge, public Starship **T−** card (LL2)
 
 ## Open PRs
 
-- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19) — this STATUS.md snapshot
+- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20) — Live Launch embed / overlay / countdown (ready for review)
 
 ## Next
 
-1. Re-QA the live site; fix regressions
-2. Live Launch UX — embed fallback, overlay alignment, countdown
+After #20 merges: Live Launch catch auto-seek + stricter YouTube IDs (new PR). Then Explore/Learn polish. Do not submit the contest.

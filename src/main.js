@@ -1,7 +1,7 @@
 import "./style.css";
 import { Viewer } from "./viewer.js";
 import { CATALOG, catalogById, findCatalogByPart, searchCatalog } from "./data/catalog.js";
-import { countdown, formatUtc, loadLaunches, REFRESH_MS, statusTip } from "./data/launches.js";
+import { countdown, formatUtc, loadLaunches, nextStarshipWindow, REFRESH_MS, statusTip } from "./data/launches.js";
 import { createLiveLaunch } from "./live.js";
 
 const app = document.getElementById("app");
@@ -360,6 +360,7 @@ async function refreshLaunches() {
     }
     syncLiveSampleChips(data.source, prefer);
     renderLaunches();
+    live.setLaunchWindow(nextStarshipWindow(data), { source: data.source });
   } finally {
     btnRefresh.disabled = false;
   }

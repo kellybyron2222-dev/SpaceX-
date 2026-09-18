@@ -218,3 +218,46 @@ export function countdown(iso) {
   if (h > 0) return `T${sign}${h}h ${m}m`;
   return `T${sign}${m}m`;
 }
+
+/** Second-resolution T− / T+ for Live Launch. Public LL2 NET, not official range time. */
+export function countdownClock(iso) {
+  if (!iso) return "";
+  const delta = new Date(iso).getTime() - Date.now();
+  if (Number.isNaN(delta)) return "";
+  const sign = delta < 0 ? "+" : "−";
+  const abs = Math.abs(delta);
+  const d = Math.floor(abs / 86400000);
+  const h = Math.floor((abs % 86400000) / 3600000);
+  const m = Math.floor((abs % 3600000) / 60000);
+  const s = Math.floor((abs % 60000) / 1000);
+  const hh = String(h).padStart(2, "0");
+  const mm = String(m).padStart(2, "0");
+  const ss = String(s).padStart(2, "0");
+  if (d > 0) return `T${sign}${d}d ${hh}:${mm}:${ss}`;
+  return `T${sign}${hh}:${mm}:${ss}`;
+}
+
+export function isStarshipLaunch(launch) {
+  const blob = `${launch?.vehicle || ""} ${launch?.mission || ""} ${launch?.pad || ""} ${launch?.site || ""}`.toLowerCase();
+  return /starship|super heavy|starbase|boca chica/.test(blob);
+}
+
+const STARSHIP_WINDOW_GRACE_MS = 8 * 60 * 60 * 1000;
+
+/** Next public Starship / Super Heavy window from an LL2 (or sample) bundle. */
+export function nextStarshipWindow(bundle) {
+  if (!bundle) return null;
+  const upcoming = (bundle.upcoming || []).filter(isStarshipLaunch);
+  const recent = (bundle.recent || []).filter(isStarshipLaunch);
+  const inflight = [...upcoming, ...recent].find((l) => l.status === "in-flight");
+  if (inflight) return inflight;
+  const now = Date.now();
+  const sorted = [...upcoming].sort((a, b) => new Date(a.net) - new Date(b.net));
+  const current = sorted.find((l) => {
+    if (l.status === "success" || l.status === "failure" || l.status === "scrub") return false;
+    const t = new Date(l.net).getTime();
+    if (Number.isNaN(t)) return true;
+    return t + STARSHIP_WINDOW_GRACE_MS >= now;
+  });
+  return current || sorted[0] || null;
+}

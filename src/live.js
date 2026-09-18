@@ -1,12 +1,16 @@
 import overlayConfig from "./data/live/overlays.json";
 import { catalogById } from "./data/catalog.js";
+import { countdownClock, formatUtc } from "./data/launches.js";
 import {
+  fetchYouTubeOembed,
   loadHotspotsVisible,
   parseYouTubeId,
   resolveDefaultVideoId,
   STORAGE_KEY,
   storeHotspotsVisible,
   storeVideoId,
+  youtubeThumbCandidates,
+  youtubeWatchUrl,
 } from "./data/live/youtube.js";
 
 const YT_ERRORS = {
@@ -18,14 +22,9 @@ const YT_ERRORS = {
 };
 
 const EMBED_BLOCK_CODES = new Set([101, 150]);
-
-function youtubeWatchUrl(id) {
-  return `https://www.youtube.com/watch?v=${id}`;
-}
-
-function youtubeThumbUrl(id) {
-  return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-}
+const READY_TIMEOUT_MS = 9000;
+const NUDGE_STEP = 0.015;
+const NUDGE_LIMIT = 0.12;
 
 function formatTime(s) {
   if (!Number.isFinite(s) || s < 0) return "—";
@@ -41,6 +40,12 @@ function formatTime(s) {
 function loadYouTubeApi() {
   if (window.YT?.Player) return Promise.resolve(window.YT);
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn, arg) => {
+      if (settled) return;
+      settled = true;
+      fn(arg);
+    };
     const prev = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = () => {
       try {
@@ -48,20 +53,21 @@ function loadYouTubeApi() {
       } catch {
         /* ignore */
       }
-      if (window.YT?.Player) resolve(window.YT);
-      else reject(new Error("YouTube API ready without Player"));
+      if (window.YT?.Player) finish(resolve, window.YT);
+      else finish(reject, new Error("YouTube API ready without Player"));
     };
     if (!document.querySelector("script[data-yt-iframe-api]")) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
       tag.async = true;
       tag.dataset.ytIframeApi = "1";
-      tag.onerror = () => reject(new Error("YouTube IFrame API failed to load"));
+      tag.onerror = () => finish(reject, new Error("YouTube IFrame API failed to load"));
       document.head.appendChild(tag);
     }
     window.setTimeout(() => {
-      if (window.YT?.Player) resolve(window.YT);
-    }, 10000);
+      if (window.YT?.Player) finish(resolve, window.YT);
+      else finish(reject, new Error("YouTube IFrame API timed out"));
+    }, 8000);
   });
 }
 
@@ -83,7 +89,7 @@ function svgEl(name, attrs) {
   return el;
 }
 
-export function createLiveLaunch({ onSelect }) {
+export function createLiveLaunch({ onSelect } = {}) {
   const stage = document.getElementById("live-stage");
   const host = document.getElementById("live-player-host");
   const overlay = document.getElementById("live-overlay");
@@ -110,9 +116,21 @@ export function createLiveLaunch({ onSelect }) {
   const fallbackOpen = document.getElementById("live-fallback-open");
   const fallbackRetry = document.getElementById("live-fallback-retry");
   const btnEmbedHelp = document.getElementById("btn-embed-help");
+  const frameOpen = document.getElementById("live-frame-yt");
+  const fitNav = document.getElementById("live-fits");
+  const fitBlurb = document.getElementById("live-fit-blurb");
+  const countdownEl = document.getElementById("live-countdown");
+  const countdownKicker = document.getElementById("live-countdown-kicker");
+  const countdownMission = document.getElementById("live-countdown-mission");
+  const countdownT = document.getElementById("live-countdown-t");
+  const countdownMeta = document.getElementById("live-countdown-meta");
+  const countdownStatus = document.getElementById("live-countdown-status");
 
   const presets = overlayConfig.presets || [];
   const chapters = overlayConfig.chapters || [];
+  const pictureFits = overlayConfig.pictureFits || [
+    { id: "recap", name: "Recap frames", inset: { top: 0, right: 0, bottom: 0, left: 0 } },
+  ];
   const fallbackId = overlayConfig.defaultVideoId || "hI9HQfCAw64";
 
   const state = {
@@ -126,9 +144,20 @@ export function createLiveLaunch({ onSelect }) {
     duration: 0,
     player: null,
     poll: 0,
+    tick: 0,
+    readyTimer: 0,
     manualUntil: 0,
     embedBlocked: false,
     embedBlockedManual: false,
+    playerReady: false,
+    triedNocookie: false,
+    oembed: null,
+    oembedGen: 0,
+    fitId: pictureFits[0]?.id || "recap",
+    fitManual: false,
+    nudge: { x: 0, y: 0 },
+    windowLaunch: null,
+    windowSource: "live",
   };
 
   function showError(msg) {
@@ -145,10 +174,29 @@ export function createLiveLaunch({ onSelect }) {
     return presets.find((p) => p.id === state.presetId) || presets[0] || null;
   }
 
+  function currentFit() {
+    return pictureFits.find((f) => f.id === state.fitId) || pictureFits[0] || null;
+  }
+
   function syncOpenLinks() {
     const href = youtubeWatchUrl(state.videoId);
     openLink.href = href;
     fallbackOpen.href = href;
+    if (frameOpen) frameOpen.href = href;
+  }
+
+  function setFallbackThumb(preferred) {
+    const urls = [preferred, ...youtubeThumbCandidates(state.videoId)].filter(Boolean);
+    const unique = [...new Set(urls)];
+    let i = 0;
+    fallbackThumb.hidden = false;
+    fallbackThumb.alt = `Thumbnail for ${state.oembed?.title || state.videoId}`;
+    fallbackThumb.onerror = () => {
+      i += 1;
+      if (i < unique.length) fallbackThumb.src = unique[i];
+      else fallbackThumb.hidden = true;
+    };
+    fallbackThumb.src = unique[0] || "";
   }
 
   function hideFallback({ force = false } = {}) {
@@ -160,22 +208,81 @@ export function createLiveLaunch({ onSelect }) {
     frame?.classList.remove("is-blocked");
   }
 
-  function showFallback({ title, detail, manual = false } = {}) {
+  function showFallback({ title, detail, manual = false, thumb } = {}) {
     state.embedBlocked = true;
     state.embedBlockedManual = manual;
-    const name = overlayConfig.defaultVideoTitle || "this webcast";
+    const name = state.oembed?.title || overlayConfig.defaultVideoTitle || "this webcast";
     fallbackTitle.textContent = title || "Watch on YouTube";
     fallbackCopy.textContent =
       detail ||
       `The in-page player could not play this video. YouTube may show a sign-in / bot check, or the uploader may have disabled embedding (common on some SpaceX IDs). Open ${name} on YouTube instead.`;
-    fallbackThumb.src = youtubeThumbUrl(state.videoId);
-    fallbackThumb.alt = `Thumbnail for ${state.videoId}`;
-    fallbackThumb.hidden = false;
+    setFallbackThumb(thumb || state.oembed?.thumbnail);
     fallback.hidden = false;
     fallback.classList.remove("hidden");
     frame?.classList.add("is-blocked");
     overlay.classList.add("is-hidden");
     overlay.classList.add("hotspots-off");
+  }
+
+  function applyOverlayFit() {
+    const fit = currentFit();
+    const ins = fit?.inset || { top: 0, right: 0, bottom: 0, left: 0 };
+    const top = Math.max(0, ins.top + state.nudge.y);
+    const left = Math.max(0, ins.left + state.nudge.x);
+    const right = Math.max(0, ins.right - state.nudge.x);
+    const bottom = Math.max(0, ins.bottom - state.nudge.y);
+    overlay.style.setProperty("--live-fit-top", `${top * 100}%`);
+    overlay.style.setProperty("--live-fit-right", `${right * 100}%`);
+    overlay.style.setProperty("--live-fit-left", `${left * 100}%`);
+    overlay.style.setProperty("--live-fit-bottom", `${bottom * 100}%`);
+  }
+
+  function bannerText() {
+    const launch = state.windowLaunch;
+    if (launch?.status === "in-flight") {
+      return `${launch.mission} is in flight on the public Launch Library 2 list — not official SpaceX. Paste a webcast ID if this recap is not the live stream.`;
+    }
+    if (launch) {
+      return `Public Starship window on the manifest: ${launch.mission}. This tab still embeds a public YouTube recap until you paste a webcast ID — not official telemetry.`;
+    }
+    return overlayConfig.defaultVideoNote;
+  }
+
+  function renderCountdown() {
+    const launch = state.windowLaunch;
+    if (!countdownEl) return;
+    if (!launch) {
+      countdownEl.hidden = true;
+      countdownEl.classList.add("hidden");
+      return;
+    }
+    countdownEl.hidden = false;
+    countdownEl.classList.remove("hidden");
+    const t = countdownClock(launch.net);
+    const when = formatUtc(launch.net);
+    const inflight = launch.status === "in-flight";
+    const netMs = new Date(launch.net).getTime();
+    const past = Number.isFinite(netMs) && netMs < Date.now() && !inflight;
+    if (countdownKicker) {
+      countdownKicker.textContent = inflight
+        ? "Public Starship test in flight"
+        : past
+          ? "Listed public Starship window"
+          : "Next public Starship window";
+    }
+    if (countdownMission) countdownMission.textContent = launch.mission;
+    if (countdownT) countdownT.textContent = inflight ? "In flight" : t || "NET TBD";
+    if (countdownStatus) {
+      countdownStatus.textContent = launch.statusLabel || launch.status;
+      countdownStatus.className = `status ${launch.status || "scheduled"}`;
+    }
+    if (countdownMeta) {
+      const src =
+        state.windowSource === "live"
+          ? "Launch Library 2 (The Space Devs)"
+          : "sample teaching slot (not live LL2)";
+      countdownMeta.textContent = `${launch.vehicle} · ${launch.pad} · ${when}. Public ${src} — not official SpaceX countdown, range status, or telemetry.`;
+    }
   }
 
   function syncChrome() {
@@ -189,7 +296,31 @@ export function createLiveLaunch({ onSelect }) {
     follow.disabled = state.isLive;
     const preset = currentPreset();
     presetBlurb.textContent = preset?.blurb || "";
-    banner.textContent = overlayConfig.defaultVideoNote;
+    const fit = currentFit();
+    if (fitBlurb) {
+      fitBlurb.textContent = fit?.blurb || "";
+    }
+    banner.textContent = bannerText();
+    applyOverlayFit();
+    renderCountdown();
+  }
+
+  function renderFits() {
+    if (!fitNav) return;
+    fitNav.innerHTML = "";
+    for (const fit of pictureFits) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `chip${fit.id === state.fitId ? " active" : ""}`;
+      btn.textContent = fit.name;
+      btn.addEventListener("click", () => {
+        state.fitId = fit.id;
+        state.fitManual = true;
+        renderFits();
+        syncChrome();
+      });
+      fitNav.appendChild(btn);
+    }
   }
 
   function renderPresets() {
@@ -218,7 +349,7 @@ export function createLiveLaunch({ onSelect }) {
     const usable = state.isLive ? [] : chapters.filter((c) => !duration || c.t <= duration + 1);
     if (!usable.length) {
       chapterNav.innerHTML = `<p class="hint">${
-        state.isLive ? "Live stream — pick a camera-angle preset." : "No VOD chapter markers for this video."
+        state.isLive ? "Live stream — pick a camera-angle preset and Live webcast overlay fit." : "No VOD chapter markers for this video."
       }</p>`;
       return;
     }
@@ -383,7 +514,27 @@ export function createLiveLaunch({ onSelect }) {
     return false;
   }
 
+  function applyLiveFitIfNeeded() {
+    if (state.fitManual) return;
+    const liveFit = pictureFits.find((f) => f.id === "live-wide");
+    const recapFit = pictureFits.find((f) => f.id === "recap") || pictureFits[0];
+    const next = state.isLive ? liveFit || recapFit : recapFit;
+    if (next && next.id !== state.fitId) {
+      state.fitId = next.id;
+      renderFits();
+    }
+  }
+
+  function clearReadyTimer() {
+    if (state.readyTimer) {
+      window.clearTimeout(state.readyTimer);
+      state.readyTimer = 0;
+    }
+  }
+
   function onPlayerReady() {
+    state.playerReady = true;
+    clearReadyTimer();
     showError("");
     hideFallback();
     try {
@@ -392,6 +543,7 @@ export function createLiveLaunch({ onSelect }) {
       state.duration = 0;
     }
     state.isLive = detectLive();
+    applyLiveFitIfNeeded();
     syncChrome();
     renderChapters();
     resizePlayer();
@@ -401,17 +553,24 @@ export function createLiveLaunch({ onSelect }) {
     const code = ev?.data;
     const short = YT_ERRORS[code] || `YouTube player error (${code ?? "?"}).`;
     const blocked = EMBED_BLOCK_CODES.has(code);
+    if (!blocked && !state.triedNocookie) {
+      state.triedNocookie = true;
+      createPlayer(state.videoId, { nocookie: true });
+      return;
+    }
     showFallback({
       title: "Open on YouTube",
       detail: blocked
         ? "Embedding is disabled for this video (player error 101/150). Some SpaceX webcast IDs block in-page play. Use Open on YouTube, or paste an ID that allows embedding."
         : `${short} YouTube may also show a sign-in / bot check inside the embed. Use Open on YouTube if the in-page player stays unavailable.`,
+      thumb: state.oembed?.thumbnail,
     });
     syncChrome();
   }
 
   function onPlayerState() {
     state.isLive = detectLive();
+    applyLiveFitIfNeeded();
     syncChrome();
     renderChapters();
   }
@@ -427,19 +586,8 @@ export function createLiveLaunch({ onSelect }) {
     }
   }
 
-  function mountIframeFallback(id) {
-    host.innerHTML = "";
-    const iframe = document.createElement("iframe");
-    iframe.id = "live-player";
-    iframe.title = overlayConfig.defaultVideoTitle || "Public Starship stream";
-    iframe.src = `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
-    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-    iframe.allowFullscreen = true;
-    iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    host.appendChild(iframe);
-  }
-
-  async function createPlayer(id) {
+  function destroyPlayer() {
+    clearReadyTimer();
     if (state.player) {
       try {
         state.player.destroy();
@@ -448,18 +596,55 @@ export function createLiveLaunch({ onSelect }) {
       }
       state.player = null;
     }
+    state.playerReady = false;
     host.innerHTML = "";
-    const slot = document.createElement("div");
-    slot.id = "live-player";
-    host.appendChild(slot);
+  }
+
+  function mountIframeFallback(id, { nocookie = false } = {}) {
+    host.innerHTML = "";
+    const iframe = document.createElement("iframe");
+    iframe.id = "live-player";
+    iframe.title = overlayConfig.defaultVideoTitle || "Public Starship stream";
+    const hostName = nocookie ? "www.youtube-nocookie.com" : "www.youtube.com";
+    iframe.src = `https://${hostName}/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    host.appendChild(iframe);
+  }
+
+  async function probeOembed(id) {
+    const gen = ++state.oembedGen;
+    const result = await fetchYouTubeOembed(id);
+    if (gen !== state.oembedGen) return;
+    state.oembed = result;
+    if (result.embeddable === false && !state.playerReady && !state.embedBlockedManual) {
+      destroyPlayer();
+      showFallback({
+        title: result.title || "Open on YouTube",
+        detail:
+          "YouTube oEmbed returned unauthorized — this ID has embedding disabled (common on some SpaceX webcasts). Open it on YouTube instead, or paste an ID that allows embeds.",
+        thumb: result.thumbnail,
+      });
+      syncChrome();
+    }
+  }
+
+  async function createPlayer(id, { nocookie = false } = {}) {
+    destroyPlayer();
     showError("");
     hideFallback({ force: true });
+    probeOembed(id);
     try {
       const YT = await loadYouTubeApi();
+      const slot = document.createElement("div");
+      slot.id = "live-player";
+      host.appendChild(slot);
       state.player = new YT.Player("live-player", {
         videoId: id,
         width: "100%",
         height: "100%",
+        host: nocookie ? "https://www.youtube-nocookie.com" : "https://www.youtube.com",
         playerVars: {
           rel: 0,
           modestbranding: 1,
@@ -473,10 +658,21 @@ export function createLiveLaunch({ onSelect }) {
           onStateChange: onPlayerState,
         },
       });
+      state.readyTimer = window.setTimeout(() => {
+        if (!state.playerReady && !state.embedBlocked) {
+          showFallback({
+            title: "Open on YouTube",
+            detail:
+              "The in-page player did not become ready. YouTube often shows a sign-in / bot check in embedded players. Open the webcast on YouTube, or tap Retry embed.",
+            thumb: state.oembed?.thumbnail,
+          });
+          syncChrome();
+        }
+      }, READY_TIMEOUT_MS);
     } catch (err) {
       console.warn(err);
-      mountIframeFallback(id);
-      showError("YouTube API unavailable — using a basic embed. Chapter sync needs the IFrame API.");
+      mountIframeFallback(id, { nocookie: state.triedNocookie });
+      showError("YouTube API unavailable — using a basic embed. If you see a sign-in / bot check, Open on YouTube.");
     }
   }
 
@@ -487,7 +683,12 @@ export function createLiveLaunch({ onSelect }) {
       return;
     }
     state.videoId = id;
+    state.triedNocookie = false;
+    state.oembed = null;
+    state.isLive = false;
+    if (!state.fitManual) state.fitId = pictureFits.find((f) => f.id === "recap")?.id || state.fitId;
     if (persist) storeVideoId(id);
+    renderFits();
     syncChrome();
     if (state.active) createPlayer(id);
   }
@@ -495,12 +696,17 @@ export function createLiveLaunch({ onSelect }) {
   function startPoll() {
     stopPoll();
     state.poll = window.setInterval(pollTime, 500);
+    state.tick = window.setInterval(renderCountdown, 1000);
   }
 
   function stopPoll() {
     if (state.poll) {
       window.clearInterval(state.poll);
       state.poll = 0;
+    }
+    if (state.tick) {
+      window.clearInterval(state.tick);
+      state.tick = 0;
     }
   }
 
@@ -509,6 +715,7 @@ export function createLiveLaunch({ onSelect }) {
     stage.classList.remove("hidden");
     syncChrome();
     renderPresets();
+    renderFits();
     renderHotspots();
     renderChapters();
     if (!state.player && !host.querySelector("iframe")) createPlayer(state.videoId);
@@ -537,12 +744,16 @@ export function createLiveLaunch({ onSelect }) {
     renderHotspots();
   }
 
-  fallbackThumb.addEventListener("error", () => {
-    fallbackThumb.hidden = true;
-  });
+  function nudge(dx, dy) {
+    state.nudge.x = Math.max(-NUDGE_LIMIT, Math.min(NUDGE_LIMIT, state.nudge.x + dx));
+    state.nudge.y = Math.max(-NUDGE_LIMIT, Math.min(NUDGE_LIMIT, state.nudge.y + dy));
+    applyOverlayFit();
+  }
+
   fallbackRetry.addEventListener("click", () => {
     hideFallback({ force: true });
     showError("");
+    state.triedNocookie = false;
     if (state.active) createPlayer(state.videoId);
   });
   btnEmbedHelp.addEventListener("click", () => {
@@ -551,6 +762,7 @@ export function createLiveLaunch({ onSelect }) {
       detail:
         "If the player asks you to sign in, says the video is unavailable, or sits behind a bot check, YouTube is blocking the embed. That is common on datacenter and some SpaceX IDs. Open the webcast on YouTube instead.",
       manual: true,
+      thumb: state.oembed?.thumbnail,
     });
     syncChrome();
   });
@@ -567,12 +779,22 @@ export function createLiveLaunch({ onSelect }) {
     } catch {
       /* ignore */
     }
+    state.fitManual = false;
+    state.nudge = { x: 0, y: 0 };
     const id = parseYouTubeId(import.meta.env.VITE_YOUTUBE_VIDEO_ID || "") || fallbackId;
     loadVideo(id, { persist: false });
   });
   btnHotspots.addEventListener("click", () => toggleHotspots());
   follow.addEventListener("change", () => {
     state.followChapters = follow.checked;
+  });
+  document.getElementById("live-nudge-left")?.addEventListener("click", () => nudge(-NUDGE_STEP, 0));
+  document.getElementById("live-nudge-right")?.addEventListener("click", () => nudge(NUDGE_STEP, 0));
+  document.getElementById("live-nudge-up")?.addEventListener("click", () => nudge(0, -NUDGE_STEP));
+  document.getElementById("live-nudge-down")?.addEventListener("click", () => nudge(0, NUDGE_STEP));
+  document.getElementById("live-nudge-reset")?.addEventListener("click", () => {
+    state.nudge = { x: 0, y: 0 };
+    applyOverlayFit();
   });
   window.addEventListener("resize", () => {
     if (state.active) resizePlayer();
@@ -585,6 +807,7 @@ export function createLiveLaunch({ onSelect }) {
 
   syncChrome();
   renderPresets();
+  renderFits();
   renderHotspots();
   renderChapters();
 
@@ -593,12 +816,21 @@ export function createLiveLaunch({ onSelect }) {
     deactivate,
     toggleHotspots,
     clearSelection,
+    setLaunchWindow(launch, { source } = {}) {
+      state.windowLaunch = launch || null;
+      state.windowSource = source || "live";
+      if (state.active) syncChrome();
+      else renderCountdown();
+    },
     setSelected(id) {
       state.catalogId = id;
       renderHotspots();
     },
     get selectedId() {
       return state.catalogId;
+    },
+    get hotspotsOn() {
+      return state.hotspotsOn;
     },
   };
 }
