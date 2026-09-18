@@ -1,6 +1,6 @@
 import "./style.css";
 import { Viewer } from "./viewer.js";
-import { CATALOG, catalogById, findCatalogByPart, searchCatalog } from "./data/catalog.js";
+import { CATALOG, catalogById, findCatalogByPart, frameTargetForCatalog, searchCatalog } from "./data/catalog.js";
 import {
   formatUtc,
   loadLaunches,
@@ -69,7 +69,7 @@ function catalogFrameTarget(entry) {
   ) {
     return { sceneId: "falcon9", partId: "falcon9.fins" };
   }
-  return { sceneId: entry.sceneId, partId: entry.partId };
+  return frameTargetForCatalog(entry, viewer.sceneId);
 }
 
 function frameCatalogIn3D(id) {

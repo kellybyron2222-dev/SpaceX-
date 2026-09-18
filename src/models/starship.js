@@ -30,11 +30,13 @@ const PARTS = ids("starship", {
   },
   fwdFlaps: {
     name: "Forward flaps",
+    pickPriority: 8,
     blurb:
       "Two forward flaps (canards) help control pitch and roll during the high-altitude belly-flop, as shown on flight vehicles.",
   },
   aftFlaps: {
     name: "Aft flaps",
+    pickPriority: 8,
     blurb:
       "Larger aft flaps provide most of the aerodynamic lever arm during descent before the landing flip.",
   },
