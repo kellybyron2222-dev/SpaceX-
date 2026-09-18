@@ -102,7 +102,7 @@ If the live API is unreachable (network, CORS, or throttle), the tracker **falls
 
 This is **not** official SpaceX telemetry, range video, or an internal camera product. The UI labels it as a public stream embed.
 
-**Commentator** (toolbar or **C**) is the in-app sports-style play-by-play. It stays **off until Start** and sits **beside** the 16:9 frame so the video stays clear. Beats come from the bot-readable cue sheet at [`public/broadcast/cues.json`](public/broadcast/cues.json) (Flight 5 + generic phases, shipped in [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)). Each beat can highlight a hotspot and open Learn for that part. Phase picker, mute, and pause auto-advance are on the panel. Works with the default VOD and a pasted YouTube id (`?mode=live&commentary=1&phase=catch&video=hI9HQfCAw64`). Public educational beats only.
+**Commentator** (toolbar or **C**) is the in-app sports-style play-by-play. It stays **off until Start** and sits **beside** the 16:9 frame so the video stays clear. Beats come from the bot-readable cue sheet at [`public/broadcast/cues.json`](public/broadcast/cues.json) (Flight 5 catch + Flight 13 T+ + generic phases). Each beat can highlight a hotspot and open Learn. Phase picker, mute, and pause auto-advance are on the panel. When nothing is live, the player prefills the latest completed official-style webcast from Launch Library 2 and syncs beats to that VOD clock (`t0Offset` + T+). Paste still wins (`?mode=live&commentary=1&phase=catch&video=hI9HQfCAw64`). Public educational beats only.
 
 ### Embeds can fail (use Open on YouTube)
 
@@ -112,11 +112,11 @@ When the in-page player is blocked, Live Launch **does not leave a broken iframe
 
 ### Set the YouTube ID
 
-Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://www.youtube.com/watch?v=hI9HQfCAw64) recap (`hI9HQfCAw64`, 13 Oct 2024, **~3:28** — not the multi-hour webcast). Swap it for the latest public launch/test stream when one is up, **preferring an ID that allows embedding**.
+When Launch Library 2 / YouTube has no live Starship or Falcon webcast, Live Launch auto-selects the **most recent completed** official-style YouTube VOD (as of 2026-09-18 that is Starship Flight 13) and prefills the embed at T-0 when the stream start time is known. The Flight 5 recap (`hI9HQfCAw64`) stays the last-resort teaching VOD and the catch cue sheet. Prefer IDs that allow embedding.
 
 1. In the Live Launch sidebar, paste a YouTube **watch** URL or 11-character **video** ID and click **Load** (remembered in `localStorage`). Playlist, channel, and `@handle` links are rejected — the parser will not scrape an 11-character token out of them. The ID field is monospace and stays on one line so `hI9HQfCAw64` is not read as `h19HQ/CAw64`.
 2. Or copy `.env.example` to `.env`, set `VITE_YOUTUBE_VIDEO_ID=your_id`, and restart Vite. Env is the deploy-time default when the user has not pasted an ID.
-3. **Reset to default webcast** clears the saved ID and reloads the env/JSON default.
+3. **Reset to latest webcast** clears the saved ID and re-runs the LL2 live-or-latest picker (Flight 5 recap only if nothing newer is listed).
 4. **Open on YouTube** is the primary action next to Load — use it whenever the embed is blocked.
 
 ### Overlay presets (JSON)
@@ -143,7 +143,7 @@ Overlays start **off** so the webcast is watchable. Toggle them with the **Hotsp
 
 ### Starship countdown (public LL2)
 
-If Launch Library 2 (or the sample teaching set) lists a Starship / Super Heavy / Starbase window, Live Launch shows a **T− / T+** card: mission, status, pad, and NET. That clock is a **public educational approximation** from [The Space Devs](https://thespacedevs.com/llapi) — **not** official SpaceX countdown, range status, or telemetry. The YouTube embed stays the Flight 5 recap until you paste a webcast ID. In-flight public reports are labeled as such.
+If Launch Library 2 (or the sample teaching set) lists a Starship / Super Heavy / Starbase window, Live Launch shows a **T− / T+** card: mission, status, pad, and NET. That clock is a **public educational approximation** from [The Space Devs](https://thespacedevs.com/llapi) — **not** official SpaceX countdown, range status, or telemetry. In-flight public reports are labeled as such. The embed follows a live YouTube webcast when LL2 lists one; otherwise it prefills the latest completed VOD.
 
 ### Phase 2 (not in this MVP)
 

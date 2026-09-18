@@ -9,6 +9,8 @@ import {
   beatAtTime,
   beatById,
   cuesUrl,
+  latestSheetVideoId,
+  missionBeats,
   normalizeBeat,
   normalizePack,
   pickSheet,
@@ -23,11 +25,13 @@ const hotspotIds = new Set(
 );
 
 describe("broadcast cue JSON from #33", () => {
-  it("ships Flight 5 plus generic launch/test phases", () => {
+  it("ships Flight 5, Flight 13, and generic T+ phases", () => {
     assert.match(pack.schema, /broadcast-cues/);
     assert.match(pack.disclaimer, /not official/i);
     assert.ok(pack.sheets.some((s) => s.id === "flight-5"));
+    assert.ok(pack.sheets.some((s) => s.id === "flight-13"));
     assert.ok(pack.sheets.some((s) => s.id === "generic-launch-test"));
+    assert.equal(latestSheetVideoId(pack), "lC3RDO7tdLc");
   });
 
   it("keeps beats bot-readable with clock, cue, optional hotspot + Learn", () => {
@@ -57,6 +61,28 @@ describe("broadcast cue JSON from #33", () => {
     assert.ok(recap.some((b) => b.phase === "liftoff"));
     assert.equal(beatAtClock(recap, 100, "recapSeconds").phase, "catch");
     assert.equal(pickSheet(pack, "dQw4w9WgXcQ").id, "generic-launch-test");
+  });
+
+  it("binds Flight 13 aliases and maps liftoff / splash to public T+", () => {
+    const sheet = pickSheet(pack, "lC3RDO7tdLc");
+    assert.equal(sheet.id, "flight-13");
+    assert.equal(pickSheet(pack, "uI6pKTGyNq4").id, "flight-13");
+    assert.equal(sheet.t0OffsetSeconds, 11118);
+    const lift = beatById(sheet, "liftoff");
+    assert.equal(lift.clockSeconds, 0);
+    assert.equal(lift.learnId, "booster-cluster");
+    const splash = beatById(sheet, "splashdown");
+    assert.equal(splash.clockSeconds, 3921);
+    const mission = missionBeats(sheet);
+    assert.equal(beatAtClock(mission, 0, "clockSeconds").phase, "liftoff");
+    assert.equal(beatAtClock(mission, 141, "clockSeconds").phase, "hot-staging");
+  });
+
+  it("gives generic phases clockSeconds so an unmatched VOD can follow T+", () => {
+    const generic = pickSheet(pack, "dQw4w9WgXcQ");
+    const lift = beatById(generic, "liftoff");
+    assert.equal(lift.clockSeconds, 0);
+    assert.ok(missionBeats(generic).length >= 8);
   });
 });
 

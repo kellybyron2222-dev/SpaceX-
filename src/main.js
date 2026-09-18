@@ -510,7 +510,7 @@ async function refreshLaunches({ preferFirst = false } = {}) {
     }
     syncLiveSampleChips(data.source, prefer);
     renderLaunches();
-    live.setLaunchWindow(nextStarshipWindow(data), { source: data.source });
+    live.setLaunchWindow(nextStarshipWindow(data), { source: data.source, bundle: data });
     if (preferFirst) frameTrackerLaunch({ preferFirst: true });
     else if (state.mode === "tracker") {
       const current = launchById(state.launchId);

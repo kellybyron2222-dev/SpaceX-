@@ -1,5 +1,6 @@
 import { SAMPLE_LAUNCHES } from "./sampleLaunches.js";
 import { catalogById } from "./catalog.js";
+import { normalizeVidUrl } from "./live/webcast.js";
 
 export const REFRESH_MS = 10 * 60 * 1000;
 const LL2 = "https://ll.thespacedevs.com/2.3.0";
@@ -118,12 +119,19 @@ export function sceneForLaunch(vehicle, pad, site, mission = "") {
   return "falcon9";
 }
 
+function launchWebcasts(raw) {
+  const rows = raw.webcasts || raw.vid_urls || raw.vidURLs || [];
+  return rows.map(normalizeVidUrl);
+}
+
 export function normalizeLaunch(raw) {
   if (raw.mission && raw.vehicle && raw.status && raw.pad && !raw.rocket) {
     return {
       ...raw,
       relatedIds: relatedIdsForLaunch(raw.vehicle, raw.pad, raw.site, raw.mission),
       sceneId: sceneForLaunch(raw.vehicle, raw.pad, raw.site, raw.mission),
+      webcasts: launchWebcasts(raw),
+      webcastLive: Boolean(raw.webcastLive || raw.webcast_live),
     };
   }
   const mapped = mapStatus(raw.status);
@@ -145,6 +153,8 @@ export function normalizeLaunch(raw) {
     description: raw.mission?.description || "",
     relatedIds: relatedIdsForLaunch(vehicle, pad, site, mission),
     sceneId: sceneForLaunch(vehicle, pad, site, mission),
+    webcasts: launchWebcasts(raw),
+    webcastLive: Boolean(raw.webcast_live),
   };
 }
 
@@ -168,10 +178,10 @@ async function getJson(url, timeoutMs = 12000) {
 }
 
 async function fetchFromBase(base) {
-  const q = "lsp__name=SpaceX&limit=12&mode=normal";
+  const q = "lsp__name=SpaceX&limit=12&mode=detailed";
   const [up, prev] = await Promise.all([
     getJson(`${base}/launches/upcoming/?${q}`),
-    getJson(`${base}/launches/previous/?lsp__name=SpaceX&limit=8&mode=normal`),
+    getJson(`${base}/launches/previous/?lsp__name=SpaceX&limit=8&mode=detailed`),
   ]);
   if (!Array.isArray(up?.results) || !Array.isArray(prev?.results)) throw new Error("Unexpected LL2 shape");
   return {
