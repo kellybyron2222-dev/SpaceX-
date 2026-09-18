@@ -1,6 +1,7 @@
 import overlayConfig from "./data/live/overlays.json";
 import { catalogById } from "./data/catalog.js";
 import { countdownClock, formatUtc } from "./data/launches.js";
+import { beatAtClock, beatById, fetchCuePack, missionBeats, pickSheet, recapBeats } from "./data/live/cues.js";
 import {
   fetchYouTubeOembed,
   loadHotspotsVisible,
@@ -91,7 +92,7 @@ function svgEl(name, attrs) {
   return el;
 }
 
-export function createLiveLaunch({ onSelect, onShareChange } = {}) {
+export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const stage = document.getElementById("live-stage");
   const host = document.getElementById("live-player-host");
   const overlay = document.getElementById("live-overlay");
@@ -128,6 +129,17 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
   const countdownT = document.getElementById("live-countdown-t");
   const countdownMeta = document.getElementById("live-countdown-meta");
   const countdownStatus = document.getElementById("live-countdown-status");
+  const commentator = document.getElementById("commentator");
+  const commClock = document.getElementById("comm-clock");
+  const commPhase = document.getElementById("comm-phase");
+  const commCue = document.getElementById("comm-cue");
+  const commBeats = document.getElementById("comm-beats");
+  const commPick = document.getElementById("comm-phase-pick");
+  const commPause = document.getElementById("comm-pause");
+  const commMute = document.getElementById("comm-mute");
+  const btnCommStart = document.getElementById("btn-comm-start");
+  const btnCommLearn = document.getElementById("btn-comm-learn");
+  const btnCommentary = document.getElementById("btn-commentary");
 
   const presets = overlayConfig.presets || [];
   const chapters = overlayConfig.chapters || [];
@@ -165,7 +177,294 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
     pendingPlay: false,
     seekUntil: 0,
     seekReload: false,
+    cuePack: null,
+    cueLoad: null,
+    sheet: null,
+    commentaryOn: false,
+    pauseAdvance: false,
+    muted: false,
+    beatId: null,
+    pendingPhase: null,
+    fromQueryYoutube: false,
   };
+
+  function learnIdForBeat(beat) {
+    if (beat?.learnId) return beat.learnId;
+    if (!beat?.hotspotId) return null;
+    for (const preset of presets) {
+      const hs = preset.hotspots?.find((h) => h.id === beat.hotspotId);
+      if (hs?.catalogId) return hs.catalogId;
+    }
+    return null;
+  }
+
+  function currentBeat() {
+    return beatById(state.sheet, state.beatId);
+  }
+
+  function stopSpeech() {
+    try {
+      window.speechSynthesis?.cancel();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function speakCue(text) {
+    if (state.muted || !state.commentaryOn || !text) return;
+    stopSpeech();
+    try {
+      if (!window.speechSynthesis) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.04;
+      utter.pitch = 1;
+      utter.lang = "en-US";
+      window.speechSynthesis.speak(utter);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function ensureCues() {
+    if (state.cuePack) return state.cuePack;
+    if (!state.cueLoad) {
+      state.cueLoad = fetchCuePack()
+        .then((pack) => {
+          state.cuePack = pack;
+          bindSheet();
+          return pack;
+        })
+        .catch((err) => {
+          console.warn(err);
+          state.cuePack = { schema: "spacex-companion-cues/v1", disclaimer: "", defaultSheet: "", sheets: [] };
+          state.cueLoad = null;
+          return state.cuePack;
+        });
+    }
+    return state.cueLoad;
+  }
+
+  function bindSheet() {
+    state.sheet = pickSheet(state.cuePack, state.videoId);
+    renderPhasePicker();
+    if (state.commentaryOn) renderCommentator();
+  }
+
+  function playerSeconds() {
+    try {
+      return state.player?.getCurrentTime?.() ?? 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  function missionElapsedSeconds() {
+    const launch = state.windowLaunch;
+    if (!launch?.net) return null;
+    if (!(state.isLive || launch.status === "in-flight")) return null;
+    const elapsed = (Date.now() - new Date(launch.net).getTime()) / 1000;
+    return Number.isFinite(elapsed) ? elapsed : null;
+  }
+
+  function recapFollowBeats() {
+    if (state.isLive) return [];
+    return recapBeats(state.sheet);
+  }
+
+  function followBeatAtClock() {
+    const recap = recapFollowBeats();
+    if (recap.length) return beatAtClock(recap, playerSeconds(), "recapSeconds");
+    const elapsed = missionElapsedSeconds();
+    if (elapsed == null) return null;
+    return beatAtClock(missionBeats(state.sheet), elapsed, "clockSeconds");
+  }
+
+  function autoAdvanceEnabled() {
+    if (!state.commentaryOn || state.pauseAdvance || !state.sheet) return false;
+    if (recapFollowBeats().length) return true;
+    return missionElapsedSeconds() != null && missionBeats(state.sheet).length > 0;
+  }
+
+  function followCommentary() {
+    if (!autoAdvanceEnabled()) return;
+    const beat = followBeatAtClock();
+    if (beat && beat.id !== state.beatId) applyBeat(beat, { seek: false, speak: true });
+  }
+
+  function syncShareQuery() {
+    onShareChange?.();
+  }
+
+  function applyBeat(beat, { seek = false, speak = true } = {}) {
+    if (!beat) return;
+    const same = state.beatId === beat.id;
+    state.beatId = beat.id;
+    if (beat.presetId) selectPreset(beat.presetId, { manual: false });
+    const learnId = learnIdForBeat(beat);
+    if (learnId) selectHotspot(learnId);
+    if (seek && !state.isLive && beat.recapSeconds != null) {
+      seekTo(Math.max(0, beat.recapSeconds), { play: beat.recapSeconds > 0 });
+    }
+    renderCommentator({ pulse: !same });
+    if (speak && !same) speakCue(beat.cue);
+    syncShareQuery();
+  }
+
+  function renderPhasePicker() {
+    if (!commPick) return;
+    const beats = state.sheet?.beats || [];
+    commPick.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = beats.length ? "Pick a phase" : "No cue sheet";
+    commPick.appendChild(placeholder);
+    for (const beat of beats) {
+      const opt = document.createElement("option");
+      opt.value = beat.id;
+      opt.textContent = `${beat.clock || beat.phase} · ${beat.phase}`;
+      commPick.appendChild(opt);
+    }
+    commPick.value = state.beatId || "";
+  }
+
+  function renderCommentator({ pulse = false } = {}) {
+    if (!commentator) return;
+    commentator.classList.toggle("is-idle", !state.commentaryOn);
+    stage?.classList.toggle("is-commentating", state.commentaryOn);
+    btnCommentary?.setAttribute("aria-pressed", state.commentaryOn ? "true" : "false");
+    if (btnCommStart) {
+      btnCommStart.textContent = state.commentaryOn ? "Stop commentary" : "Start commentary";
+    }
+    const canUse = Boolean(state.sheet?.beats?.length);
+    if (commPick) commPick.disabled = !state.commentaryOn || !canUse;
+    if (commPause) {
+      commPause.disabled = !state.commentaryOn;
+      commPause.checked = state.pauseAdvance;
+    }
+    if (commMute) {
+      commMute.disabled = !state.commentaryOn;
+      commMute.checked = state.muted;
+    }
+    const beat = currentBeat();
+    const entry = catalogById(learnIdForBeat(beat));
+    if (!state.commentaryOn) {
+      if (commClock) commClock.textContent = "Off until Start";
+      if (commPhase) commPhase.textContent = "Public play-by-play";
+      if (commCue) {
+        commCue.textContent =
+          "Sports-style beats sit beside the stream. Start commentary to follow T-0, hot stage, flaps, catch. Educational approximation — not official telemetry.";
+      }
+      if (commBeats) commBeats.hidden = true;
+      btnCommLearn?.classList.add("hidden");
+      return;
+    }
+    if (commClock) {
+      commClock.textContent = beat
+        ? `${state.sheet?.title || "Cue sheet"} · ${beat.clock}`
+        : state.sheet?.title || "Cue sheet";
+    }
+    if (commPhase) commPhase.textContent = beat?.phase || "Waiting for a beat";
+    if (commCue) commCue.textContent = beat?.cue || state.sheet?.note || packDisclaimer();
+    if (pulse && commCue) {
+      commCue.classList.remove("is-pulse");
+      void commCue.offsetWidth;
+      commCue.classList.add("is-pulse");
+    }
+    if (commPick && beat) commPick.value = beat.id;
+    if (btnCommLearn) {
+      btnCommLearn.classList.toggle("hidden", !entry);
+      if (entry) btnCommLearn.textContent = `Open in Learn · ${entry.name}`;
+    }
+    if (commBeats) {
+      commBeats.hidden = false;
+      commBeats.replaceChildren();
+      for (const row of state.sheet?.beats || []) {
+        const item = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `commentator-beat${row.id === state.beatId ? " active" : ""}`;
+        btn.innerHTML = `<span class="commentator-beat-clock">${row.clock}</span><span>${row.cue}</span>`;
+        btn.addEventListener("click", () => pickPhase(row.id, { seek: true }));
+        item.appendChild(btn);
+        commBeats.appendChild(item);
+      }
+    }
+  }
+
+  function packDisclaimer() {
+    return state.cuePack?.disclaimer || "Public educational beats — not official telemetry.";
+  }
+
+  async function setCommentaryOn(on, { beat, seek = false } = {}) {
+    await ensureCues();
+    bindSheet();
+    state.commentaryOn = Boolean(on);
+    if (!state.commentaryOn) {
+      stopSpeech();
+      renderCommentator();
+      syncShareQuery();
+      return;
+    }
+    let next = beat || currentBeat();
+    if (!next && state.pendingPhase) next = beatById(state.sheet, state.pendingPhase);
+    if (!next && autoAdvanceEnabled()) next = followBeatAtClock();
+    if (!next) next = state.sheet?.beats?.[0] || null;
+    state.pendingPhase = null;
+    renderCommentator();
+    if (next) applyBeat(next, { seek, speak: true });
+    else syncShareQuery();
+  }
+
+  function pickPhase(id, { seek = true } = {}) {
+    const beat = beatById(state.sheet, id);
+    if (!beat) return;
+    applyBeat(beat, { seek, speak: true });
+  }
+
+  function toggleCommentary(force) {
+    const on = typeof force === "boolean" ? force : !state.commentaryOn;
+    setCommentaryOn(on, { seek: false });
+  }
+
+  async function applyQuery({ commentary, phase, youtube } = {}) {
+    if (youtube) {
+      state.fromQueryYoutube = true;
+      loadVideo(youtube, { persist: false });
+    }
+    await ensureCues();
+    bindSheet();
+    if (phase) state.pendingPhase = phase;
+    if (commentary) {
+      const beat = beatById(state.sheet, phase);
+      await setCommentaryOn(true, { beat, seek: Boolean(beat) });
+    } else if (phase) {
+      renderPhasePicker();
+    }
+  }
+
+  function applyShareLink({ videoId, presetId, hotspotId, hotspots, commentary, phase } = {}) {
+    if (typeof hotspots === "boolean") toggleHotspots(hotspots, { share: false });
+    if (videoId) {
+      const id = parseYouTubeId(videoId);
+      if (id) {
+        state.fromQueryYoutube = true;
+        if (state.active) {
+          if (id !== state.videoId) loadVideo(id, { persist: false });
+        } else {
+          state.videoId = id;
+          syncChrome();
+        }
+      }
+    }
+    if (presetId) selectPreset(presetId, { manual: true });
+    if (hotspotId && catalogById(hotspotId)) {
+      selectHotspot(hotspotId);
+      if (typeof hotspots !== "boolean") toggleHotspots(true, { share: false });
+    }
+    if (commentary || phase) {
+      applyQuery({ commentary: Boolean(commentary), phase: phase || undefined });
+    }
+  }
 
   function showError(msg) {
     if (!msg) {
@@ -582,6 +881,7 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
       clearPendingSeekIfClose(t);
       if (state.pendingSeek != null) applyJump();
       applyChapterAt(t);
+      followCommentary();
     } catch {
       /* ignore */
     }
@@ -758,6 +1058,7 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
     state.isLive = false;
     if (persist) storeVideoId(id);
     if (!state.fitManual) state.fitId = pictureFits.find((f) => f.id === "recap")?.id || state.fitId;
+    bindSheet();
     renderFits();
     syncChrome();
     try {
@@ -828,6 +1129,7 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
       state.videoId = id;
       state.oembed = result;
       if (persist) storeVideoId(id);
+      bindSheet();
       syncChrome();
     });
   }
@@ -857,6 +1159,10 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
     renderFits();
     renderHotspots();
     renderChapters();
+    ensureCues().then(() => {
+      bindSheet();
+      renderCommentator();
+    });
     if (!state.player && !host.querySelector("iframe")) createPlayer(state.videoId);
     else resizePlayer();
     startPoll();
@@ -870,6 +1176,7 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
     } catch {
       /* ignore */
     }
+    stopSpeech();
   }
 
   function toggleHotspots(force, { share = true } = {}) {
@@ -929,6 +1236,22 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
     onShareChange?.();
   });
   btnHotspots.addEventListener("click", () => toggleHotspots());
+  btnCommentary?.addEventListener("click", () => toggleCommentary());
+  btnCommStart?.addEventListener("click", () => toggleCommentary());
+  commPause?.addEventListener("change", () => {
+    state.pauseAdvance = commPause.checked;
+  });
+  commMute?.addEventListener("change", () => {
+    state.muted = commMute.checked;
+    if (state.muted) stopSpeech();
+  });
+  commPick?.addEventListener("change", () => {
+    if (commPick.value) pickPhase(commPick.value, { seek: true });
+  });
+  btnCommLearn?.addEventListener("click", () => {
+    const id = learnIdForBeat(currentBeat()) || state.catalogId;
+    if (id) onLearn?.(id);
+  });
   follow.addEventListener("change", () => {
     state.followChapters = follow.checked;
   });
@@ -954,31 +1277,14 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
   renderFits();
   renderHotspots();
   renderChapters();
-
-  function applyShareLink({ videoId, presetId, hotspotId, hotspots } = {}) {
-    if (typeof hotspots === "boolean") toggleHotspots(hotspots, { share: false });
-    if (videoId) {
-      const id = parseYouTubeId(videoId);
-      if (id) {
-        if (state.active) {
-          if (id !== state.videoId) loadVideo(id, { persist: false });
-        } else {
-          state.videoId = id;
-          syncChrome();
-        }
-      }
-    }
-    if (presetId) selectPreset(presetId, { manual: true });
-    if (hotspotId && catalogById(hotspotId)) {
-      selectHotspot(hotspotId);
-      if (typeof hotspots !== "boolean") toggleHotspots(true, { share: false });
-    }
-  }
+  renderCommentator();
 
   return {
     activate,
     deactivate,
     toggleHotspots,
+    toggleCommentary,
+    applyQuery,
     applyShareLink,
     shareSnapshot() {
       return {
@@ -986,14 +1292,18 @@ export function createLiveLaunch({ onSelect, onShareChange } = {}) {
         videoId: state.videoId === fallbackId ? "" : state.videoId,
         catalogId: state.catalogId,
         hotspotsOn: state.hotspotsOn,
+        commentaryOn: state.commentaryOn,
+        beatId: state.beatId,
       };
     },
     clearSelection,
     setLaunchWindow(launch, { source } = {}) {
       state.windowLaunch = launch || null;
       state.windowSource = source || "live";
-      if (state.active) syncChrome();
-      else renderCountdown();
+      if (state.active) {
+        syncChrome();
+        followCommentary();
+      } else renderCountdown();
     },
     setSelected(id) {
       state.catalogId = id;

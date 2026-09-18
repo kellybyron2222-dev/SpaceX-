@@ -59,6 +59,33 @@
           </div>
           <p id="live-player-error" class="live-error hidden" role="alert"></p>
         </div>
+        <aside id="commentator" class="commentator is-idle" aria-label="Live Launch commentator">
+          <p class="commentator-kicker">Commentator</p>
+          <p id="comm-clock" class="commentator-clock">Off until Start</p>
+          <h2 id="comm-phase">Public play-by-play</h2>
+          <p id="comm-cue" class="commentator-cue">
+            Sports-style beats sit beside the stream. Start commentary to follow T-0, hot stage, flaps, catch.
+            Educational approximation — not official telemetry.
+          </p>
+          <div class="commentator-controls">
+            <button type="button" id="btn-comm-start" class="tool primary">Start commentary</button>
+            <label class="field-label" for="comm-phase-pick">Phase</label>
+            <select id="comm-phase-pick" disabled>
+              <option value="">Pick a phase</option>
+            </select>
+            <label class="follow-row">
+              <input type="checkbox" id="comm-pause" disabled />
+              Pause auto-advance
+            </label>
+            <label class="follow-row">
+              <input type="checkbox" id="comm-mute" disabled />
+              Mute
+            </label>
+            <button type="button" id="btn-comm-learn" class="tool hidden">Open in Learn</button>
+          </div>
+          <ol id="comm-beats" class="commentator-beats" hidden></ol>
+          <p class="hint">Panel stays off the picture until Start. Hotspots and Learn still work as before.</p>
+        </aside>
       </div>
 
       <header class="topbar">
@@ -87,6 +114,9 @@
           <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
           <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="false" title="Show hotspot overlays (H)">
             Hotspots
+          </button>
+          <button type="button" id="btn-commentary" class="tool live-only" aria-pressed="false" title="Start sports-style commentary (C)">
+            Commentary
           </button>
           <button type="button" id="btn-help" class="tool ghost" title="Keyboard shortcuts (?)">?</button>
         </div>
@@ -188,6 +218,9 @@
           <button type="button" id="btn-live-default" class="text-btn">Reset to default webcast</button>
         </div>
         <p id="live-url-error" class="hint" hidden role="alert"></p>
+        <p class="hint">
+          <strong>Commentator</strong> is beside the stream (toolbar or C). It stays off until Start so the video stays clear.
+        </p>
         <p class="section-label">Overlay preset</p>
         <div class="filters" id="live-presets"></div>
         <p id="live-preset-blurb" class="hint"></p>
@@ -247,7 +280,7 @@
           <h2 id="help-title">Controls</h2>
           <ul>
             <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn · <kbd>Y</kbd> Live Launch</li>
-            <li><kbd>H</kbd> Toggle Live Launch hotspots</li>
+            <li><kbd>H</kbd> Toggle Live Launch hotspots · <kbd>C</kbd> Start / stop commentary</li>
             <li><kbd>R</kbd> Reset camera and explode</li>
             <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
@@ -268,7 +301,7 @@
           Approximate educational model — not SpaceX CAD or flight hardware drawings.
           Dimensions are rounded public figures used only as rough scale.
           Launch times come from a public third-party API, not SpaceX.
-          <span class="live-only"> Live Launch embeds a public YouTube stream — not official SpaceX telemetry or internal cameras.</span>
+          <span class="live-only"> Live Launch embeds a public YouTube stream with optional in-app commentary — not official SpaceX telemetry or internal cameras.</span>
         </p>
       </footer>
     </div>

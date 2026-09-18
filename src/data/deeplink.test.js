@@ -51,6 +51,20 @@ describe("serializeDeepLink", () => {
       serializeDeepLink({ mode: "live", preset: "catch-chopsticks", hotspots: true }),
       "mode=live&preset=catch-chopsticks&hotspots=1",
     );
+    assert.equal(
+      serializeDeepLink({ mode: "live", preset: "catch-chopsticks", commentary: true, phase: "catch" }),
+      "mode=live&preset=catch-chopsticks&commentary=1&phase=catch",
+    );
+  });
+
+  it("reads Live commentary bits without a second URL scheme", () => {
+    const live = parseDeepLink("?mode=live&commentary=1&phase=catch&youtube=hI9HQfCAw64");
+    assert.equal(live.mode, "live");
+    assert.equal(live.commentary, true);
+    assert.equal(live.phase, "catch");
+    assert.equal(live.video, "hI9HQfCAw64");
+    assert.equal(inferredMode(parseDeepLink("commentary=start&phase=liftoff")), "live");
+    assert.equal(parseDeepLink("?mode=learn&id=raptor").commentary, false);
   });
 
   it("infers a tab when mode is omitted", () => {

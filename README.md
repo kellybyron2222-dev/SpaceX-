@@ -8,7 +8,7 @@ This Pages app is the **Starship Component Viewer**. The related Grok bot is **S
 
 **Snapshot:** [STATUS.md](STATUS.md)
 
-Bot / share links stay on `/SpaceX-/` as query (or hash): `?mode=learn&id=raptor`, `?mode=explore&scene=raptor`, `?mode=live&preset=catch-chopsticks`. In-app nav rewrites the URL so you can copy it.
+Bot / share links stay on `/SpaceX-/` as query (or hash): `?mode=learn&id=raptor`, `?mode=explore&scene=raptor`, `?mode=live&commentary=1&phase=catch`. In-app nav rewrites the URL so you can copy it.
 
 Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Parametric teaching models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
@@ -101,6 +101,8 @@ If the live API is unreachable (network, CORS, or throttle), the tracker **falls
 **Live Launch** plays a **public YouTube embed** of Starship coverage and lets you click tagged components on the picture. Each hotspot maps to a catalog id (chopsticks, Raptor cluster, tiles, QD arm, flaps, OLM, …) and opens the same Learn detail panel: Overview / History / Function / Sources / Physics.
 
 This is **not** official SpaceX telemetry, range video, or an internal camera product. The UI labels it as a public stream embed.
+
+**Commentator** (toolbar or **C**) is the in-app sports-style play-by-play. It stays **off until Start** and sits **beside** the 16:9 frame so the video stays clear. Beats come from the bot-readable cue sheet at [`public/broadcast/cues.json`](public/broadcast/cues.json) (Flight 5 + generic phases, shipped in [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)). Each beat can highlight a hotspot and open Learn for that part. Phase picker, mute, and pause auto-advance are on the panel. Works with the default VOD and a pasted YouTube id (`?mode=live&commentary=1&phase=catch&video=hI9HQfCAw64`). Public educational beats only.
 
 ### Embeds can fail (use Open on YouTube)
 
