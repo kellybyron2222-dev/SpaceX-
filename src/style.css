@@ -425,7 +425,13 @@ body,
 @media (max-width: 860px) {
   :root {
     --footer-gap: max(8px, var(--safe-bottom));
-    --chrome-bottom: calc(var(--footer-gap) + 38px);
+    --footer-h: 2.85rem;
+    --chrome-bottom: calc(var(--footer-gap) + var(--footer-h) + 8px);
+    --learn-3d-min: max(12.5rem, 26vh);
+    --learn-teach-h: min(22vh, 10rem);
+    --learn-catalog-max: 9.75rem;
+    --learn-top-chrome: 11.25rem;
+    --row-fade: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.25rem), transparent 100%);
   }
 
   .topbar {
@@ -444,7 +450,10 @@ body,
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
+    overscroll-behavior-x: contain;
+    padding-inline-end: 1.75rem;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
   }
 
   .modes::-webkit-scrollbar,
@@ -455,16 +464,23 @@ body,
 
   .mode-btn {
     flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
     white-space: nowrap;
+    overflow: visible;
   }
 
   .toolbar {
     justify-content: flex-start;
+    gap: 6px;
   }
 
   .tool {
     flex: 0 0 auto;
+    width: max-content;
+    max-width: none;
     white-space: nowrap;
+    overflow: visible;
   }
 
   .sidebar {
@@ -579,6 +595,14 @@ body,
 
   .brand p {
     display: none;
+  }
+
+  .modes {
+    gap: 4px;
+  }
+
+  .toolbar {
+    gap: 4px;
   }
 }
 
@@ -938,6 +962,8 @@ body,
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    scroll-padding-bottom: 12px;
   }
 
   #app[data-mode="tracker"] .launch-card,
@@ -945,12 +971,15 @@ body,
     flex-shrink: 0;
   }
 
-  /* Learn: compact horizontal catalog above a scrolling teach sheet — 3D stays on top. */
+  /* Learn: compact catalog + shorter teach sheet so a min 3D band stays visible. */
   #app[data-mode="learn"] .catalog-panel {
-    bottom: calc(var(--chrome-bottom) + 30vh);
-    max-height: none;
+    bottom: calc(var(--chrome-bottom) + var(--learn-teach-h));
+    max-height: min(
+      var(--learn-catalog-max),
+      max(4.5rem, calc(100dvh - var(--learn-3d-min) - var(--learn-teach-h) - var(--chrome-bottom) - var(--learn-top-chrome)))
+    );
     height: auto;
-    padding: 8px 10px;
+    padding: 6px 8px;
     overflow: hidden;
   }
 
@@ -969,7 +998,10 @@ body,
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.4rem), transparent 100%);
+    overscroll-behavior-x: contain;
+    padding-inline-end: 1.75rem;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
     gap: 6px;
   }
 
@@ -987,7 +1019,7 @@ body,
   #app[data-mode="learn"] .teach-panel {
     bottom: var(--chrome-bottom);
     top: auto;
-    max-height: 30vh;
+    max-height: var(--learn-teach-h);
   }
 
   #app[data-mode="learn"] .teach-panel h2,
@@ -1036,13 +1068,15 @@ body,
   }
 
   .mode-btn {
-    padding: 12px 14px;
+    padding: 12px 8px;
+    letter-spacing: 0.045em;
   }
 
   .tool,
   .tool.ghost {
     min-width: 44px;
-    padding: 12px 14px;
+    padding: 12px 8px;
+    letter-spacing: 0.03em;
   }
 
   .chip {
