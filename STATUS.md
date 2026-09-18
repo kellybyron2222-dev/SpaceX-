@@ -4,17 +4,14 @@
 
 ## Shipped
 
-- Through [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, YouTube fallback / overlay fit / Starship **T−** card
-- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md` · [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21): Vacuum Raptor framing · tokenized search
-- [#24](https://github.com/kellybyron2222-dev/SpaceX-/pull/24): contest-ready README — 120s booth script, viewer vs Starship Render Lab
-- [#23](https://github.com/kellybyron2222-dev/SpaceX-/pull/23): Live Launch **Catch auto-seek** + stricter YouTube IDs
-- [#25](https://github.com/kellybyron2222-dev/SpaceX-/pull/25): Falcon **Merlin Vacuum** + **Falcon tanks** catalog rows
-- [#22](https://github.com/kellybyron2222-dev/SpaceX-/pull/22): mobile tabs / Learn 3D band / Tracker footer / Live phone player chrome
-- This PR [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26): Tracker auto-frames the first card (Sample does not keep leftover Heavy); **Crew-13** at SLC-40 maps Crew access arm from the mission name; window/NET line; Physics tab label; empty Learn search clears the teach sheet
+- Through [#26](https://github.com/kellybyron2222-dev/SpaceX-/pull/26): Pages viewer, Live Launch (fallback / overlay / T− / Catch auto-seek), Vacuum Raptor framing, Falcon **MVac** + tanks rows, mobile tabs, Tracker first-card frame / Crew-13 chips
+- [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19) `STATUS.md` · [#24](https://github.com/kellybyron2222-dev/SpaceX-/pull/24) contest README (120s booth script)
+- This PR: Learn **Merlin Vacuum** frames the white second-stage tank (not the carbon interstage wall)
 
 ## Open PRs
 
 - [#27](https://github.com/kellybyron2222-dev/SpaceX-/pull/27) (draft) — prefer Starship flap picks over the barrel
+- this PR — MVac second-stage framing
 
 ## Next
 
