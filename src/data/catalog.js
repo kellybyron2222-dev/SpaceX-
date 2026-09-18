@@ -482,17 +482,34 @@ export function findCatalogByPart(part) {
   return null;
 }
 
+function catalogFamilyOk(entry, family) {
+  if (family === "starship" || family === "falcon") {
+    return entry.family === family || entry.family === "shared";
+  }
+  if (family === "vehicle" || family === "ground") {
+    return entry.domain === family;
+  }
+  return true;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Hyphenated compounds stay one token, so "catch" misses "catch-and-replace". */
+function hasToken(haystack, token) {
+  const re = new RegExp(`(?:^|[^a-z0-9-])${escapeRegExp(token)}(?:[^a-z0-9-]|$)`);
+  return re.test(haystack);
+}
+
 export function searchCatalog(query, family = "all") {
-  const q = query.trim().toLowerCase();
+  const toks = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return CATALOG.filter((e) => {
-    if (family === "starship" || family === "falcon") {
-      if (e.family !== family && e.family !== "shared") return false;
-    } else if (family === "vehicle" || family === "ground") {
-      if (e.domain !== family) return false;
-    }
-    if (!q) return true;
+    if (!catalogFamilyOk(e, family)) return false;
+    if (!toks.length) return true;
     const src = (e.sources || []).map((s) => s.label).join(" ");
-    const blob = `${e.name} ${e.family} ${e.category} ${e.blurb} ${e.history} ${e.function || ""} ${e.physics || ""} ${e.expand || ""} ${src}`.toLowerCase();
-    return blob.includes(q);
+    const primary = [e.name, e.family, e.category, e.id.replace(/-/g, " "), e.expand || ""].join(" ").toLowerCase();
+    const blob = `${primary} ${e.blurb} ${e.history} ${e.function || ""} ${e.physics || ""} ${src}`.toLowerCase();
+    return toks.every((t) => hasToken(t.length <= 2 ? primary : blob, t));
   });
 }

@@ -6,13 +6,13 @@
 
 - Through [#18](https://github.com/kellybyron2222-dev/SpaceX-/pull/18): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, Explore/Tracker/Learn QA
 - [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md` on main
-- Live-site audit: **no critical Pages regression**
-- This PR [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): Live Launch YouTube fallback, **Live webcast** overlay fit + nudge, public Starship **T−** card (LL2)
+- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): Live Launch YouTube fallback, overlay fit + nudge, public Starship **T−** card (LL2)
+- This PR [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21): Learn **Vacuum Raptor** frames the aft bells (no black canvas) · tokenized catalog search (`catch` / `QD`)
 
 ## Open PRs
 
-- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20) — Live Launch embed / overlay / countdown (ready for review)
+- [#21](https://github.com/kellybyron2222-dev/SpaceX-/pull/21) — Vacuum Raptor framing + Learn search tokens
 
 ## Next
 
-After #20 merges: Live Launch catch auto-seek + stricter YouTube IDs (new PR). Then Explore/Learn polish. Do not submit the contest.
+Mobile polish (tab row / Learn 3D band on phone) **or** Live Launch catch auto-seek + stricter YouTube IDs. Do not submit the contest.
