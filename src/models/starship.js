@@ -45,8 +45,8 @@ const PARTS = ids("starship", {
   },
   vac: {
     name: "Vacuum Raptors",
-    frameTight: 1.22,
-    frameBias: { x: 0.62, y: 0.12, z: 0.82 },
+    frameTight: 1.12,
+    frameBias: { x: 0.48, y: -0.12, z: 0.88 },
     blurb:
       "Three vacuum Raptors with larger expansion bells sit around the sea-level trio. Bell size here is a round teaching guess.",
   },
@@ -173,6 +173,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
     vac.add(eng);
   }
   tag(vac, PARTS.vac);
+  vac.userData.frameFocus = vac.children[0] || vac;
   g.add(vac);
 
   const skirt = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.98, r, 2.4, 48), mats.soot);
