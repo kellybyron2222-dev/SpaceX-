@@ -106,6 +106,7 @@ export function createLiveLaunch({ onSelect } = {}) {
   const hotspotNav = document.getElementById("live-hotspot-list");
   const clock = document.getElementById("live-clock");
   const errBox = document.getElementById("live-player-error");
+  const urlErr = document.getElementById("live-url-error");
   const banner = document.getElementById("live-banner");
   const openLink = document.getElementById("live-open-yt");
   const follow = document.getElementById("live-follow-chapters");
@@ -170,10 +171,18 @@ export function createLiveLaunch({ onSelect } = {}) {
     if (!msg) {
       errBox.classList.add("hidden");
       errBox.textContent = "";
+      if (urlErr) {
+        urlErr.hidden = true;
+        urlErr.textContent = "";
+      }
       return;
     }
     errBox.textContent = msg;
     errBox.classList.remove("hidden");
+    if (urlErr) {
+      urlErr.textContent = msg;
+      urlErr.hidden = false;
+    }
   }
 
   function currentPreset() {
