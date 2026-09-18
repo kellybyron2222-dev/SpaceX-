@@ -1,8 +1,9 @@
 {
   "defaultVideoId": "hI9HQfCAw64",
   "defaultVideoTitle": "Starship's Fifth Flight Test",
-  "defaultVideoNote": "SpaceX public YouTube webcast (13 Oct 2024). Placeholder for the latest public Starship launch/test stream — not official telemetry or an internal camera.",
-  "notes": "Coordinates are normalized 0–1 with origin at the top-left of the 16:9 player. shape=rect uses x,y,w,h. shape=polygon uses points:[[x,y],...]. catalogId must match src/data/catalog.js. Edit this file to retune boxes without changing app code. Chapter times (seconds) are a starting point for the default Flight 5 VOD.",
+  "defaultVideoNote": "SpaceX public recap (13 Oct 2024, ~3:28). Placeholder for the latest public Starship launch/test stream — not official telemetry or an internal camera. YouTube may still block in-page play (bot check). Some SpaceX webcast IDs disable embedding entirely (player errors 101/150) — prefer IDs that allow embeds, or use Open on YouTube.",
+  "expectedDurationSeconds": 208,
+  "notes": "Coordinates are normalized 0–1 with origin at the top-left of the 16:9 player. shape=rect uses x,y,w,h. shape=polygon uses points:[[x,y],...]. catalogId must match src/data/catalog.js. Boxes are surveyed against the default Flight 5 recap frames (Starbase gulf-side camera: Mechazilla left, vehicle to the right of the tower — not a centered pad plate). Chapter times are recap timestamps, not mission T+. The recap is ~3:28; T+6:54 catch is about 1:40 in this upload, not 7:00. Some SpaceX video IDs block embeds even when oEmbed succeeds.",
   "chapters": [
     {
       "t": 0,
@@ -10,7 +11,7 @@
       "label": "Stack on pad"
     },
     {
-      "t": 420,
+      "t": 100,
       "presetId": "catch-chopsticks",
       "label": "Catch / chopsticks"
     }
@@ -19,26 +20,26 @@
     {
       "id": "stack-on-pad",
       "name": "Stack on pad",
-      "blurb": "Typical Starbase wide shot: Super Heavy + Starship on the OLM, Mechazilla to the right. Boxes are teaching overlays, not a surveyed camera model.",
+      "blurb": "Flight 5 recap pad/liftoff camera: Mechazilla on the left, Super Heavy + Starship just right of the tower. Teaching overlay, not a surveyed camera model.",
       "hotspots": [
         {
           "id": "pad-payload-bay",
           "catalogId": "payload-bay",
           "label": "Nose / bay",
           "shape": "rect",
-          "x": 0.36,
-          "y": 0.05,
-          "w": 0.1,
-          "h": 0.11
+          "x": 0.48,
+          "y": 0.03,
+          "w": 0.12,
+          "h": 0.12
         },
         {
           "id": "pad-tiles",
           "catalogId": "tiles",
           "label": "Tiles",
           "shape": "rect",
-          "x": 0.355,
-          "y": 0.15,
-          "w": 0.11,
+          "x": 0.475,
+          "y": 0.14,
+          "w": 0.13,
           "h": 0.16
         },
         {
@@ -47,11 +48,11 @@
           "label": "Flaps",
           "shape": "polygon",
           "points": [
-            [0.28, 0.16],
-            [0.36, 0.18],
-            [0.365, 0.34],
-            [0.27, 0.38],
-            [0.255, 0.24]
+            [0.42, 0.14],
+            [0.49, 0.15],
+            [0.5, 0.32],
+            [0.41, 0.36],
+            [0.4, 0.22]
           ]
         },
         {
@@ -59,40 +60,40 @@
           "catalogId": "hot-stage",
           "label": "Hot stage",
           "shape": "rect",
-          "x": 0.35,
-          "y": 0.32,
-          "w": 0.12,
-          "h": 0.055
+          "x": 0.47,
+          "y": 0.3,
+          "w": 0.14,
+          "h": 0.07
         },
         {
           "id": "pad-grid-fins",
           "catalogId": "grid-fins",
           "label": "Grid fins",
           "shape": "rect",
-          "x": 0.3,
-          "y": 0.385,
-          "w": 0.22,
-          "h": 0.09
+          "x": 0.44,
+          "y": 0.37,
+          "w": 0.2,
+          "h": 0.1
         },
         {
           "id": "pad-tanks",
           "catalogId": "starship-tanks",
           "label": "Tanks",
           "shape": "rect",
-          "x": 0.36,
+          "x": 0.48,
           "y": 0.47,
-          "w": 0.1,
-          "h": 0.22
+          "w": 0.12,
+          "h": 0.2
         },
         {
           "id": "pad-raptors",
           "catalogId": "booster-cluster",
           "label": "Raptor cluster",
           "shape": "rect",
-          "x": 0.35,
-          "y": 0.69,
-          "w": 0.12,
-          "h": 0.08
+          "x": 0.475,
+          "y": 0.67,
+          "w": 0.13,
+          "h": 0.09
         },
         {
           "id": "pad-qd",
@@ -100,10 +101,10 @@
           "label": "QD arm",
           "shape": "polygon",
           "points": [
-            [0.46, 0.36],
-            [0.68, 0.32],
-            [0.7, 0.42],
-            [0.45, 0.48]
+            [0.4, 0.38],
+            [0.62, 0.36],
+            [0.64, 0.48],
+            [0.42, 0.52]
           ]
         },
         {
@@ -111,47 +112,47 @@
           "catalogId": "chopsticks",
           "label": "Chopsticks",
           "shape": "rect",
-          "x": 0.44,
-          "y": 0.18,
-          "w": 0.18,
-          "h": 0.2
+          "x": 0.4,
+          "y": 0.16,
+          "w": 0.2,
+          "h": 0.22
         },
         {
           "id": "pad-tower",
           "catalogId": "mechazilla-tower",
           "label": "Tower",
           "shape": "rect",
-          "x": 0.62,
-          "y": 0.02,
-          "w": 0.14,
-          "h": 0.78
+          "x": 0.28,
+          "y": 0.06,
+          "w": 0.16,
+          "h": 0.74
         },
         {
           "id": "pad-olm",
           "catalogId": "olm",
           "label": "OLM",
           "shape": "rect",
-          "x": 0.26,
-          "y": 0.77,
-          "w": 0.32,
-          "h": 0.09
+          "x": 0.38,
+          "y": 0.76,
+          "w": 0.28,
+          "h": 0.1
         },
         {
           "id": "pad-deluge",
           "catalogId": "deluge",
           "label": "Deluge",
           "shape": "rect",
-          "x": 0.2,
+          "x": 0.32,
           "y": 0.86,
-          "w": 0.42,
-          "h": 0.08
+          "w": 0.38,
+          "h": 0.09
         }
       ]
     },
     {
       "id": "catch-chopsticks",
       "name": "Catch / chopsticks",
-      "blurb": "Tower-centered catch view: arms, pins, grid fins, and the booster barrel. Aligns with Flight 5-class return footage.",
+      "blurb": "Flight 5 recap catch camera (~1:40): tower left, booster to the right of the chopsticks against the sunset sky. Matches the public recap poster frame.",
       "hotspots": [
         {
           "id": "catch-arms",
@@ -159,14 +160,14 @@
           "label": "Chopsticks",
           "shape": "polygon",
           "points": [
-            [0.22, 0.2],
-            [0.78, 0.2],
-            [0.78, 0.58],
-            [0.66, 0.58],
-            [0.66, 0.3],
-            [0.34, 0.3],
-            [0.34, 0.58],
-            [0.22, 0.58]
+            [0.36, 0.42],
+            [0.58, 0.4],
+            [0.58, 0.58],
+            [0.52, 0.58],
+            [0.52, 0.48],
+            [0.42, 0.48],
+            [0.42, 0.58],
+            [0.36, 0.58]
           ]
         },
         {
@@ -174,70 +175,70 @@
           "catalogId": "catch-pins",
           "label": "Catch pins",
           "shape": "rect",
-          "x": 0.4,
-          "y": 0.32,
-          "w": 0.2,
-          "h": 0.1
+          "x": 0.49,
+          "y": 0.44,
+          "w": 0.1,
+          "h": 0.12
         },
         {
           "id": "catch-fins",
           "catalogId": "grid-fins",
           "label": "Grid fins",
           "shape": "rect",
-          "x": 0.3,
-          "y": 0.14,
-          "w": 0.4,
-          "h": 0.12
+          "x": 0.48,
+          "y": 0.08,
+          "w": 0.14,
+          "h": 0.14
         },
         {
           "id": "catch-tanks",
           "catalogId": "starship-tanks",
           "label": "Booster tanks",
           "shape": "rect",
-          "x": 0.4,
-          "y": 0.42,
-          "w": 0.2,
-          "h": 0.26
+          "x": 0.5,
+          "y": 0.22,
+          "w": 0.1,
+          "h": 0.22
         },
         {
           "id": "catch-cluster",
           "catalogId": "booster-cluster",
           "label": "Raptor cluster",
           "shape": "rect",
-          "x": 0.4,
-          "y": 0.68,
-          "w": 0.2,
-          "h": 0.1
+          "x": 0.495,
+          "y": 0.52,
+          "w": 0.11,
+          "h": 0.12
         },
         {
           "id": "catch-tower",
           "catalogId": "mechazilla-tower",
           "label": "Tower",
           "shape": "rect",
-          "x": 0.72,
-          "y": 0.02,
+          "x": 0.32,
+          "y": 0.28,
           "w": 0.16,
-          "h": 0.86
+          "h": 0.56
         },
         {
           "id": "catch-olm",
           "catalogId": "olm",
           "label": "OLM",
           "shape": "rect",
-          "x": 0.28,
-          "y": 0.82,
-          "w": 0.4,
-          "h": 0.1
+          "x": 0.3,
+          "y": 0.84,
+          "w": 0.28,
+          "h": 0.12
         },
         {
           "id": "catch-qd",
           "catalogId": "qd-arm",
           "label": "QD arm",
           "shape": "rect",
-          "x": 0.58,
-          "y": 0.36,
+          "x": 0.4,
+          "y": 0.62,
           "w": 0.16,
-          "h": 0.1
+          "h": 0.14
         }
       ]
     }

@@ -84,17 +84,24 @@ If the live API is unreachable (network, CORS, or throttle), the tracker **falls
 
 This is **not** official SpaceX telemetry, range video, or an internal camera product. The UI labels it as a public stream embed.
 
+### Embeds can fail (use Open on YouTube)
+
+YouTube often **blocks in-page playback**: a sign-in / “confirm you’re not a bot” wall, or player errors **101 / 150** when the uploader disabled embedding. **Some SpaceX video IDs cannot play in an embed even though the watch page works.** The default recap (`hI9HQfCAw64`) is oEmbed-allowed, but a datacenter or logged-out embed can still fail.
+
+When the in-page player is blocked, Live Launch **does not leave a broken iframe plus hotspots as the only UI**. It shows a fallback card: thumbnail, a short explanation, and a large **Open on YouTube** button. **Can't play here?** in the sidebar forces the same fallback (bot wall with no error code). Prefer IDs that allow embedding when changing the default.
+
 ### Set the YouTube ID
 
-Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://www.youtube.com/watch?v=hI9HQfCAw64) webcast (`hI9HQfCAw64`, 13 Oct 2024). Swap it for the latest public launch/test stream when one is up.
+Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://www.youtube.com/watch?v=hI9HQfCAw64) recap (`hI9HQfCAw64`, 13 Oct 2024, **~3:28** — not the multi-hour webcast). Swap it for the latest public launch/test stream when one is up, **preferring an ID that allows embedding**.
 
-1. In the Live Launch sidebar, paste a YouTube URL or 11-character video ID and click **Load** (remembered in `localStorage`).
+1. In the Live Launch sidebar, paste a YouTube URL or 11-character video ID and click **Load** (remembered in `localStorage`). The ID field is monospace and stays on one line so `hI9HQfCAw64` is not read as `h19HQ/CAw64`.
 2. Or copy `.env.example` to `.env`, set `VITE_YOUTUBE_VIDEO_ID=your_id`, and restart Vite. Env is the deploy-time default when the user has not pasted an ID.
 3. **Reset to default webcast** clears the saved ID and reloads the env/JSON default.
+4. **Open on YouTube** is the primary action next to Load — use it whenever the embed is blocked.
 
 ### Overlay presets (JSON)
 
-Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.json) so you can retune them **without changing app code**. Coordinates are normalized **0–1**, origin at the **top-left** of the 16:9 player.
+Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.json) so you can retune them **without changing app code**. Coordinates are normalized **0–1**, origin at the **top-left** of the 16:9 player. Shipped boxes are aligned to the **default Flight 5 recap frames** (gulf-side Starbase camera: **tower left, vehicle to the right of the tower** — not a centered pad plate).
 
 | Shape | Fields |
 | --- | --- |
@@ -103,12 +110,14 @@ Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.jso
 
 Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped presets:
 
-- **Stack on pad** — wide Starbase shot: stack, tower, chopsticks, QD, OLM, deluge, flaps, tiles, grid fins, Raptor cluster.
-- **Catch / chopsticks** — tower-centered return: arms, catch pins, grid fins, booster tanks, cluster.
+- **Stack on pad** — recap pad/liftoff: stack, tower, chopsticks, QD, OLM, deluge, flaps, tiles, grid fins, Raptor cluster.
+- **Catch / chopsticks** — recap catch (~1:40): arms, catch pins, grid fins, booster tanks, cluster.
 
-`chapters` in the same file are optional VOD markers (`t` in seconds → `presetId`). On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers (times are a starting point for the default Flight 5 webcast — edit the JSON to match another video).
+`chapters` in the same file are VOD markers (`t` in seconds → `presetId`). Times are **recap timestamps**, not mission elapsed time. The Flight 5 recap is ~3:28 (`expectedDurationSeconds`); booster catch at mission **T+6:54** is about **1:40** in this upload, not `t=420`. On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers. Edit the JSON to match another video.
 
-Overlays start **off** so the webcast is watchable. Toggle them with the **Hotspots** toolbar button or **H**. When they are on, boxes stay dim (transparent fill, faint outline) until hover or keyboard focus; click still opens Learn. The selected hotspot stays highlighted. Names in the sidebar work even when overlays are hidden.
+Entering **Live Launch** clears leftover Learn/Tracker teach selection so a Merlin panel cannot sit beside a Starship VOD. Pick a tagged component (list or hotspot) to fill Overview / Sources again.
+
+Overlays start **off** so the webcast is watchable. Toggle them with the **Hotspots** toolbar button or **H**. When they are on, boxes stay dim (transparent fill, faint outline) until hover or keyboard focus; click still opens Learn. **On phones / coarse pointers, overlay boxes are visual only** (they do not steal the YouTube play control). Use the **Tagged components** list — rows are at least **44px** tall. The selected hotspot stays highlighted. Names in the sidebar work even when overlays are hidden.
 
 ### Phase 2 (not in this MVP)
 
@@ -168,7 +177,7 @@ Booth walkthrough — keep the footer disclaimer on screen the whole time.
 3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
 5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
-6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer. Show **Stack on pad**, click chopsticks or OLM, flip Learn tabs. Switch to **Catch / chopsticks**. Optionally paste the current public webcast ID.
+6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer. If the embed is blocked, show **Open on YouTube**. Otherwise show **Stack on pad**, click a tagged name (or a hotspot on desktop), flip Learn tabs. Switch to **Catch / chopsticks** (chapter ~1:40 on the default recap). Optionally paste the current public webcast ID — prefer one that allows embedding.
 
 If live launches fail, the sample-data banner is expected — keep talking; the 3D path is the demo.
 
