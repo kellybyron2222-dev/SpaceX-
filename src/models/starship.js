@@ -45,8 +45,8 @@ const PARTS = ids("starship", {
   },
   vac: {
     name: "Vacuum Raptors",
-    frameTight: 1.15,
-    frameBias: { x: 0.2, y: -0.82, z: 0.65 },
+    frameTight: 1.22,
+    frameBias: { x: 0.62, y: 0.12, z: 0.82 },
     blurb:
       "Three vacuum Raptors with larger expansion bells sit around the sea-level trio. Bell size here is a round teaching guess.",
   },
