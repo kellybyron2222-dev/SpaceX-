@@ -91,7 +91,7 @@ function svgEl(name, attrs) {
   return el;
 }
 
-export function createLiveLaunch({ onSelect } = {}) {
+export function createLiveLaunch({ onSelect, onShareChange } = {}) {
   const stage = document.getElementById("live-stage");
   const host = document.getElementById("live-player-host");
   const overlay = document.getElementById("live-overlay");
@@ -345,7 +345,10 @@ export function createLiveLaunch({ onSelect } = {}) {
       btn.type = "button";
       btn.className = `chip${preset.id === state.presetId ? " active" : ""}`;
       btn.textContent = preset.name;
-      btn.addEventListener("click", () => selectPreset(preset.id, { manual: true }));
+      btn.addEventListener("click", () => {
+        selectPreset(preset.id, { manual: true });
+        onShareChange?.();
+      });
       presetNav.appendChild(btn);
     }
   }
@@ -380,6 +383,7 @@ export function createLiveLaunch({ onSelect } = {}) {
         seekTo(ch.t, { play: ch.t > 0 });
         selectPreset(ch.presetId, { manual: false });
         highlightChapterAt(ch.t);
+        onShareChange?.();
       });
       chapterNav.appendChild(btn);
     }
@@ -460,6 +464,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     state.catalogId = catalogId;
     renderHotspots();
     onSelect?.(catalogId);
+    onShareChange?.();
   }
 
   function chapterForPreset(presetId) {
@@ -867,10 +872,11 @@ export function createLiveLaunch({ onSelect } = {}) {
     }
   }
 
-  function toggleHotspots(force) {
+  function toggleHotspots(force, { share = true } = {}) {
     state.hotspotsOn = typeof force === "boolean" ? force : !state.hotspotsOn;
     storeHotspotsVisible(state.hotspotsOn);
     syncChrome();
+    if (share) onShareChange?.();
   }
 
   function clearSelection() {
@@ -900,7 +906,10 @@ export function createLiveLaunch({ onSelect } = {}) {
     });
     syncChrome();
   });
-  btnLoad.addEventListener("click", () => loadVideo(urlInput.value, { persist: true }));
+  btnLoad.addEventListener("click", () => {
+    loadVideo(urlInput.value, { persist: true });
+    onShareChange?.();
+  });
   urlInput.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
@@ -917,6 +926,7 @@ export function createLiveLaunch({ onSelect } = {}) {
     state.nudge = { x: 0, y: 0 };
     const id = parseYouTubeId(import.meta.env.VITE_YOUTUBE_VIDEO_ID || "") || fallbackId;
     loadVideo(id, { persist: false });
+    onShareChange?.();
   });
   btnHotspots.addEventListener("click", () => toggleHotspots());
   follow.addEventListener("change", () => {
@@ -945,10 +955,39 @@ export function createLiveLaunch({ onSelect } = {}) {
   renderHotspots();
   renderChapters();
 
+  function applyShareLink({ videoId, presetId, hotspotId, hotspots } = {}) {
+    if (typeof hotspots === "boolean") toggleHotspots(hotspots, { share: false });
+    if (videoId) {
+      const id = parseYouTubeId(videoId);
+      if (id) {
+        if (state.active) {
+          if (id !== state.videoId) loadVideo(id, { persist: false });
+        } else {
+          state.videoId = id;
+          syncChrome();
+        }
+      }
+    }
+    if (presetId) selectPreset(presetId, { manual: true });
+    if (hotspotId && catalogById(hotspotId)) {
+      selectHotspot(hotspotId);
+      if (typeof hotspots !== "boolean") toggleHotspots(true, { share: false });
+    }
+  }
+
   return {
     activate,
     deactivate,
     toggleHotspots,
+    applyShareLink,
+    shareSnapshot() {
+      return {
+        presetId: state.presetId,
+        videoId: state.videoId === fallbackId ? "" : state.videoId,
+        catalogId: state.catalogId,
+        hotspotsOn: state.hotspotsOn,
+      };
+    },
     clearSelection,
     setLaunchWindow(launch, { source } = {}) {
       state.windowLaunch = launch || null;

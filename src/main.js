@@ -13,6 +13,13 @@ import {
   trackerWhenLine,
 } from "./data/launches.js";
 import { createLiveLaunch } from "./live.js";
+import {
+  hasDeepLink,
+  inferredMode,
+  parseDeepLink,
+  replaceShareUrl,
+  serializeDeepLink,
+} from "./data/deeplink.js";
 
 const app = document.getElementById("app");
 const canvas = document.getElementById("view");
@@ -65,9 +72,14 @@ function syncReferencePhotos(entry) {
 
 const viewer = new Viewer(canvas);
 
+let shareReady = false;
+
 const live = createLiveLaunch({
   onSelect(catalogId) {
     selectCatalog(catalogId);
+  },
+  onShareChange() {
+    syncShareUrl();
   },
 });
 
@@ -85,6 +97,60 @@ const state = {
   catalogQuery: "",
   pendingCatalog: null,
 };
+
+function shareQuery() {
+  const snap = live.shareSnapshot();
+  const catalogId = state.mode === "live" ? snap.catalogId : state.catalogId;
+  return serializeDeepLink({
+    mode: state.mode,
+    id: catalogId || "",
+    scene: state.sceneId,
+    preset: state.mode === "live" ? snap.presetId : "",
+    video: state.mode === "live" ? snap.videoId : "",
+    hotspots: state.mode === "live" ? snap.hotspotsOn : false,
+  });
+}
+
+function syncShareUrl() {
+  if (!shareReady) return;
+  replaceShareUrl(shareQuery(), window.location, window.history);
+}
+
+function applyDeepLink(link) {
+  const catalogId = link.id || link.hotspot;
+  const mode = inferredMode(link) || state.mode;
+
+  if (mode === "live") {
+    live.applyShareLink({
+      videoId: link.video || undefined,
+      hotspots: link.hotspots,
+    });
+    setMode("live");
+    live.applyShareLink({
+      presetId: link.preset || undefined,
+      hotspotId: catalogId || undefined,
+      hotspots: link.hotspots,
+    });
+    return;
+  }
+
+  if (mode === "learn") {
+    setMode("learn");
+    if (catalogId && catalogById(catalogId)) selectCatalog(catalogId);
+    return;
+  }
+
+  if (mode === "explore") {
+    if (link.scene && viewer.scenes().some((s) => s.id === link.scene)) {
+      selectScene(link.scene);
+    }
+    setMode("explore");
+    if (catalogId && catalogById(catalogId)) frameCatalogIn3D(catalogId);
+    return;
+  }
+
+  if (mode === "tracker") setMode("tracker");
+}
 
 function catalogFrameTarget(entry) {
   if (
@@ -137,6 +203,7 @@ function setMode(mode) {
     }
   }
   if (mode === "tracker") frameTrackerLaunch();
+  syncShareUrl();
 }
 
 function renderNav(activeId, relatedSceneIds = []) {
@@ -178,6 +245,7 @@ function selectScene(id, { partId, framePart = true } = {}) {
   telDia.textContent = spec.diameter;
   applyExplodeButton(spec);
   hideCallout();
+  syncShareUrl();
   return spec;
 }
 
@@ -269,6 +337,7 @@ function selectCatalog(id, { loadScene = true } = {}) {
     }
   }
   showTeach(entry);
+  syncShareUrl();
 }
 
 function renderCatalog() {
@@ -600,3 +669,8 @@ selectScene("fullstack");
 renderCatalog();
 refreshLaunches();
 setInterval(refreshLaunches, REFRESH_MS);
+
+const incoming = parseDeepLink(window.location.search, window.location.hash);
+if (hasDeepLink(incoming)) applyDeepLink(incoming);
+shareReady = true;
+if (hasDeepLink(incoming)) syncShareUrl();

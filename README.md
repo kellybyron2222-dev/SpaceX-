@@ -8,6 +8,8 @@ This Pages app is the **Starship Component Viewer**. The related Grok bot is **S
 
 **Snapshot:** [STATUS.md](STATUS.md)
 
+Bot / share links stay on `/SpaceX-/` as query (or hash): `?mode=learn&id=raptor`, `?mode=explore&scene=raptor`, `?mode=live&preset=catch-chopsticks`. In-app nav rewrites the URL so you can copy it.
+
 Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Parametric teaching models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
