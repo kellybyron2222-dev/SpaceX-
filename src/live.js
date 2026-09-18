@@ -255,7 +255,11 @@ export function createLiveLaunch({ onSelect }) {
   function selectPreset(id, { manual = false } = {}) {
     if (!presets.some((p) => p.id === id)) return;
     state.presetId = id;
-    if (manual) state.manualUntil = performance.now() + 12000;
+    if (manual) {
+      state.followChapters = false;
+      follow.checked = false;
+      state.manualUntil = performance.now() + 12000;
+    }
     renderPresets();
     renderHotspots();
     syncChrome();
