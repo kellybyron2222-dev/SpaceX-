@@ -426,8 +426,37 @@ body,
     padding: 10px 12px;
   }
 
+  .modes {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .modes::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mode-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
   .toolbar {
     justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tool {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .sidebar {
@@ -500,7 +529,8 @@ body,
 #app[data-mode="learn"] .live-only,
 #app[data-mode="live"] .explore-only,
 #app[data-mode="live"] .tracker-only,
-#app[data-mode="live"] .explore-learn {
+#app[data-mode="live"] .explore-learn,
+#app[data-mode="live"] .learn-only {
   display: none !important;
 }
 
@@ -785,14 +815,16 @@ body,
   }
 
   .teach-panel {
-    bottom: auto;
-    top: 118px;
-    max-height: 28vh;
+    /* Sit above the bottom sheet so wrapped/stacked chrome cannot cover mode tabs. */
+    bottom: calc(54px + 34vh);
+    top: auto;
+    max-height: 26vh;
   }
 
   #app[data-mode="learn"] .catalog-panel {
     top: auto;
     bottom: 54px;
+    max-height: 34vh;
   }
 
   #app[data-mode="tracker"] .tracker-panel {
@@ -802,15 +834,16 @@ body,
   #app[data-mode="live"] .live-panel {
     top: auto;
     bottom: 54px;
-    max-height: 32vh;
+    max-height: 30vh;
   }
 
   #app[data-mode="live"] .teach-panel {
-    max-height: 22vh;
+    bottom: calc(54px + 30vh);
+    max-height: 20vh;
   }
 
   #app[data-mode="live"] .live-stage {
-    padding: 108px 8px 38vh;
+    padding: 96px 8px 54vh;
   }
 }
 
