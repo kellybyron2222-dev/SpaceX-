@@ -24,7 +24,7 @@ export function createFalconPad() {
   const mats = createMaterials();
   const g = new THREE.Group();
 
-  const pad = createPad(mats, 22, { deluge: true });
+  const pad = createPad(mats, 22, { deluge: true, variant: "falcon" });
   pad.position.y = -0.55;
   g.add(pad);
 

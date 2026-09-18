@@ -12,7 +12,7 @@ export function createFullStack() {
     id: "fullstack.booster",
     name: "Super Heavy (first stage)",
     blurb:
-      "The booster makes up most of the ~121 m stack height. Catch hardpoints and grid fins sit near the top; 33 engines sit on the pad.",
+      "The booster makes up most of the ~124 m stack height. Catch hardpoints and grid fins sit near the top; 33 engines sit on the pad.",
   });
   g.add(booster);
 

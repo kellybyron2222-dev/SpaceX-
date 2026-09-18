@@ -70,9 +70,12 @@ export function createAsds() {
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = 0.02;
   sea.receiveShadow = true;
+  sea.userData.skipFrame = true;
   g.add(sea);
 
   enableShadows(g);
   g.userData.supportsExplode = false;
+  g.userData.frameTight = 1.15;
+  g.userData.frameBias = { x: 0.42, y: 0.55, z: 0.72 };
   return g;
 }

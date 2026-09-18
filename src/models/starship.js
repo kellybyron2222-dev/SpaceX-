@@ -16,7 +16,7 @@ const PARTS = ids("starship", {
   nose: {
     name: "Nosecone / payload bay",
     blurb:
-      "An ogive nose closes the ~50 m upper stage. Public articles describe a forward payload volume and a nose header tank — shown here as simple volumes.",
+      "An ogive nose closes the ~52 m upper stage. Public articles describe a forward payload volume and a nose header tank — shown here as simple volumes.",
   },
   barrel: {
     name: "Ship barrel / tanks",
@@ -45,6 +45,8 @@ const PARTS = ids("starship", {
   },
   vac: {
     name: "Vacuum Raptors",
+    frameTight: 1.08,
+    frameBias: { x: 0.28, y: -0.78, z: 0.72 },
     blurb:
       "Three vacuum Raptors with larger expansion bells sit around the sea-level trio. Bell size here is a round teaching guess.",
   },
@@ -70,7 +72,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
   const mats = createMaterials();
   const g = new THREE.Group();
   const r = SCALE.diameter / 2;
-  const barrelH = 36;
+  const barrelH = 38;
   const noseH = 14;
   const total = barrelH + noseH;
 
@@ -171,6 +173,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
     vac.add(eng);
   }
   tag(vac, PARTS.vac);
+  vac.userData.frameFocus = vac.children[0] || vac;
   g.add(vac);
 
   const skirt = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.98, r, 2.4, 48), mats.soot);
@@ -196,5 +199,5 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
 }
 
 export function shipHeight() {
-  return 36 + 14 + 2.2;
+  return 38 + 14 + 2.2;
 }

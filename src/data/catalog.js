@@ -35,6 +35,11 @@ export const CATALOG = [
       "raptor.gimbal",
       "raptor.oxPre",
       "raptor.fuelPre",
+      "raptor.injector",
+      "raptor.oxPump",
+      "raptor.fuelPump",
+      "raptor.plumbing",
+      "raptor.tvc",
       "starship.sl",
     ],
     blurb:
@@ -93,7 +98,7 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "falcon9",
     partId: "falcon9.engines",
-    matchIds: ["falcon9.engines", "falcon9.octaweb"],
+    matchIds: ["falcon9.engines", "falcon9.octaweb", "falcon9.second", "falcon9.interstage", "falconheavy.side"],
     blurb:
       "RP-1/LOX gas-generator engine. Nine Merlins on Falcon 9; 27 on Falcon Heavy. The cluster here uses round public counts and simple bells.",
     history:
@@ -120,7 +125,7 @@ export const CATALOG = [
     function:
       "Tanks store cryogenic CH4 and LOX, feed the engines, and are the primary airframe. Common domes and downcomers (the raceway on the model) move propellant. During flight the tanks are structural: they carry axial compression, bending from aero and TVC, and internal pressure. On reentry the windward skin is tiled; the leeward side is mostly bare stainless in public photos.",
     physics:
-      "A 9 m cylinder ~71 m tall (booster) or ~50 m (ship) is a thin-walled pressure vessel plus column. Hydrostatic head of LOX is non-trivial over tens of meters, so tank pressure and baffles matter. Stainless has lower specific stiffness than the Falcon aluminum stack, which is one public rationale for the large diameter. Cryo shrinkage, buckling under thrust, and slosh during flip maneuvers are the usual textbook issues — none of which we size here. Ring spacing on the model (~1.8 m) matches the commonly photographed barrel-section height, used only as visual scale.",
+      "A 9 m cylinder ~72 m tall (booster) or ~52 m (ship) is a thin-walled pressure vessel plus column. Hydrostatic head of LOX is non-trivial over tens of meters, so tank pressure and baffles matter. Stainless has lower specific stiffness than the Falcon aluminum stack, which is one public rationale for the large diameter. Cryo shrinkage, buckling under thrust, and slosh during flip maneuvers are the usual textbook issues — none of which we size here. Ring spacing on the model (~1.8 m) matches the commonly photographed barrel-section height, used only as visual scale.",
     sources: [SRC.starship, SRC.updates, SRC.faa],
   },
   {
@@ -152,13 +157,13 @@ export const CATALOG = [
     partId: "starship.nose",
     matchIds: ["starship.nose"],
     blurb:
-      "Ogive nose on the ~50 m upper stage. Public articles describe a forward payload volume and a nose header tank — simple volumes here.",
+      "Ogive nose on the ~52 m upper stage. Public articles describe a forward payload volume and a nose header tank — simple volumes here.",
     history:
       "Starship does not use a Falcon-style clamshell fairing for most cargo. SpaceX has shown PEZ-style dispensers, cargo-door concepts, and crew interiors only as public renderings or test hardware. Header tanks in the nose appear in flight-article photos. This ogive is a scale stand-in.",
     function:
-      "The nose closes the stack aerodynamically, can house payload or crew volume, and includes a header tank used during landing burns in public descriptions. It is not a Starlink dispenser CAD model.",
+      "The nose closes the stack aerodynamically, can house payload or crew volume, and includes the forward methane header used during landing burns in public descriptions (the LOX header sits aft). It is not a Starlink dispenser CAD model.",
     physics:
-      "An ogive is a low-drag nose for the boost phase; reentry heating on the nose is managed by tiles plus attitude. Header-tank location near the nose is a CG / settling story during the flip. None of that is simulated.",
+      "An ogive is a low-drag nose for the boost phase; reentry heating on the nose is managed by tiles plus attitude. Public articles put the methane (CH4) landing header forward in the nose and the LOX header aft near the engines — not both in the nosecone. That split is a CG / settling story during the flip. None of that is simulated.",
     sources: [SRC.starship, SRC.updates],
   },
   {
@@ -190,9 +195,9 @@ export const CATALOG = [
     partId: "booster.fins",
     matchIds: ["booster.fins", "falcon9.fins"],
     blurb:
-      "Lattice fins steer returning boosters. Super Heavy and Falcon 9 both use four fins; this scene shows the Starship-scale set.",
+      "Lattice fins steer returning boosters. Falcon 9 uses four fins; public Starship V3 Super Heavy reporting (Ars, May 2026) is three fins. This Super Heavy scene shows the three-fin V3 layout.",
     history:
-      "Falcon 9 grid fins were originally aluminum and later titanium — a change SpaceX announced after heating and stiction issues on early recovery flights. Super Heavy uses much larger fins, shown folding against the tank in stacking footage. Both systems are public, but lattice thickness, latch design, and hydraulic vs electric drive differ and are not specified here.",
+      "Falcon 9 grid fins were originally aluminum and later titanium — a change SpaceX announced after heating and stiction issues on early recovery flights. Super Heavy used four large fins on earlier flight articles; public V3 booster reporting describes three. Both systems are public, but lattice thickness, latch design, and hydraulic vs electric drive differ and are not specified here.",
     function:
       "After entry burn, grid fins provide roll, pitch, and yaw so the booster can hit a droneship or chopsticks with engine residual. They fold or stow for ascent. On Super Heavy they also interact with the catch-arm keep-out zone — but they are not the catch pins. Pick the waffle lattice for this entry; pick the gold pins for Catch hardpoints.",
     physics:
@@ -240,12 +245,12 @@ export const CATALOG = [
   {
     id: "hot-stage",
     name: "Hot-stage / interstage",
-    family: "shared",
+    family: "starship",
     category: "Staging",
     domain: "vehicle",
     sceneId: "booster",
     partId: "booster.staging",
-    matchIds: ["booster.staging", "falcon9.interstage", "fullstack.ship", "fullstack.booster"],
+    matchIds: ["booster.staging", "fullstack.ship", "fullstack.booster"],
     blurb:
       "Starship lights the upper stage while still stacked (hot staging). Falcon uses a more conventional interstage. Both are shown as bands, not mechanisms.",
     history:
@@ -264,7 +269,7 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "falcon9",
     partId: "falcon9.fairing",
-    matchIds: ["falcon9.fairing", "falcon9.second"],
+    matchIds: ["falcon9.fairing"],
     blurb:
       "Clamshell fairing that protects Falcon payloads through max-q, then splits and is recovered when the mission allows.",
     history:
@@ -278,6 +283,7 @@ export const CATALOG = [
   {
     id: "chopsticks",
     name: "Chopsticks / catch arms",
+    expand: "Mechazilla tower arms that stack stages and catch Super Heavy",
     family: "starship",
     category: "Recovery",
     domain: "vehicle",
@@ -291,7 +297,7 @@ export const CATALOG = [
     function:
       "Arms open around a 9 m vehicle, close on hardpoints, and ride a carriage up the tower to stack or after catch. They replace landing legs on the booster in the current public architecture. The model includes a ghost booster so the catch bay is readable. Vehicle-side pins are a separate catalog entry (Catch hardpoints).",
     physics:
-      "Catch is a relative-navigation and energy-absorption problem: a ~71 m, 9 m-diameter booster arrives with residual vertical rate that the arms and pins must take as a load path into the tower. Even a small lateral offset becomes a large moment at the tower root. Public videos are the right intuition; we do not quote structural margins. Exploded view opens the arms so the keep-out cylinder is obvious.",
+      "Catch is a relative-navigation and energy-absorption problem: a ~72 m, 9 m-diameter booster arrives with residual vertical rate that the arms and pins must take as a load path into the tower. Even a small lateral offset becomes a large moment at the tower root. Public videos are the right intuition; we do not quote structural margins. Exploded view opens the arms so the keep-out cylinder is obvious.",
     sources: [SRC.starship, SRC.updates],
   },
   {
@@ -316,6 +322,7 @@ export const CATALOG = [
   {
     id: "olm",
     name: "OLM / launch mount",
+    expand: "Orbital Launch Mount — Starship pad deck at Starbase",
     family: "starship",
     category: "Pad",
     domain: "ground",
@@ -335,6 +342,7 @@ export const CATALOG = [
   {
     id: "qd-arm",
     name: "Quick-disconnect arm",
+    expand: "QD — pad swing arm that loads propellant and services until late in the count",
     family: "starship",
     category: "Services",
     domain: "ground",
@@ -392,6 +400,7 @@ export const CATALOG = [
   {
     id: "asds",
     name: "ASDS droneship",
+    expand: "Autonomous spaceport drone ship — Falcon landing barge",
     family: "falcon",
     category: "Recovery",
     domain: "ground",
@@ -411,6 +420,7 @@ export const CATALOG = [
   {
     id: "mechazilla-tower",
     name: "Mechazilla tower",
+    expand: "Starship launch-and-catch tower next to the orbital mount",
     family: "starship",
     category: "Pad",
     domain: "ground",
@@ -430,12 +440,13 @@ export const CATALOG = [
   {
     id: "strongback",
     name: "Strongback / TE",
+    expand: "Transporter-erector — the mast that tilts Falcon vertical on the pad",
     family: "falcon",
     category: "Pad",
     domain: "ground",
     sceneId: "falcon-pad",
     partId: "falconpad.strongback",
-    matchIds: ["falconpad.strongback", "falconpad.te", "falconpad.vehicle"],
+    matchIds: ["falconpad.strongback", "falconpad.te", "falconpad.vehicle", "pad.falconDeck"],
     blurb:
       "Transporter-erector strongback that tilts Falcon 9 vertical and supports it at SLC-40, LC-39A, and SLC-4E.",
     history:
@@ -481,7 +492,7 @@ export function searchCatalog(query, family = "all") {
     }
     if (!q) return true;
     const src = (e.sources || []).map((s) => s.label).join(" ");
-    const blob = `${e.name} ${e.family} ${e.category} ${e.blurb} ${e.history} ${src}`.toLowerCase();
+    const blob = `${e.name} ${e.family} ${e.category} ${e.blurb} ${e.history} ${e.function || ""} ${e.physics || ""} ${e.expand || ""} ${src}`.toLowerCase();
     return blob.includes(q);
   });
 }

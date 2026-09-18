@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
-/** Rounded public figures used only as teaching scale (meters). */
+/** Rounded public figures used only as teaching scale (meters). SpaceX design page, 18 Sep 2026. */
 export const SCALE = {
   diameter: 9,
-  boosterH: 71,
-  shipH: 50,
-  stackH: 121,
+  boosterH: 72,
+  shipH: 52,
+  stackH: 124,
   ring: 1.8,
 };
 
@@ -163,11 +163,11 @@ export function ids(prefix, dict) {
 export function tag(object, part) {
   object.userData.part = part;
   object.traverse((child) => {
+    if (part && !child.userData.part) child.userData.part = part;
     if (!child.isMesh) return;
     if (child.userData.pickProxy) return;
     child.castShadow = true;
     child.receiveShadow = true;
-    if (part && !child.userData.part) child.userData.part = part;
   });
   return object;
 }
@@ -292,6 +292,20 @@ export function createGridFin(mats, w = 3.2, h = 4.2, t = 0.22) {
   const hinge = new THREE.Mesh(new THREE.BoxGeometry(w * 0.35, 0.35, 0.5), mats.darkSteel);
   hinge.position.set(0, -h / 2 - 0.1, 0.1);
   g.add(hinge);
+  // Solid invisible plate so waffle cells do not leak picks through to the tank.
+  const proxy = new THREE.Mesh(
+    new THREE.BoxGeometry(w * 1.08, h * 1.12, Math.max(0.62, t * 2.4)),
+    new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      colorWrite: false,
+    }),
+  );
+  proxy.userData.pickProxy = true;
+  proxy.castShadow = false;
+  proxy.receiveShadow = false;
+  g.add(proxy);
   return g;
 }
 
@@ -312,7 +326,7 @@ export function createFlap(mats, width, height, thick = 0.18) {
   return g;
 }
 
-export function createPad(mats, radius = 18, { deluge = false } = {}) {
+export function createPad(mats, radius = 18, { deluge = false, variant = "starship" } = {}) {
   const g = new THREE.Group();
   const disk = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, 0.4, 64), mats.pad);
   disk.position.y = -0.2;
@@ -349,12 +363,21 @@ export function createPad(mats, radius = 18, { deluge = false } = {}) {
     g.add(birds);
   }
 
-  tag(g, {
-    id: "pad.olm",
-    name: "Launch mount / pad deck",
-    blurb:
-      "A simplified orbital launch mount: hold-down deck and ring markings. Not an OLM/OLP fabrication drawing.",
-  });
+  if (variant === "falcon") {
+    tag(g, {
+      id: "pad.falconDeck",
+      name: "Falcon pad deck",
+      blurb:
+        "Hold-down / TE deck at an LC-39A, SLC-40, or SLC-4E class Falcon pad. Ring markings only — not a Starship orbital launch mount (OLM).",
+    });
+  } else {
+    tag(g, {
+      id: "pad.olm",
+      name: "Launch mount / pad deck",
+      blurb:
+        "A simplified orbital launch mount (OLM): hold-down deck and ring markings. Not an OLM/OLP fabrication drawing.",
+    });
+  }
   return g;
 }
 

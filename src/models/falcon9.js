@@ -29,8 +29,9 @@ const PARTS = ids("falcon9", {
   },
   fins: {
     name: "Grid fins",
+    pickPriority: 8,
     blurb:
-      "Titanium grid fins steer the first stage through the atmosphere on the way back. Lattice is simplified.",
+      "Titanium grid fins steer the first stage through the atmosphere on the way back. Falcon 9 uses four; lattice is simplified.",
   },
   interstage: {
     name: "Interstage",
@@ -51,6 +52,20 @@ const PARTS = ids("falcon9", {
     name: "Octaweb",
     blurb:
       "The thrust structure that carries nine Merlins. Name is the public nickname; this is a dark cylinder, not a forging.",
+  },
+});
+
+const HEAVY = ids("falconheavy", {
+  side: {
+    name: "Side booster",
+    pickPriority: 5,
+    blurb:
+      "Falcon Heavy flies two extra Falcon-class cores as side boosters. They separate and land separately from the center core. Teaching stand-ins, not unique Heavy CAD.",
+  },
+  center: {
+    name: "Center core tanks",
+    blurb:
+      "The center core of a Falcon Heavy stack uses the same ~3.7 m RP-1/LOX barrels as Falcon 9 — this is not a solo Falcon 9.",
   },
 });
 
@@ -131,7 +146,7 @@ function addFairing(parent, mats, radius, y0) {
   parent.add(fairing);
 }
 
-function buildCore(mats, { sideBooster = false } = {}) {
+function buildCore(mats, { sideBooster = false, tankPart = PARTS.tanks } = {}) {
   const g = new THREE.Group();
   const r = 3.66 / 2;
 
@@ -153,7 +168,7 @@ function buildCore(mats, { sideBooster = false } = {}) {
   tag(engines, PARTS.engines);
   g.add(engines);
 
-  g.add(stageBody(mats, r, 38.5, 1.7, PARTS.tanks));
+  g.add(stageBody(mats, r, 38.5, 1.7, tankPart));
   addLegs(g, mats, r, 2.1);
   addFins(g, mats, r, 37.5);
 
@@ -161,6 +176,7 @@ function buildCore(mats, { sideBooster = false } = {}) {
     const nose = new THREE.Mesh(new THREE.ConeGeometry(r, 4.4, 32), mats.blackPaint);
     nose.position.y = 42.4;
     g.add(nose);
+    tag(g, HEAVY.side);
     const capH = 40.2;
     g.userData.coreHeight = capH;
     enableShadows(g);
@@ -192,7 +208,7 @@ export function createFalcon9({ withPad = true } = {}) {
   const mats = createMaterials();
   const g = buildCore(mats);
   if (withPad) {
-    const pad = createPad(mats, 12, { deluge: true });
+    const pad = createPad(mats, 12, { deluge: true, variant: "falcon" });
     pad.position.y = -0.55;
     g.add(pad);
   }
@@ -203,16 +219,16 @@ export function createFalconHeavy() {
   const mats = createMaterials();
   const g = new THREE.Group();
   const pitch = 3.72;
-  const center = buildCore(mats);
-  const left = buildCore(mats, { sideBooster: true });
-  const right = buildCore(mats, { sideBooster: true });
+  const center = buildCore(mats, { tankPart: HEAVY.center });
+  const left = buildCore(mats, { sideBooster: true, tankPart: HEAVY.side });
+  const right = buildCore(mats, { sideBooster: true, tankPart: HEAVY.side });
   left.position.x = -pitch;
   right.position.x = pitch;
   homeAndExplode(left, new THREE.Vector3(-6.5, 0, 0));
   homeAndExplode(right, new THREE.Vector3(6.5, 0, 0));
   g.add(center, left, right);
 
-  const pad = createPad(mats, 16, { deluge: true });
+  const pad = createPad(mats, 16, { deluge: true, variant: "falcon" });
   pad.position.y = -0.55;
   g.add(pad);
   enableShadows(g);

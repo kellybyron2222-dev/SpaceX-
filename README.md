@@ -122,9 +122,9 @@ All sizes are **rounded public figures** used only as rough scale (1 scene unit 
 
 | Scene | Public-architecture notes |
 | --- | --- |
-| **Full stack** | Super Heavy + Starship, about **121 m** tall and **9 m** diameter. Exploded view lifts the ship. Includes rainbird stand-ins on the mount. |
-| **Super Heavy** | First-stage booster, about **71 m**. Ring-stack barrel, raceway, four grid fins, catch hardpoints, vented hot-staging ring, **33-Raptor** cluster (3 + 10 + 20). |
-| **Starship** | Upper stage, about **50 m**. Ogive nose, barrel tanks, windward hex tiles, forward/aft flaps, three sea-level and three vacuum Raptors. |
+| **Full stack** | Super Heavy + Starship, about **124 m** tall and **9 m** diameter. Exploded view lifts the ship. Includes rainbird stand-ins on the mount. |
+| **Super Heavy** | First-stage booster, about **72 m**. Ring-stack barrel, raceway, three grid fins (V3 public layout; Falcon 9 still uses four), catch hardpoints, vented hot-staging ring, **33-Raptor** cluster (3 + 10 + 20). |
+| **Starship** | Upper stage, about **52 m**. Ogive nose, barrel tanks, windward hex tiles, forward/aft flaps, three sea-level and three vacuum Raptors. |
 | **Raptor engine** | Close-up methane/LOX **full-flow staged combustion** teaching model: nozzle, chamber, gimbal, preburners, pumps, pipes. |
 | **Mechazilla** | Launch-and-catch tower with chopsticks and a ghost booster. Tower height is a **~146 m-class** round figure. |
 | **QD arm** | Quick-disconnect swing arm from a tower stub to a ghost 9 m barrel. |
@@ -148,7 +148,7 @@ Grid fins and catch pins are separate picks: the waffle lattice opens **Grid fin
 
 Each entry stores family (Starship / Falcon / shared), category, a short blurb, history, function, optional physics notes, public sources, and a link to the 3D scene + mesh id that should highlight.
 
-Physics copy uses **order-of-magnitude public figures** (9 m diameter, 33 engines, Merlin-class kN, ~146 m tower). It is not a performance datasheet.
+Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 / 52 m stack, 33 engines, Merlin-class kN, ~146 m tower). It is not a performance datasheet.
 
 ## Controls
 
@@ -156,14 +156,14 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 33 engine
 - **H** toggle Live Launch hotspots
 - **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
 - **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
-- **R** reset camera (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
+- **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
 - **1–9** and **0** switch 3D scenes · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest demo script (2 minutes)
 
 Booth walkthrough — keep the footer disclaimer on screen the whole time.
 
-1. **Explore (20s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~121 m vehicle. Click a **grid fin** vs a **catch pin** so the callouts stay distinct. Hit **Explode** to lift the ship, then **Reset camera** (tween).
+1. **Explore (20s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~124 m vehicle. Click a **grid fin** vs a **catch pin** so the callouts stay distinct. Hit **Explode** to lift the ship, then **Reset camera** (tween; also collapses explode).
 2. **Tracker (25s).** Switch to **Tracker**. Point at the Live LL2 vs Sample toggle and the “not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
 3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
