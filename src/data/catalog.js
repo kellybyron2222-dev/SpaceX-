@@ -5,8 +5,8 @@ const SRC = {
   falcon9: { label: "SpaceX Falcon 9", url: "https://www.spacex.com/vehicles/falcon-9/" },
   updates: { label: "SpaceX updates", url: "https://www.spacex.com/updates" },
   f9guide: {
-    label: "Falcon 9 User’s Guide",
-    url: "https://www.spacex.com/media/falcon-users-guide-2021-09.pdf",
+    label: "Falcon Payload User’s Guide",
+    url: "https://www.spacex.com/assets/media/falcon-users-guide-2025-05-09.pdf",
   },
   nasaCct: {
     label: "NASA Commercial Crew",
