@@ -500,6 +500,7 @@ body,
 #app[data-mode="learn"] .live-only,
 #app[data-mode="live"] .explore-only,
 #app[data-mode="live"] .tracker-only,
+#app[data-mode="live"] .learn-only,
 #app[data-mode="live"] .explore-learn {
   display: none !important;
 }
