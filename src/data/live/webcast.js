@@ -107,14 +107,16 @@ function completed(launch) {
   return COMPLETED.has(launch?.status);
 }
 
-export function findLatestCompletedWebcast(bundle) {
+export function findLatestCompletedWebcast(bundle, { vehicle = "starship" } = {}) {
   const rows = bundleLaunches(bundle)
     .filter(isWebcastVehicle)
     .filter(completed)
     .filter((launch) => youtubeClips(launch).length)
     .sort((a, b) => new Date(b.net || 0) - new Date(a.net || 0));
-  const starship = rows.find(isStarshipWebcastLaunch);
-  const row = starship || rows.find(isFalconWebcastLaunch);
+  const row =
+    vehicle === "falcon"
+      ? rows.find(isFalconWebcastLaunch)
+      : rows.find(isStarshipWebcastLaunch) || (vehicle === "any" ? rows.find(isFalconWebcastLaunch) : null);
   if (!row) return null;
   const clip = pickLaunchWebcast(row);
   if (!clip?.youtubeId) return null;
@@ -158,12 +160,14 @@ export function resolveAutoWebcast({
   }
   const live = findLiveWebcast(bundle);
   if (live) return live;
-  const latest = findLatestCompletedWebcast(bundle);
-  if (latest) return latest;
+  const latestStarship = findLatestCompletedWebcast(bundle, { vehicle: "starship" });
+  if (latestStarship) return latestStarship;
   const sheet = parseYouTubeId(latestSheetVideoId);
   if (sheet) {
     return { youtubeId: sheet, reason: "cue-sheet", live: false, t0Offset: null, title: "", mission: "" };
   }
+  const latestFalcon = findLatestCompletedWebcast(bundle, { vehicle: "falcon" });
+  if (latestFalcon) return latestFalcon;
   const fallback = parseYouTubeId(fallbackId);
   if (fallback) {
     return { youtubeId: fallback, reason: "fallback", live: false, t0Offset: null, title: "", mission: "" };
