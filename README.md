@@ -2,9 +2,29 @@
 
 GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
+**Live site (open in a normal browser):** [https://kellybyron2222-dev.github.io/SpaceX-/](https://kellybyron2222-dev.github.io/SpaceX-/)
+
 Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker and a searchable teaching catalog. Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
+
+## Deploy (GitHub Pages)
+
+Pushes to `main` run `npm ci` → `npm run build` and publish `dist/` with GitHub Actions. Vite `base` is `/SpaceX-/` so asset URLs match this project-pages path.
+
+**First-time enable (one click, if the site 404s):**
+
+1. Open [Settings → Pages](https://github.com/kellybyron2222-dev/SpaceX-/settings/pages)
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**
+3. Save. Then either wait for the next push to `main`, or open **Actions** → **Deploy GitHub Pages** → **Run workflow**
+
+After that, the URL above is the public app.
+
+### Alternate: Vercel (if Pages is blocked)
+
+One-click import: [Deploy on Vercel](https://vercel.com/new/clone?repository-url=https://github.com/kellybyron2222-dev/SpaceX-).
+
+Or: [vercel.com/new](https://vercel.com/new) → Import `kellybyron2222-dev/SpaceX-` → Deploy. `vercel.json` builds with `VITE_BASE=/` so the app is served from the Vercel domain root instead of `/SpaceX-/`.
 
 ## Run
 
