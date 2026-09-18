@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Starship Component Viewer</title>
+    <meta
+      name="description"
+      content="Interactive educational 3D viewer of approximate Starship, Super Heavy, Falcon, and launch-pad componentry, plus a live launch tracker."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23070b10' width='32' height='32'/%3E%3Cpath fill='%23d7dde3' d='M16 3l3.2 9.2H16L12.4 22 16 29l3.6-7L16 12.2h3.2z'/%3E%3Ccircle cx='16' cy='12' r='1.2' fill='%23f5c16c'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div id="app" data-mode="explore">
+      <canvas id="view"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <div class="brand">
+          <span class="mark" aria-hidden="true"></span>
+          <div>
+            <h1>Starship Component Viewer</h1>
+            <p>Parametric educational models · Grok Bot contest showcase</p>
+          </div>
+        </div>
+        <nav class="modes" aria-label="App sections">
+          <button type="button" class="mode-btn" data-mode="tracker">Tracker</button>
+          <button type="button" class="mode-btn active" data-mode="explore">Explore 3D</button>
+          <button type="button" class="mode-btn" data-mode="learn">Learn</button>
+        </nav>
+        <div class="toolbar">
+          <button type="button" id="btn-refresh" class="tool tracker-only" title="Refresh launches">Refresh</button>
+          <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Exploded view (E)">
+            Explode
+          </button>
+          <button type="button" id="btn-reset" class="tool" title="Reset camera (R)">Reset camera</button>
+          <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
+          <button type="button" id="btn-help" class="tool ghost" title="Keyboard shortcuts (?)">?</button>
+        </div>
+      </header>
+
+      <aside class="sidebar explore-only" aria-label="Component picker">
+        <p class="side-label">Scenes</p>
+        <nav id="scene-nav" class="scene-nav"></nav>
+        <dl class="telemetry" id="telemetry">
+          <div><dt>Scale</dt><dd>1 unit = 1 m</dd></div>
+          <div><dt>Height</dt><dd id="tel-height">—</dd></div>
+          <div><dt>Diameter</dt><dd id="tel-dia">—</dd></div>
+        </dl>
+        <p class="hint">Click a mesh for a public-architecture callout. Drag to orbit · scroll to zoom · right-drag to pan.</p>
+      </aside>
+
+      <section class="panel tracker-panel tracker-only" aria-label="Launch tracker">
+        <header class="panel-head">
+          <div>
+            <p class="side-label">Launch tracker</p>
+            <h2>Starship · Falcon 9 · Falcon Heavy</h2>
+          </div>
+        </header>
+        <p id="tracker-banner" class="banner">Loading public launch data…</p>
+        <div class="filters" id="launch-filters">
+          <button type="button" class="chip active" data-filter="all">All</button>
+          <button type="button" class="chip" data-filter="starship">Starship</button>
+          <button type="button" class="chip" data-filter="falcon9">Falcon 9</button>
+          <button type="button" class="chip" data-filter="heavy">Heavy</button>
+        </div>
+        <div id="launch-list" class="launch-list"></div>
+        <p class="hint">
+          Data from Launch Library 2 (The Space Devs), a public third-party database — not official SpaceX telemetry.
+          Click a mission to frame related pad/vehicle infrastructure.
+        </p>
+      </section>
+
+      <aside class="panel catalog-panel learn-only" aria-label="Infrastructure catalog">
+        <p class="side-label">Critical infrastructure</p>
+        <input id="catalog-search" type="search" placeholder="Search tanks, QD, ASDS…" autocomplete="off" />
+        <div class="filters" id="catalog-filters">
+          <button type="button" class="chip active" data-family="all">All</button>
+          <button type="button" class="chip" data-family="starship">Starship</button>
+          <button type="button" class="chip" data-family="falcon">Falcon</button>
+          <button type="button" class="chip" data-family="vehicle">Vehicle</button>
+          <button type="button" class="chip" data-family="ground">Ground</button>
+        </div>
+        <nav id="catalog-nav" class="catalog-nav"></nav>
+      </aside>
+
+      <aside id="callout" class="callout hidden explore-only" role="status">
+        <p class="callout-kicker">Selected part</p>
+        <h2 id="callout-title">—</h2>
+        <p id="callout-body"></p>
+        <div class="callout-actions">
+          <button type="button" id="btn-teach" class="tool hidden">Open in Learn</button>
+          <button type="button" id="callout-close" class="text-btn">Clear (Esc)</button>
+        </div>
+      </aside>
+
+      <aside id="teach" class="teach-panel learn-only" aria-label="Teach mode">
+        <p class="callout-kicker" id="teach-meta">Learn</p>
+        <h2 id="teach-title">Select a component</h2>
+        <p id="teach-blurb" class="lede">Pick an entry in the catalog. The 3D view will focus that part.</p>
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="overview">Overview</button>
+          <button type="button" class="tab" data-tab="history">History</button>
+          <button type="button" class="tab" data-tab="function">Function</button>
+          <button type="button" class="tab" data-tab="physics" id="tab-physics">Physics</button>
+        </div>
+        <div id="teach-body" class="teach-body"></div>
+        <button type="button" id="btn-physics" class="text-btn">I’m interested in the physics notes</button>
+      </aside>
+
+      <div id="help" class="help hidden" role="dialog" aria-labelledby="help-title">
+        <div class="help-card">
+          <h2 id="help-title">Controls</h2>
+          <ul>
+            <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn</li>
+            <li><kbd>R</kbd> Reset camera</li>
+            <li><kbd>S</kbd> Screenshot</li>
+            <li><kbd>E</kbd> Toggle exploded view</li>
+            <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> Switch 3D scene</li>
+            <li><kbd>F</kbd> Fullscreen</li>
+            <li><kbd>?</kbd> Toggle this panel</li>
+            <li><kbd>Esc</kbd> Clear selection / close help</li>
+          </ul>
+          <p>Orbit: left-drag · Pan: right-drag or two-finger · Zoom: wheel / pinch</p>
+          <button type="button" id="help-close" class="tool">Close</button>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>
+          Approximate educational model — not SpaceX CAD or flight hardware drawings.
+          Dimensions are rounded public figures used only as rough scale.
+          Launch times come from a public third-party API, not SpaceX.
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
