@@ -171,7 +171,7 @@
             size="14"
             maxlength="128"
             placeholder="11-char ID or youtube.com/watch?v=…"
-            title="YouTube video ID — 11 characters, letter I not digit 1"
+            title="YouTube video watch URL or 11-character video ID — not a playlist or channel"
           />
           <button type="button" id="btn-live-load" class="tool">Load</button>
         </div>
@@ -180,6 +180,7 @@
           <button type="button" id="btn-embed-help" class="text-btn">Can't play here?</button>
           <button type="button" id="btn-live-default" class="text-btn">Reset to default webcast</button>
         </div>
+        <p id="live-url-error" class="hint" hidden role="alert"></p>
         <p class="section-label">Overlay preset</p>
         <div class="filters" id="live-presets"></div>
         <p id="live-preset-blurb" class="hint"></p>
