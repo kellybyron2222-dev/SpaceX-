@@ -4,7 +4,7 @@ GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
 **Live site (open in a normal browser):** [https://kellybyron2222-dev.github.io/SpaceX-/](https://kellybyron2222-dev.github.io/SpaceX-/)
 
-Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker and a searchable teaching catalog. Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD.
+Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker and a searchable teaching catalog. Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
 
@@ -41,15 +41,17 @@ Then open the printed local URL (default [http://127.0.0.1:47321](http://127.0.0
 | `npm run build` | Production bundle in `dist/` |
 | `npm run preview` | Serve the production build |
 
+Production `vite.config.js` defaults `base` to **`/SpaceX-/`** for GitHub Pages (`https://kellybyron2222-dev.github.io/SpaceX-/`). Override with `VITE_BASE=/` for a root host (the Pages workflow and `vercel.json` already do this where needed).
+
 Dependencies stay minimal: `three` and `vite`.
 
 ## App sections
 
 | Tab | What you get |
 | --- | --- |
-| **Tracker** | Upcoming and recent SpaceX launches (Starship, Falcon 9, Falcon Heavy). Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
-| **Explore 3D** | Original orbitable component viewer. Click a mesh for a short callout; **Open in Learn** deep-links the catalog. |
-| **Learn** | Searchable critical-infrastructure catalog. Selecting an entry drives the 3D scene and opens Overview / History / Function. Physics notes stay collapsed until you opt in. |
+| **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live LL2** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
+| **Explore 3D** | Orbitable component viewer with PBR/IBL lighting. Click a mesh for a callout; **Open in Learn** deep-links the catalog. Idle rotate resumes after a few seconds. |
+| **Learn** | Searchable **22-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
 
 ## Launch tracker API (Launch Library 2)
 
@@ -59,6 +61,7 @@ Launches come from **[Launch Library 2](https://ll.thespacedevs.com/)** by [The 
 - Filter: `lsp__name=SpaceX` (agency id 121)
 - Mode: `normal` (includes pad, rocket, mission, window, status)
 - Refresh: every **10 minutes**, plus a manual **Refresh** button
+- Source toggle: **Live LL2** (query the API) vs **Sample** (cached teaching missions). If live is selected but the API is unreachable, the tracker falls back to sample and says so.
 
 ### Keys and rate limits
 
@@ -72,7 +75,7 @@ For a higher rate limit (Patreon / The Space Devs paid tiers):
 
 The key is sent as `Authorization: Token <key>` as documented by The Space Devs. **Never commit `.env`.**
 
-If the live API is unreachable (network, CORS, or throttle), the tracker **falls back to cached sample missions** and labels the list as sample data. In local `npm run dev`, Vite also proxies `/ll2` → `https://ll.thespacedevs.com` as a CORS backup.
+If the live API is unreachable (network, CORS, or throttle), the tracker **falls back to cached sample missions** and labels the list as sample data — or you can pick **Sample** yourself. In local `npm run dev`, Vite also proxies `/ll2` → `https://ll.thespacedevs.com` as a CORS backup.
 
 ## What each 3D scene represents
 
@@ -96,13 +99,15 @@ Click any labeled mesh for a 1–2 sentence explainer. Nothing here is a drawing
 
 ## Critical infrastructure catalog
 
-Learn mode includes **17** entries spanning Starship and Falcon 9/Heavy:
+Learn mode includes **22** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**.
 
-**Vehicle:** Raptor, Merlin 1D, tanks, flaps, grid fins, heat-shield tiles, hot-stage / interstage, payload fairing, chopsticks, landing legs.
+**Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, tanks, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, chopsticks, landing legs.
 
 **Ground:** OLM / launch mount, QD arm, water deluge / rainbirds, crew access arm, ASDS, Mechazilla tower, strongback / TE.
 
-Each entry stores family (Starship / Falcon / shared), category, a short blurb, history, function, optional physics notes, and a link to the 3D scene + mesh id that should highlight.
+Grid fins and catch pins are separate picks: the waffle lattice opens **Grid fins**; the gold pins open **Catch hardpoints**. Raycasting prefers the smaller, higher-priority pin proxies so a nearby fin lattice does not steal the click.
+
+Each entry stores family (Starship / Falcon / shared), category, a short blurb, history, function, optional physics notes, public sources, and a link to the 3D scene + mesh id that should highlight.
 
 Physics copy uses **order-of-magnitude public figures** (9 m diameter, 33 engines, Merlin-class kN, ~146 m tower). It is not a performance datasheet.
 
@@ -110,16 +115,16 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 33 engine
 
 - **T** Tracker · **V** Explore · **L** Learn
 - **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
-- **R** reset camera · **S** screenshot PNG · **E** exploded view
+- **R** reset camera (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
 - **1–9** and **0** switch 3D scenes · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest demo script (2 minutes)
 
 Booth walkthrough — keep the footer disclaimer on screen the whole time.
 
-1. **Explore (20s).** Open on Full stack. Orbit the ~121 m vehicle, click the engine cluster and a grid fin so callouts appear. Hit **Explode** to lift the ship, then **Reset camera**.
-2. **Tracker (25s).** Switch to **Tracker**. Point at the “Launch Library 2 / not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
-3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “deluge” or “ASDS” to show Falcon ground gear.
+1. **Explore (20s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~121 m vehicle. Click a **grid fin** vs a **catch pin** so the callouts stay distinct. Hit **Explode** to lift the ship, then **Reset camera** (tween).
+2. **Tracker (25s).** Switch to **Tracker**. Point at the Live LL2 vs Sample toggle and the “not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
+3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
 5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
 
@@ -129,6 +134,7 @@ If live launches fail, the sample-data banner is expected — keep talking; the 
 
 - Suitable for a booth laptop: low-poly primitives, instanced tiles, no texture downloads.
 - Screenshot writes the WebGL canvas (`preserveDrawingBuffer`).
+- Camera moves between scenes and catalog picks are tweened; idle rotate pauses while you orbit.
 - Launch status mapping is from LL2 abbreviations (Go, TBD/TBC, Hold, Scrub, In Flight, Success, Failure) onto the tracker chips.
 - Clicking a launch highlights related catalog hardware (e.g. Starbase → chopsticks / OLM / QD; LC-39A → strongback / crew arm; SLC-40 / SLC-4E → Falcon 9 + ASDS).
 - Keep the footer disclaimer if you extend the models.
