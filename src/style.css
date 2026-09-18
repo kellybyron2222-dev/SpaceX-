@@ -451,9 +451,20 @@ body,
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     overscroll-behavior-x: contain;
-    padding-inline-end: 1.75rem;
+    padding-inline-end: 0;
+    min-width: 0;
+    max-width: 100%;
     mask-image: var(--row-fade);
     -webkit-mask-image: var(--row-fade);
+  }
+
+  .scene-nav {
+    padding-inline-end: 1.75rem;
+  }
+
+  .modes {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 
   .modes::-webkit-scrollbar,
@@ -603,6 +614,10 @@ body,
 
   .toolbar {
     gap: 4px;
+  }
+
+  .tool-more {
+    display: none;
   }
 }
 
@@ -935,7 +950,7 @@ body,
 
   #app[data-mode="tracker"] .tracker-panel {
     bottom: var(--chrome-bottom);
-    max-height: min(38vh, 340px);
+    max-height: min(44vh, 380px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1020,6 +1035,22 @@ body,
     bottom: var(--chrome-bottom);
     top: auto;
     max-height: var(--learn-teach-h);
+  }
+
+  #app[data-mode="learn"] .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    padding-inline-end: 1.5rem;
+    mask-image: var(--row-fade);
+    -webkit-mask-image: var(--row-fade);
+  }
+
+  #app[data-mode="learn"] .tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   #app[data-mode="learn"] .teach-panel h2,
