@@ -871,6 +871,11 @@ body,
   visibility: hidden;
 }
 
+.live-overlay.is-hidden .hotspot,
+.live-overlay.hotspots-off .hotspot {
+  pointer-events: none;
+}
+
 #live-hotspots {
   position: absolute;
   inset: 0;
@@ -880,9 +885,9 @@ body,
 }
 
 .hotspot {
-  fill: rgba(245, 193, 108, 0.14);
-  stroke: rgba(245, 193, 108, 0.85);
-  stroke-width: 1.5px;
+  fill: transparent;
+  stroke: rgba(245, 193, 108, 0.28);
+  stroke-width: 1px;
   vector-effect: non-scaling-stroke;
   cursor: pointer;
   pointer-events: auto;
@@ -891,13 +896,15 @@ body,
 
 .hotspot:hover,
 .hotspot:focus-visible {
-  fill: rgba(125, 211, 252, 0.22);
+  fill: rgba(125, 211, 252, 0.18);
   stroke: #7dd3fc;
+  stroke-width: 1.5px;
 }
 
 .hotspot.selected {
-  fill: rgba(125, 211, 252, 0.32);
+  fill: rgba(125, 211, 252, 0.28);
   stroke: #7dd3fc;
+  stroke-width: 1.5px;
   filter: drop-shadow(0 0 6px rgba(125, 211, 252, 0.45));
 }
 
@@ -922,6 +929,14 @@ body,
   max-width: 46%;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.hotspot-label.is-hover,
+.hotspot-label.selected {
+  opacity: 1;
 }
 
 .hotspot-label.selected {

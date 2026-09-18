@@ -102,7 +102,7 @@ export function createLiveLaunch({ onSelect }) {
     videoId: resolveDefaultVideoId(fallbackId),
     presetId: presets[0]?.id || "stack-on-pad",
     catalogId: null,
-    hotspotsOn: loadHotspotsVisible(true),
+    hotspotsOn: loadHotspotsVisible(false),
     followChapters: true,
     isLive: false,
     duration: 0,
@@ -232,9 +232,15 @@ export function createLiveLaunch({ onSelect }) {
       const c = hotspotCentroid(hs);
       const lab = document.createElement("span");
       lab.className = `hotspot-label${selected ? " selected" : ""}`;
+      lab.dataset.catalogId = hs.catalogId;
       lab.textContent = hs.label || entry.name;
       lab.style.left = `${c.x * 100}%`;
       lab.style.top = `${c.y * 100}%`;
+      const setHover = (on) => lab.classList.toggle("is-hover", on);
+      shape.addEventListener("pointerenter", () => setHover(true));
+      shape.addEventListener("pointerleave", () => setHover(false));
+      shape.addEventListener("focus", () => setHover(true));
+      shape.addEventListener("blur", () => setHover(false));
       labels.appendChild(lab);
 
       const row = document.createElement("button");
