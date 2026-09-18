@@ -2,6 +2,7 @@ import "./style.css";
 import { Viewer } from "./viewer.js";
 import { CATALOG, catalogById, findCatalogByPart, searchCatalog } from "./data/catalog.js";
 import { countdown, formatUtc, loadLaunches, REFRESH_MS } from "./data/launches.js";
+import { createLiveLaunch } from "./live.js";
 
 const app = document.getElementById("app");
 const canvas = document.getElementById("view");
@@ -32,6 +33,12 @@ const tabPhysics = document.getElementById("tab-physics");
 
 const viewer = new Viewer(canvas);
 
+const live = createLiveLaunch({
+  onSelect(catalogId) {
+    selectCatalog(catalogId);
+  },
+});
+
 const state = {
   mode: "explore",
   sceneId: "fullstack",
@@ -48,6 +55,7 @@ const state = {
 };
 
 function setMode(mode) {
+  const prev = state.mode;
   state.mode = mode;
   app.dataset.mode = mode;
   document.querySelectorAll(".mode-btn").forEach((btn) => {
@@ -56,7 +64,16 @@ function setMode(mode) {
   if (mode !== "explore") hideCallout();
   if (mode === "learn") {
     renderCatalog();
-    if (state.catalogId) showTeach(catalogById(state.catalogId));
+    showTeach(state.catalogId ? catalogById(state.catalogId) : null);
+  }
+  if (mode === "live") {
+    live.activate();
+    viewer.setPaused(true);
+    live.setSelected(state.catalogId);
+    showTeach(state.catalogId ? catalogById(state.catalogId) : null);
+  } else if (prev === "live") {
+    live.deactivate();
+    viewer.setPaused(false);
   }
 }
 
@@ -125,9 +142,12 @@ function showCallout(part) {
 
 function showTeach(entry) {
   if (!entry) {
-    teachMeta.textContent = "Learn";
-    teachTitle.textContent = "Select a component";
-    teachBlurb.textContent = "Pick an entry in the catalog. The 3D view will focus that part.";
+    const liveMode = state.mode === "live";
+    teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
+    teachTitle.textContent = liveMode ? "Select a tagged component" : "Select a component";
+    teachBlurb.textContent = liveMode
+      ? "Click a hotspot on the public stream (or a name in the list). Overview / History / Function / Sources / Physics use the same catalog as Learn."
+      : "Pick an entry in the catalog. The 3D view will focus that part.";
     teachBody.innerHTML = "";
     return;
   }
@@ -163,11 +183,13 @@ function selectCatalog(id, { loadScene = true } = {}) {
   if (!entry) return;
   state.catalogId = id;
   renderCatalog();
-  if (loadScene) {
-    if (viewer.sceneId !== entry.sceneId) selectScene(entry.sceneId, { partId: entry.partId });
-    else viewer.highlightById(entry.partId, { frame: true });
-  } else {
-    viewer.highlightById(entry.partId, { frame: true });
+  if (state.mode !== "live") {
+    if (loadScene) {
+      if (viewer.sceneId !== entry.sceneId) selectScene(entry.sceneId, { partId: entry.partId });
+      else viewer.highlightById(entry.partId, { frame: true });
+    } else {
+      viewer.highlightById(entry.partId, { frame: true });
+    }
   }
   showTeach(entry);
 }
@@ -395,6 +417,26 @@ window.addEventListener("keydown", (event) => {
   if (key === "t") setMode("tracker");
   if (key === "v") setMode("explore");
   if (key === "l") setMode("learn");
+  if (key === "y") setMode("live");
+  if (key === "?" || (event.shiftKey && key === "/")) help.classList.toggle("hidden");
+  if (key === "escape") {
+    help.classList.add("hidden");
+    viewer.clearSelection();
+    hideCallout();
+    if (state.mode === "live") {
+      live.clearSelection();
+      state.catalogId = null;
+      showTeach(null);
+    }
+  }
+  if (key === "f") {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+  if (state.mode === "live") {
+    if (key === "h") live.toggleHotspots();
+    return;
+  }
   if (key === "r") viewer.resetCamera();
   if (key === "i") btnIdle.click();
   if (key === "s") {
@@ -402,16 +444,6 @@ window.addEventListener("keydown", (event) => {
     viewer.screenshot();
   }
   if (key === "e") btnExplode.click();
-  if (key === "?" || (event.shiftKey && key === "/")) help.classList.toggle("hidden");
-  if (key === "escape") {
-    help.classList.add("hidden");
-    viewer.clearSelection();
-    hideCallout();
-  }
-  if (key === "f") {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-    else document.exitFullscreen?.();
-  }
   if (key === "0") {
     const scene = viewer.scenes()[9];
     if (scene) selectScene(scene.id);

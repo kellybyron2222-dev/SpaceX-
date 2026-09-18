@@ -6,7 +6,7 @@
     <title>Starship Component Viewer</title>
     <meta
       name="description"
-      content="Interactive educational 3D viewer of approximate Starship, Super Heavy, Falcon, and launch-pad componentry, plus a live launch tracker."
+      content="Interactive educational 3D viewer of approximate Starship, Super Heavy, Falcon, and launch-pad componentry, plus a live launch tracker and public-stream Live Launch mode."
     />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23070b10' width='32' height='32'/%3E%3Cpath fill='%23d7dde3' d='M16 3l3.2 9.2H16L12.4 22 16 29l3.6-7L16 12.2h3.2z'/%3E%3Ccircle cx='16' cy='12' r='1.2' fill='%23f5c16c'/%3E%3C/svg%3E" />
   </head>
@@ -14,6 +14,17 @@
     <div id="app" data-mode="explore">
       <canvas id="view"></canvas>
       <div class="vignette" aria-hidden="true"></div>
+
+      <div id="live-stage" class="live-stage live-only" aria-label="Live Launch public stream">
+        <div class="live-frame">
+          <div id="live-player-host"></div>
+          <div id="live-overlay" class="live-overlay">
+            <svg id="live-hotspots" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="false"></svg>
+            <div id="live-labels" class="live-labels"></div>
+          </div>
+          <p id="live-player-error" class="live-error hidden" role="alert"></p>
+        </div>
+      </div>
 
       <header class="topbar">
         <div class="brand">
@@ -27,6 +38,7 @@
           <button type="button" class="mode-btn" data-mode="tracker">Tracker</button>
           <button type="button" class="mode-btn active" data-mode="explore">Explore 3D</button>
           <button type="button" class="mode-btn" data-mode="learn">Learn</button>
+          <button type="button" class="mode-btn" data-mode="live">Live Launch</button>
         </nav>
         <div class="toolbar">
           <button type="button" id="btn-refresh" class="tool tracker-only" title="Refresh launches">Refresh</button>
@@ -36,8 +48,11 @@
           <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Exploded view (E)">
             Explode
           </button>
-          <button type="button" id="btn-reset" class="tool" title="Reset camera (R)">Reset camera</button>
+          <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera (R)">Reset camera</button>
           <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
+          <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="true" title="Show hotspot overlays (H)">
+            Hotspots
+          </button>
           <button type="button" id="btn-help" class="tool ghost" title="Keyboard shortcuts (?)">?</button>
         </div>
       </header>
@@ -101,7 +116,38 @@
         </div>
       </aside>
 
-      <aside id="teach" class="teach-panel learn-only" aria-label="Teach mode">
+      <aside class="panel live-panel live-only" aria-label="Live Launch controls">
+        <p class="side-label">Live Launch</p>
+        <h2 class="live-heading">Public stream embed</h2>
+        <p id="live-banner" class="banner">Public YouTube embed — not official SpaceX telemetry or internal cameras.</p>
+        <label class="field-label" for="live-url">YouTube URL or video ID</label>
+        <div class="live-url-row">
+          <input id="live-url" type="text" spellcheck="false" autocomplete="off" placeholder="https://youtube.com/watch?v=… or 11-char ID" />
+          <button type="button" id="btn-live-load" class="tool">Load</button>
+        </div>
+        <div class="live-url-actions">
+          <button type="button" id="btn-live-default" class="text-btn">Reset to default webcast</button>
+          <a id="live-open-yt" class="text-btn" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+        </div>
+        <p class="section-label">Overlay preset</p>
+        <div class="filters" id="live-presets"></div>
+        <p id="live-preset-blurb" class="hint"></p>
+        <p class="section-label">VOD chapters</p>
+        <label class="follow-row">
+          <input type="checkbox" id="live-follow-chapters" checked />
+          Follow chapters
+        </label>
+        <div class="filters" id="live-chapters"></div>
+        <p id="live-clock" class="hint">Load a public stream to begin.</p>
+        <p class="section-label">Tagged components</p>
+        <nav id="live-hotspot-list" class="catalog-nav"></nav>
+        <p class="hint">
+          Click a box on the video or a name in this list. Hotspot coordinates live in
+          <code>src/data/live/overlays.json</code> (0–1, top-left origin).
+        </p>
+      </aside>
+
+      <aside id="teach" class="teach-panel learn-live" aria-label="Teach mode">
         <p class="callout-kicker" id="teach-meta">Learn</p>
         <h2 id="teach-title">Select a component</h2>
         <p id="teach-blurb" class="lede">Pick an entry in the catalog. The 3D view will focus that part.</p>
@@ -120,7 +166,8 @@
         <div class="help-card">
           <h2 id="help-title">Controls</h2>
           <ul>
-            <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn</li>
+            <li><kbd>T</kbd> Tracker · <kbd>V</kbd> Explore · <kbd>L</kbd> Learn · <kbd>Y</kbd> Live Launch</li>
+            <li><kbd>H</kbd> Toggle Live Launch hotspots</li>
             <li><kbd>R</kbd> Reset camera (tween)</li>
             <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
@@ -140,6 +187,7 @@
           Approximate educational model — not SpaceX CAD or flight hardware drawings.
           Dimensions are rounded public figures used only as rough scale.
           Launch times come from a public third-party API, not SpaceX.
+          <span class="live-only"> Live Launch embeds a public YouTube stream — not official SpaceX telemetry or internal cameras.</span>
         </p>
       </footer>
     </div>

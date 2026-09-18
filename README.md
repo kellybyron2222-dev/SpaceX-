@@ -4,7 +4,7 @@ GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
 **Live site (open in a normal browser):** [https://kellybyron2222-dev.github.io/SpaceX-/](https://kellybyron2222-dev.github.io/SpaceX-/)
 
-Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker and a searchable teaching catalog. Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
+Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
 
@@ -52,6 +52,7 @@ Dependencies stay minimal: `three` and `vite`.
 | **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live LL2** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
 | **Explore 3D** | Orbitable component viewer with PBR/IBL lighting. Click a mesh for a callout; **Open in Learn** deep-links the catalog. Idle rotate resumes after a few seconds. |
 | **Learn** | Searchable **22-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
+| **Live Launch** | Public YouTube embed of Starship coverage with clickable hotspot overlays. Click a tag for the same Learn panel. Not official SpaceX telemetry or internal cameras. |
 
 ## Launch tracker API (Launch Library 2)
 
@@ -76,6 +77,44 @@ For a higher rate limit (Patreon / The Space Devs paid tiers):
 The key is sent as `Authorization: Token <key>` as documented by The Space Devs. **Never commit `.env`.**
 
 If the live API is unreachable (network, CORS, or throttle), the tracker **falls back to cached sample missions** and labels the list as sample data — or you can pick **Sample** yourself. In local `npm run dev`, Vite also proxies `/ll2` → `https://ll.thespacedevs.com` as a CORS backup.
+
+## Live Launch
+
+**Live Launch** plays a **public YouTube embed** of Starship coverage and lets you click tagged components on the picture. Each hotspot maps to a catalog id (chopsticks, Raptor cluster, tiles, QD arm, flaps, OLM, …) and opens the same Learn detail panel: Overview / History / Function / Sources / Physics.
+
+This is **not** official SpaceX telemetry, range video, or an internal camera product. The UI labels it as a public stream embed.
+
+### Set the YouTube ID
+
+Default placeholder: SpaceX’s public [*Starship's Fifth Flight Test*](https://www.youtube.com/watch?v=hI9HQfCAw64) webcast (`hI9HQfCAw64`, 13 Oct 2024). Swap it for the latest public launch/test stream when one is up.
+
+1. In the Live Launch sidebar, paste a YouTube URL or 11-character video ID and click **Load** (remembered in `localStorage`).
+2. Or copy `.env.example` to `.env`, set `VITE_YOUTUBE_VIDEO_ID=your_id`, and restart Vite. Env is the deploy-time default when the user has not pasted an ID.
+3. **Reset to default webcast** clears the saved ID and reloads the env/JSON default.
+
+### Overlay presets (JSON)
+
+Hotspot boxes live in [`src/data/live/overlays.json`](src/data/live/overlays.json) so you can retune them **without changing app code**. Coordinates are normalized **0–1**, origin at the **top-left** of the 16:9 player.
+
+| Shape | Fields |
+| --- | --- |
+| `rect` | `x`, `y`, `w`, `h` |
+| `polygon` | `points: [[x, y], …]` |
+
+Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped presets:
+
+- **Stack on pad** — wide Starbase shot: stack, tower, chopsticks, QD, OLM, deluge, flaps, tiles, grid fins, Raptor cluster.
+- **Catch / chopsticks** — tower-centered return: arms, catch pins, grid fins, booster tanks, cluster.
+
+`chapters` in the same file are optional VOD markers (`t` in seconds → `presetId`). On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers (times are a starting point for the default Flight 5 webcast — edit the JSON to match another video).
+
+Toggle overlays with the **Hotspots** toolbar button or **H**. The selected hotspot is highlighted. Names in the sidebar work if a box is hard to click.
+
+### Phase 2 (not in this MVP)
+
+- Real-time computer-vision detection/tracking of parts on the live pixels
+- Official SpaceX API / internal camera feeds
+
 
 ## What each 3D scene represents
 
@@ -113,7 +152,9 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 33 engine
 
 ## Controls
 
-- **T** Tracker · **V** Explore · **L** Learn
+- **T** Tracker · **V** Explore · **L** Learn · **Y** Live Launch
+- **H** toggle Live Launch hotspots
+- **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
 - **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
 - **R** reset camera (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
 - **1–9** and **0** switch 3D scenes · **F** fullscreen · **?** help · **Esc** clear selection
@@ -127,6 +168,7 @@ Booth walkthrough — keep the footer disclaimer on screen the whole time.
 3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
 5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
+6. **Live Launch (20s).** Switch to **Live Launch**. Point at the public-stream disclaimer. Show **Stack on pad**, click chopsticks or OLM, flip Learn tabs. Switch to **Catch / chopsticks**. Optionally paste the current public webcast ID.
 
 If live launches fail, the sample-data banner is expected — keep talking; the 3D path is the demo.
 
