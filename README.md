@@ -108,7 +108,7 @@ Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped p
 
 `chapters` in the same file are optional VOD markers (`t` in seconds → `presetId`). On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers (times are a starting point for the default Flight 5 webcast — edit the JSON to match another video).
 
-Toggle overlays with the **Hotspots** toolbar button or **H**. The selected hotspot is highlighted. Names in the sidebar work if a box is hard to click.
+Overlays start **off** so the webcast is watchable. Toggle them with the **Hotspots** toolbar button or **H**. When they are on, boxes stay dim (transparent fill, faint outline) until hover or keyboard focus; click still opens Learn. The selected hotspot stays highlighted. Names in the sidebar work even when overlays are hidden.
 
 ### Phase 2 (not in this MVP)
 

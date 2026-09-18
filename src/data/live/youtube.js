@@ -46,7 +46,7 @@ export function storeVideoId(id) {
   }
 }
 
-export function loadHotspotsVisible(fallback = true) {
+export function loadHotspotsVisible(fallback = false) {
   try {
     const v = localStorage.getItem(HOTSPOT_STORAGE_KEY);
     if (v === "0") return false;
