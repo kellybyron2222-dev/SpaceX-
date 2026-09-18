@@ -4,8 +4,8 @@
 
 ## Shipped
 
-- Through [#29](https://github.com/kellybyron2222-dev/SpaceX-/pull/29): Explore **Mechazilla** chopsticks around a ~72 m / 33-Raptor / 3-fin Super Heavy ghost; tower lattice ~146 m-class
-- [#30](https://github.com/kellybyron2222-dev/SpaceX-/pull/30): public-figure **copy** — LOX nose tip / CH4 below, Tracker **Falcon Heavy** vs Super Heavy, Super Heavy thrust puck (not octaweb), Teaching catalog
+- Through [#31](https://github.com/kellybyron2222-dev/SpaceX-/pull/31): Mechazilla look (#29), public-figure copy (#30), living STATUS
+- [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): Explore **Raptor** stays a textbook FFSC teaching mesh; Learn + Live show a licensed Wikimedia still of a real sea-level Raptor (not hangar photoreal)
 
 ## Open PRs
 

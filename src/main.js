@@ -1,6 +1,7 @@
 import "./style.css";
 import { Viewer } from "./viewer.js";
 import { CATALOG, catalogById, findCatalogByPart, frameTargetForCatalog, searchCatalog } from "./data/catalog.js";
+import { fillReferenceFigure, photoForCatalog } from "./data/referencePhotos.js";
 import {
   formatUtc,
   loadLaunches,
@@ -39,6 +40,28 @@ const teachBlurb = document.getElementById("teach-blurb");
 const teachBody = document.getElementById("teach-body");
 const btnPhysics = document.getElementById("btn-physics");
 const tabPhysics = document.getElementById("tab-physics");
+const teachRef = document.getElementById("teach-ref");
+const teachRefImg = document.getElementById("teach-ref-img");
+const teachRefCaption = document.getElementById("teach-ref-caption");
+const teachRefCredit = document.getElementById("teach-ref-credit");
+const liveRef = document.getElementById("live-ref");
+const liveRefImg = document.getElementById("live-ref-img");
+const liveRefCaption = document.getElementById("live-ref-caption");
+const liveRefCredit = document.getElementById("live-ref-credit");
+
+function syncReferencePhotos(entry) {
+  const photo = photoForCatalog(entry?.id);
+  fillReferenceFigure(
+    teachRef,
+    { img: teachRefImg, caption: teachRefCaption, credit: teachRefCredit },
+    photo,
+  );
+  fillReferenceFigure(
+    liveRef,
+    { img: liveRefImg, caption: liveRefCaption, credit: liveRefCredit },
+    state.mode === "live" ? photo : null,
+  );
+}
 
 const viewer = new Viewer(canvas);
 
@@ -190,6 +213,7 @@ function syncPhysicsTab() {
 
 function showTeach(entry) {
   syncPhysicsTab();
+  syncReferencePhotos(entry);
   if (!entry) {
     const liveMode = state.mode === "live";
     teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
