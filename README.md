@@ -4,6 +4,8 @@ GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
 **Live site (open in a normal browser):** [https://kellybyron2222-dev.github.io/SpaceX-/](https://kellybyron2222-dev.github.io/SpaceX-/)
 
+**Snapshot:** [STATUS.md](STATUS.md)
+
 Interactive Three.js mesh viewer of **approximate, publicly described** Starship / Super Heavy / Falcon / launch-pad componentry, plus a live launch tracker, a searchable teaching catalog, and **Live Launch** (public YouTube embed with clickable component hotspots). Built as a Grok Bot contest showcase: parametric models, not proprietary SpaceX CAD. The 3D view uses **PBR materials** with **image-based lighting** (RoomEnvironment / PMREM), **camera tweens** when framing parts, and optional **idle rotate**.
 
 > Approximate educational model — not SpaceX CAD or flight hardware drawings.
