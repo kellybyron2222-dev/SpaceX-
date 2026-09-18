@@ -6,12 +6,13 @@
 
 - Through [#18](https://github.com/kellybyron2222-dev/SpaceX-/pull/18): hardened viewer + Pages (`vite` base `/SpaceX-/`), Live Launch MVP, **hotspots default-off**, Explore/Tracker/Learn QA
 - [#19](https://github.com/kellybyron2222-dev/SpaceX-/pull/19): living `STATUS.md` on main
-- This PR: Live Launch YouTube fallback, **Live webcast** overlay fit + nudge, public Starship **T−** card (LL2, not official telemetry)
+- Live-site audit: **no critical Pages regression**
+- This PR [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20): Live Launch YouTube fallback, **Live webcast** overlay fit + nudge, public Starship **T−** card (LL2)
 
 ## Open PRs
 
-- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20) — Live Launch embed / overlay / countdown (`cursor/live-launch-embed-countdown-f681`)
+- [#20](https://github.com/kellybyron2222-dev/SpaceX-/pull/20) — Live Launch embed / overlay / countdown (ready for review)
 
 ## Next
 
-Explore/Learn polish. Do not submit the contest.
+After #20 merges: Live Launch catch auto-seek + stricter YouTube IDs (new PR). Then Explore/Learn polish. Do not submit the contest.
