@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Starship Component Viewer</title>
     <meta
       name="description"
@@ -87,6 +87,8 @@
         <p class="hint">Click a mesh for a public-architecture callout. Drag to orbit · scroll to zoom · right-drag to pan.</p>
       </aside>
 
+      <p id="orbit-hint" class="orbit-hint">Drag with one finger to orbit · pinch to zoom · tap a part</p>
+
       <section class="panel tracker-panel tracker-only" aria-label="Launch tracker">
         <header class="panel-head">
           <div>
@@ -96,8 +98,8 @@
         </header>
         <p id="tracker-banner" class="banner">Loading public launch data…</p>
         <div class="filters" id="tracker-source" aria-label="Launch data source">
-          <button type="button" class="chip active" data-source="live" title="Launch Library 2 (The Space Devs) — live public SpaceX launch list, not official SpaceX telemetry">Live LL2</button>
-          <button type="button" class="chip" data-source="sample" title="Cached teaching missions with distinct names and dates — not a copy of the live list">Sample</button>
+          <button type="button" class="chip active" data-source="live" title="Live upcoming and recent SpaceX launches from Launch Library 2 (The Space Devs) — not official SpaceX telemetry">Live data</button>
+          <button type="button" class="chip" data-source="sample" title="Cached teaching missions stored in the app — not live, and not a copy of today’s list">Sample</button>
         </div>
         <div class="filters" id="launch-filters">
           <button type="button" class="chip active" data-filter="all">All</button>
@@ -114,7 +116,7 @@
 
       <aside class="panel catalog-panel learn-only" aria-label="Infrastructure catalog">
         <p class="side-label">Critical infrastructure</p>
-        <input id="catalog-search" type="search" placeholder="Search tanks, QD, ASDS…" autocomplete="off" />
+        <input id="catalog-search" type="search" placeholder="Search tanks, QD arm, ASDS droneship…" autocomplete="off" />
         <div class="filters" id="catalog-filters">
           <button type="button" class="chip active" data-family="all">All</button>
           <button type="button" class="chip" data-family="starship">Starship</button>
@@ -206,12 +208,13 @@
             <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
             <li><kbd>E</kbd> Toggle exploded view</li>
-            <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> Switch 3D scene</li>
+            <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> <kbd>-</kbd> Switch 3D scene (minus = ASDS droneship)</li>
             <li><kbd>F</kbd> Fullscreen</li>
             <li><kbd>?</kbd> Toggle this panel</li>
             <li><kbd>Esc</kbd> Clear selection / close help</li>
           </ul>
-          <p>Orbit: left-drag · Pan: right-drag or two-finger · Zoom: wheel / pinch</p>
+          <p>Mouse: left-drag to orbit · right-drag to pan · wheel to zoom</p>
+          <p>Touch: one-finger drag to orbit · pinch to zoom · two-finger drag to pan · tap a part for its callout</p>
           <button type="button" id="help-close" class="tool">Close</button>
         </div>
       </div>

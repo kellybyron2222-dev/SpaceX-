@@ -178,6 +178,33 @@ export function formatUtc(iso) {
   return `${dd} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()} · ${hh}:${mm} UTC`;
 }
 
+const STATUS_TIPS = {
+  go: "Go — launch is cleared to proceed at the listed time, range and weather permitting.",
+  hold: "Hold — the countdown or launch flow is paused.",
+  scrub: "Scrub — this attempt is called off.",
+  success: "Success — mission completed, as reported by Launch Library 2 (not official SpaceX).",
+  failure: "Failure — launch or mission failed, as reported by Launch Library 2.",
+  "in-flight": "In flight — currently airborne, as reported.",
+  scheduled: "Scheduled — on the public manifest.",
+};
+
+/** Plain-language tooltip for tracker status chips (GO / TBC / TBD / HOLD / NET / …). */
+export function statusTip(status, statusLabel = "") {
+  const label = String(statusLabel || "").trim().toUpperCase();
+  if (label === "TBC" || label.includes("TO BE CONFIRMED")) {
+    return "TBC (To Be Confirmed) — a launch slot is on the manifest, but the exact time is not confirmed. Not terms and conditions.";
+  }
+  if (label === "TBD" || label.includes("TO BE DETERMINED")) {
+    return "TBD (To Be Determined) — the date or time has not been decided yet.";
+  }
+  if (label === "NET" || label.includes("NO EARLIER")) {
+    return "NET (No Earlier Than) — the vehicle will not launch before this time; it is a floor, not a firm T-0.";
+  }
+  if (label === "GO") return STATUS_TIPS.go;
+  if (label === "HOLD") return STATUS_TIPS.hold;
+  return STATUS_TIPS[status] || STATUS_TIPS.scheduled;
+}
+
 export function countdown(iso) {
   if (!iso) return "";
   const t = new Date(iso).getTime() - Date.now();

@@ -49,7 +49,7 @@ Dependencies stay minimal: `three` and `vite`.
 
 | Tab | What you get |
 | --- | --- |
-| **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live LL2** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
+| **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live data** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
 | **Explore 3D** | Orbitable component viewer with PBR/IBL lighting. Click a mesh for a callout; **Open in Learn** deep-links the catalog. Idle rotate resumes after a few seconds. |
 | **Learn** | Searchable **22-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
 | **Live Launch** | Public YouTube embed of Starship coverage with clickable hotspot overlays. Click a tag for the same Learn panel. Not official SpaceX telemetry or internal cameras. |
@@ -62,7 +62,7 @@ Launches come from **[Launch Library 2](https://ll.thespacedevs.com/)** by [The 
 - Filter: `lsp__name=SpaceX` (agency id 121)
 - Mode: `normal` (includes pad, rocket, mission, window, status)
 - Refresh: every **10 minutes**, plus a manual **Refresh** button
-- Source toggle: **Live LL2** (query the API) vs **Sample** (cached teaching missions). If live is selected but the API is unreachable, the tracker falls back to sample and says so.
+- Source toggle: **Live data** (query Launch Library 2) vs **Sample** (cached teaching missions). If live is selected but the API is unreachable, the tracker falls back to sample, labels the chip **Live (offline)**, and says so.
 
 ### Keys and rate limits
 
@@ -115,7 +115,7 @@ Each hotspot needs a `catalogId` that exists in `src/data/catalog.js`. Shipped p
 
 `chapters` in the same file are VOD markers (`t` in seconds → `presetId`). Times are **recap timestamps**, not mission elapsed time. The Flight 5 recap is ~3:28 (`expectedDurationSeconds`); booster catch at mission **T+6:54** is about **1:40** in this upload, not `t=420`. On a **live** stream the app shows the static preset selector and disables chapter follow. For a VOD, enable **Follow chapters** to swap presets as the playhead crosses markers. Edit the JSON to match another video.
 
-Entering **Live Launch** clears leftover Learn/Tracker teach selection so a Merlin panel cannot sit beside a Starship VOD. Pick a tagged component (list or hotspot) to fill Overview / Sources again.
+Entering **Live Launch** clears leftover Learn/Tracker teach selection so a Merlin panel cannot sit beside a Starship VOD. Pick a tagged component (list or hotspot) to fill Overview / Sources again. Leaving Live Launch for **Explore 3D** or **Learn** frames that tagged part in 3D (grid fins, catch pins, chopsticks, …) instead of keeping the leftover Full stack camera.
 
 Overlays start **off** so the webcast is watchable. Toggle them with the **Hotspots** toolbar button or **H**. When they are on, boxes stay dim (transparent fill, faint outline) until hover or keyboard focus; click still opens Learn. **On phones / coarse pointers, overlay boxes are visual only** (they do not steal the YouTube play control). Use the **Tagged components** list — rows are at least **44px** tall. The selected hotspot stays highlighted. Names in the sidebar work even when overlays are hidden.
 
@@ -163,17 +163,16 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 
 
 - **T** Tracker · **V** Explore · **L** Learn · **Y** Live Launch
 - **H** toggle Live Launch hotspots
-- **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
-- **Orbit** left-drag · **pan** right-drag · **zoom** wheel / pinch
+- **Orbit** one-finger / left-drag · **pan** two-finger / right-drag · **zoom** pinch / wheel
 - **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
-- **1–9** and **0** switch 3D scenes · **F** fullscreen · **?** help · **Esc** clear selection
+- **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest demo script (2 minutes)
 
 Booth walkthrough — keep the footer disclaimer on screen the whole time.
 
 1. **Explore (20s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~124 m vehicle. Click a **grid fin** vs a **catch pin** so the callouts stay distinct. Hit **Explode** to lift the ship, then **Reset camera** (tween; also collapses explode).
-2. **Tracker (25s).** Switch to **Tracker**. Point at the Live LL2 vs Sample toggle and the “not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
+2. **Tracker (25s).** Switch to **Tracker**. Point at the Live data vs Sample toggle and the “not official SpaceX telemetry” banner. Click a Falcon 9 card (pad lights up in 3D) or a Starbase/Starship row if one is listed. Use a related chip (Merlin, chopsticks, ASDS) to jump into Learn.
 3. **Learn + physics (30s).** Stay in **Learn**, select **Raptor**. Flip Overview → History → Function → **Sources**. Click **I’m interested in the physics notes** and read the order-of-magnitude Pc / cluster packing note. Search “catch” or “ASDS” to show recovery hardware.
 4. **Falcon 9 (20s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Explode opens the clamshell and kicks the legs out.
 5. **Catch hardware (15s).** Open **Mechazilla**. Explode spreads the chopsticks around the ghost booster. Screenshot (S) if judges want a still.
