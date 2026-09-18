@@ -544,7 +544,7 @@ body,
   }
 
   #app[data-mode="explore"] .orbit-hint {
-    bottom: calc(var(--chrome-bottom) + 78px);
+    bottom: calc(var(--chrome-bottom) + 112px);
   }
 
   #app[data-mode="learn"] #catalog-filters,
@@ -563,7 +563,7 @@ body,
   }
 
   #app[data-mode="learn"] .orbit-hint {
-    bottom: calc(var(--chrome-bottom) + 30vh + 152px);
+    display: none;
   }
 
   #app[data-mode="tracker"] .orbit-hint,
@@ -863,8 +863,10 @@ body,
   flex-shrink: 0;
 }
 
-.orbit-hint {
-  display: none;
+@media (min-width: 861px) {
+  .orbit-hint {
+    display: none;
+  }
 }
 
 .chip.is-fallback {
@@ -936,6 +938,11 @@ body,
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  #app[data-mode="tracker"] .launch-card,
+  #app[data-mode="tracker"] .section-label {
+    flex-shrink: 0;
   }
 
   /* Learn: compact horizontal catalog above a scrolling teach sheet — 3D stays on top. */
@@ -1032,7 +1039,9 @@ body,
     padding: 12px 14px;
   }
 
-  .tool {
+  .tool,
+  .tool.ghost {
+    min-width: 44px;
     padding: 12px 14px;
   }
 
