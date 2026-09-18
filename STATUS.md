@@ -9,7 +9,7 @@
 
 ## Open PRs
 
-This PR (textbook 3D + photo refs).
+- [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): textbook Raptor 3D + licensed Learn/Live photo refs
 
 ## Next
 
