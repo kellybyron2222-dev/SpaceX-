@@ -364,8 +364,9 @@ document.getElementById("callout-close").addEventListener("click", () => {
 });
 btnTeach.addEventListener("click", () => {
   if (!state.pendingCatalog) return;
+  const id = state.pendingCatalog.id;
   setMode("learn");
-  selectCatalog(state.pendingCatalog.id);
+  selectCatalog(id);
 });
 
 document.querySelectorAll("#tracker-source .chip").forEach((chip) => {
