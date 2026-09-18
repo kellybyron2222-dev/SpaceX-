@@ -9,11 +9,11 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33) cue sheet · [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34) deep-links · [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35) Commentator
-- Latest-stream: if LL2/YouTube has no live Starship/Falcon webcast, Live Launch prefills the **latest completed** official-style VOD (Flight 13 as of 2026-09-18). Commentator syncs that VOD clock (Flight 5 catch + Flight 13 T+ sheet). Video stays clear until Start.
+- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37): no-live fallback to latest completed VOD (Flight 13 as of 2026-09-18). Commentator syncs that clock.
 
 ## Open PRs
 
-[#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37) latest-stream commentary. After merge: **none.**
+**None.**
 
 ## Next
 
