@@ -1,7 +1,15 @@
 import "./style.css";
 import { Viewer } from "./viewer.js";
 import { CATALOG, catalogById, findCatalogByPart, searchCatalog } from "./data/catalog.js";
-import { countdown, formatUtc, loadLaunches, nextStarshipWindow, REFRESH_MS, statusTip } from "./data/launches.js";
+import {
+  formatUtc,
+  loadLaunches,
+  nextStarshipWindow,
+  REFRESH_MS,
+  statusTip,
+  trackerCountdown,
+  trackerWhenLine,
+} from "./data/launches.js";
 import { createLiveLaunch } from "./live.js";
 
 const app = document.getElementById("app");
@@ -104,6 +112,7 @@ function setMode(mode) {
       showTeach(null);
     }
   }
+  if (mode === "tracker") frameTrackerLaunch();
 }
 
 function renderNav(activeId, relatedSceneIds = []) {
@@ -167,7 +176,19 @@ function showCallout(part) {
   btnTeach.classList.toggle("hidden", !entry);
 }
 
+function syncPhysicsTab() {
+  const locked = !state.physicsUnlocked;
+  tabPhysics.disabled = locked;
+  tabPhysics.title = locked ? "Unlock with the link below" : "Physics notes";
+  tabPhysics.setAttribute(
+    "aria-label",
+    locked ? "Physics (locked). Unlock with the link below." : "Physics notes",
+  );
+  btnPhysics.classList.toggle("hidden", !locked);
+}
+
 function showTeach(entry) {
+  syncPhysicsTab();
   if (!entry) {
     const liveMode = state.mode === "live";
     teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
@@ -186,8 +207,6 @@ function showTeach(entry) {
   document.querySelectorAll(".tab").forEach((el) => {
     el.classList.toggle("active", el.dataset.tab === tab);
   });
-  tabPhysics.disabled = !state.physicsUnlocked;
-  btnPhysics.classList.toggle("hidden", state.physicsUnlocked);
   if (tab === "sources") {
     const items = (entry.sources || [])
       .map(
@@ -232,7 +251,12 @@ function renderCatalog() {
   catalogNav.innerHTML = "";
   if (!rows.length) {
     catalogNav.innerHTML = `<p class="hint">No matching components.</p>`;
+    if (state.mode === "learn") showTeach(null);
     return;
+  }
+  if (state.mode === "learn") {
+    const visible = rows.find((e) => e.id === state.catalogId);
+    showTeach(visible || null);
   }
   for (const entry of rows) {
     const btn = document.createElement("button");
@@ -281,12 +305,8 @@ function renderLaunches() {
       const card = document.createElement("button");
       card.type = "button";
       card.className = `launch-card${launch.id === state.launchId ? " active" : ""}`;
-      const when = formatUtc(launch.net);
-      const t = launch.status === "success" || launch.status === "failure" || launch.status === "scrub" ? "" : countdown(launch.net);
-      const window =
-        launch.windowStart && launch.windowEnd && launch.windowStart !== launch.windowEnd
-          ? `Window ${formatUtc(launch.windowStart)} → ${formatUtc(launch.windowEnd).split("·").pop().trim()}`
-          : "T-0 / NET as reported";
+      const when = trackerWhenLine(launch);
+      const t = trackerCountdown(launch);
       const chips = launch.relatedIds
         .map((id) => {
           const e = catalogById(id);
@@ -302,7 +322,7 @@ function renderLaunches() {
         <div class="row"><strong>${launch.mission}</strong><span class="status ${launch.status}" title="${tip}" aria-label="${tip}">${launch.statusLabel}</span></div>
         <span class="meta">${launch.vehicle} · ${launch.pad}</span>
         <span class="meta">${launch.site}${t ? ` · ${t}` : ""}</span>
-        <span class="meta" title="${netTitle}">${when} · ${window}</span>
+        <span class="meta" title="${netTitle}">${when}</span>
         <div class="related">${chips}</div>
       `;
       card.addEventListener("click", (ev) => {
@@ -330,6 +350,31 @@ function selectLaunch(launch) {
   renderNav(launch.sceneId, relatedScenes);
 }
 
+function launchesInView() {
+  const data = state.launches;
+  if (!data) return [];
+  const rows = [];
+  for (const list of [data.upcoming, data.recent]) {
+    for (const launch of list || []) {
+      if (launchMatchesFilter(launch, state.launchFilter)) rows.push(launch);
+    }
+  }
+  return rows;
+}
+
+function launchById(id) {
+  if (!id || !state.launches) return null;
+  return [...(state.launches.upcoming || []), ...(state.launches.recent || [])].find((l) => l.id === id) || null;
+}
+
+function frameTrackerLaunch({ preferFirst = false } = {}) {
+  const rows = launchesInView();
+  if (!rows.length) return;
+  const current = preferFirst ? null : launchById(state.launchId);
+  const pick = current && launchMatchesFilter(current, state.launchFilter) ? current : rows[0];
+  if (pick) selectLaunch(pick);
+}
+
 function syncLiveSampleChips(source, prefer) {
   const liveBtn = document.querySelector('#tracker-source [data-source="live"]');
   const sampleBtn = document.querySelector('#tracker-source [data-source="sample"]');
@@ -349,7 +394,7 @@ function syncLiveSampleChips(source, prefer) {
   }
 }
 
-async function refreshLaunches() {
+async function refreshLaunches({ preferFirst = false } = {}) {
   const prefer = state.launchSource === "sample" ? "sample" : "live";
   trackerBanner.textContent = prefer === "sample" ? "Loading sample missions…" : "Refreshing Launch Library 2…";
   trackerBanner.classList.remove("sample", "live");
@@ -373,6 +418,13 @@ async function refreshLaunches() {
     syncLiveSampleChips(data.source, prefer);
     renderLaunches();
     live.setLaunchWindow(nextStarshipWindow(data), { source: data.source });
+    if (preferFirst) frameTrackerLaunch({ preferFirst: true });
+    else if (state.mode === "tracker") {
+      const current = launchById(state.launchId);
+      if (!current || !launchMatchesFilter(current, state.launchFilter)) {
+        frameTrackerLaunch({ preferFirst: true });
+      }
+    }
   } finally {
     btnRefresh.disabled = false;
   }
@@ -436,7 +488,7 @@ document.querySelectorAll("#tracker-source .chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     state.launchSource = chip.dataset.source;
     document.querySelectorAll("#tracker-source .chip").forEach((c) => c.classList.toggle("active", c === chip));
-    refreshLaunches();
+    refreshLaunches({ preferFirst: true });
   });
 });
 
@@ -445,6 +497,12 @@ document.querySelectorAll("#launch-filters .chip").forEach((chip) => {
     state.launchFilter = chip.dataset.filter;
     document.querySelectorAll("#launch-filters .chip").forEach((c) => c.classList.toggle("active", c === chip));
     renderLaunches();
+    if (state.mode === "tracker") {
+      const current = launchById(state.launchId);
+      if (!current || !launchMatchesFilter(current, state.launchFilter)) {
+        frameTrackerLaunch({ preferFirst: true });
+      }
+    }
   });
 });
 
