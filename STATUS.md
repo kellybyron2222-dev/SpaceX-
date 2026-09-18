@@ -8,14 +8,13 @@
 
 ## Shipped
 
-- Through [#32](https://github.com/kellybyron2222-dev/SpaceX-/pull/32): textbook 3D + licensed Raptor still
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33): broadcast cue sheet [`/SpaceX-/broadcast/cues.json`](https://kellybyron2222-dev.github.io/SpaceX-/broadcast/cues.json)
-- [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34): bot deep-links (`?mode=learn&id=`, Explore `scene=`, Live `preset=` / `video=`)
-- This PR: Live Launch **Commentator** — sports-style beats from the #33 JSON, hotspot + Learn, Start / phase / mute·pause. Video stays clear until Start. Uses #34 URLs (`commentary=`, `phase=`).
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33): broadcast cue sheet
+- [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34): bot deep-links
+- [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35): Live Launch **Commentator** — beats from the cue sheet, hotspot + Learn, Start / phase / mute. Video stays clear until Start.
 
 ## Open PRs
 
-- This PR — commentator overlay on Live Launch
+**None.**
 
 ## Next
 
