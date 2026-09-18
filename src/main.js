@@ -7,6 +7,7 @@ import {
   nextStarshipWindow,
   REFRESH_MS,
   statusTip,
+  launchMatchesFilter,
   trackerCountdown,
   trackerWhenLine,
 } from "./data/launches.js";
@@ -270,15 +271,6 @@ function renderCatalog() {
     });
     catalogNav.appendChild(btn);
   }
-}
-
-function launchMatchesFilter(launch, filter) {
-  if (filter === "all") return true;
-  const blob = `${launch.vehicle} ${launch.mission}`.toLowerCase();
-  if (filter === "starship") return blob.includes("starship") || blob.includes("super heavy");
-  if (filter === "heavy") return blob.includes("heavy");
-  if (filter === "falcon9") return blob.includes("falcon 9") && !blob.includes("heavy");
-  return true;
 }
 
 function renderLaunches() {

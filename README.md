@@ -163,17 +163,17 @@ All sizes are **rounded public figures** used only as rough scale (1 scene unit 
 | **Falcon 9** | ~**70 m** × **3.7 m** white stack: 9 Merlins, landing legs, grid fins, interstage, second stage, clamshell fairing. |
 | **Falcon Heavy** | Triple core; explode separates side boosters. |
 | **Falcon pad** | Strongback / TE, crew access arm, deluge, ghost Falcon 9 — LC-39A-class teaching GSE, not a site survey. |
-| **ASDS droneship** | ~**90 × 40 m** barge with landing circle and octagon. |
+| **ASDS droneship** | ~**90 × 50 m**-class barge with landing circle and octagon. |
 
 Click any labeled mesh for a 1–2 sentence explainer. Nothing here is a drawing of flight hardware, orifices, weld schedules, or classified dimensions.
 
-## Critical infrastructure catalog
+## Teaching catalog
 
-Learn mode includes **24** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**.
+Learn mode includes **24** entries spanning Starship and Falcon 9/Heavy. Each entry has public **Sources**. Public educational approximations — not official SpaceX infrastructure drawings.
 
-**Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, **Merlin Vacuum**, Starship tanks, **Falcon tanks**, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, chopsticks, landing legs.
+**Vehicle:** Raptor, Vacuum Raptor, 33-Raptor cluster, Merlin 1D, **Merlin Vacuum**, Starship tanks, **Falcon tanks**, downcomer raceway, nosecone / payload bay, flaps, grid fins, **catch hardpoints**, heat-shield tiles, hot-stage / interstage, payload fairing, landing legs.
 
-**Ground:** OLM / launch mount, QD arm, water deluge / rainbirds, crew access arm, ASDS, Mechazilla tower, strongback / TE.
+**Ground:** chopsticks / catch arms, OLM / launch mount, QD arm, water deluge / rainbirds, crew access arm, ASDS, Mechazilla tower, strongback / TE.
 
 Grid fins and catch pins are separate picks: the waffle lattice opens **Grid fins**; the gold pins open **Catch hardpoints**. Raycasting prefers the smaller, higher-priority pin proxies so a nearby fin lattice does not steal the click.
 

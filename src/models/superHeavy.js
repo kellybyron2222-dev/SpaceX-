@@ -43,7 +43,7 @@ const PARTS = ids("booster", {
   octaweb: {
     name: "Aft engine mount",
     blurb:
-      "The aft structure that carries the engine cluster (often nicknamed the octaweb in public commentary). Simplified as a dark thrust body and skirt.",
+      "The aft thrust puck / engine section that carries the 33-Raptor cluster. Octaweb is the Falcon 9 nine-engine nickname — not this Super Heavy part. Simplified as a dark thrust body and skirt.",
   },
   hardpoints: {
     name: "Catch hardpoints",

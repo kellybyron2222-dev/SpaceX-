@@ -119,7 +119,7 @@ export const SCENES = [
     summary: "Autonomous landing barge",
     expand: "Autonomous spaceport drone ship — Falcon first-stage landing barge",
     height: "deck ~6 m",
-    diameter: "~90 × 40 m",
+    diameter: "~90 × 50 m",
     explodeHint: "No explode on this scene",
     family: "falcon",
     build: createAsds,

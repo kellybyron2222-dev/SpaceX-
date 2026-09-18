@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   relatedIdsForLaunch,
   sceneForLaunch,
+  launchMatchesFilter,
   trackerCountdown,
   trackerWhenLine,
 } from "./launches.js";
@@ -65,6 +66,36 @@ describe("Crew mapping uses mission name, not pad only", () => {
     assert.equal(ids.includes("crew-access"), false);
     assert.equal(ids.includes("raptor"), true);
     assert.equal(sceneForLaunch(vehicle, pad, site, mission), "mechazilla");
+  });
+
+  it("Super Heavy vehicle does not pick Merlin or the Falcon Heavy scene", () => {
+    const vehicle = "Super Heavy";
+    const pad = "Orbital Launch Mount";
+    const site = "Starbase, TX";
+    const mission = "Starship Flight 14";
+    const ids = relatedIdsForLaunch(vehicle, pad, site, mission);
+    assert.equal(ids.includes("merlin"), false);
+    assert.equal(ids.includes("raptor"), true);
+    assert.equal(sceneForLaunch(vehicle, pad, site, mission), "mechazilla");
+    assert.equal(launchMatchesFilter({ vehicle, mission }, "heavy"), false);
+    assert.equal(launchMatchesFilter({ vehicle, mission }, "starship"), true);
+  });
+
+  it("Falcon Heavy still matches the Heavy filter and falcon-heavy scene", () => {
+    const vehicle = "Falcon Heavy";
+    const pad = "Launch Complex 39A";
+    const site = "Kennedy Space Center, FL";
+    const mission = "NROL-97";
+    assert.equal(launchMatchesFilter({ vehicle, mission }, "heavy"), true);
+    assert.equal(sceneForLaunch(vehicle, pad, site, mission), "falcon-heavy");
+    assert.equal(relatedIdsForLaunch(vehicle, pad, site, mission).includes("merlin"), true);
+  });
+
+  it("Super Heavy at LC-39A still frames Mechazilla, not Falcon Heavy", () => {
+    assert.equal(
+      sceneForLaunch("Super Heavy", "Launch Complex 39A", "Kennedy Space Center, FL", "Starship"),
+      "mechazilla",
+    );
   });
 });
 
