@@ -14,6 +14,8 @@ import {
 const PARTS = ids("falcon9", {
   tanks: {
     name: "Falcon 9 tanks",
+    frameTight: 1.45,
+    frameBias: { x: 0.82, y: 0.12, z: 0.55 },
     blurb:
       "White-painted ~3.7 m barrels hold RP-1 and liquid oxygen. Ring spacing is a teaching cue, not a production weld map.",
   },
@@ -35,11 +37,15 @@ const PARTS = ids("falcon9", {
   },
   interstage: {
     name: "Interstage",
+    frameTight: 1.25,
+    frameBias: { x: 0.7, y: 0.08, z: 0.72 },
     blurb:
       "A composite interstage joins first and second stages and carries the public push-out / pneumatic staging hardware as a black band only.",
   },
   second: {
     name: "Second stage",
+    frameTight: 1.18,
+    frameBias: { x: 0.55, y: 0.12, z: 0.82 },
     blurb:
       "A single Merlin Vacuum engine and a shorter tank set. No RCS thruster detail.",
   },
@@ -59,11 +65,15 @@ const HEAVY = ids("falconheavy", {
   side: {
     name: "Side booster",
     pickPriority: 5,
+    frameTight: 1.4,
+    frameBias: { x: 0.9, y: 0.1, z: 0.45 },
     blurb:
       "Falcon Heavy flies two extra Falcon-class cores as side boosters. They separate and land separately from the center core. Teaching stand-ins, not unique Heavy CAD.",
   },
   center: {
     name: "Center core tanks",
+    frameTight: 1.45,
+    frameBias: { x: 0.82, y: 0.12, z: 0.55 },
     blurb:
       "The center core of a Falcon Heavy stack uses the same ~3.7 m RP-1/LOX barrels as Falcon 9 — this is not a solo Falcon 9.",
   },
@@ -196,6 +206,7 @@ function buildCore(mats, { sideBooster = false, tankPart = PARTS.tanks } = {}) {
   vac.position.y = 43.6;
   second.add(tank, vac);
   tag(second, PARTS.second);
+  second.userData.frameFocus = vac;
   g.add(second);
 
   addFairing(g, mats, r * 1.02, 56.4);
