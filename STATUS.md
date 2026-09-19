@@ -16,7 +16,7 @@
 
 ## Open PRs
 
-Mute voice (this PR). **None** after merge.
+[#47](https://github.com/kellybyron2222-dev/SpaceX-/pull/47) Mute voice. **None** after merge.
 
 ## Next
 
