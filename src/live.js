@@ -4,6 +4,7 @@ import { countdownClock, formatUtc } from "./data/launches.js";
 import {
   beatAtClock,
   beatById,
+  beatTitle,
   fetchCuePack,
   latestSheetVideoId,
   missionBeats,
@@ -49,6 +50,17 @@ function formatTime(s) {
   const mm = h ? String(m).padStart(2, "0") : String(m);
   const ss = String(sec).padStart(2, "0");
   return h ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+function formatMissionClock(seconds) {
+  if (!Number.isFinite(seconds)) return "";
+  const sign = seconds < 0 ? "T−" : "T+";
+  const abs = Math.abs(Math.round(seconds));
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const sec = abs % 60;
+  if (h) return `${sign}${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  return `${sign}${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }
 
 function loadYouTubeApi() {
@@ -386,7 +398,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     for (const beat of beats) {
       const opt = document.createElement("option");
       opt.value = beat.id;
-      opt.textContent = `${beat.clock || beat.phase} · ${beat.phase}`;
+      opt.textContent = `${beat.clock || beat.phase} · ${beatTitle(beat)}`;
       commPick.appendChild(opt);
     }
     commPick.value = state.beatId || "";
@@ -413,11 +425,11 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     const beat = currentBeat();
     const entry = catalogById(learnIdForBeat(beat));
     if (!state.commentaryOn) {
-      if (commClock) commClock.textContent = "Off until Start";
+      if (commClock) commClock.textContent = idleCommentatorClock();
       if (commPhase) commPhase.textContent = "Public play-by-play";
       if (commCue) {
         commCue.textContent =
-          "Sports-style beats sit beside the stream. Start commentary to follow T-0, hot stage, flaps, catch. Educational approximation — not official telemetry.";
+          "Start commentary to follow the latest Starship webcast from T-0 (that long YouTube hold is the countdown, not a broken player). Beats sit beside the stream — hot stage, flaps, catch. Educational approximation — not official telemetry.";
       }
       if (commTags) {
         commTags.hidden = true;
@@ -427,12 +439,8 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       btnCommLearn?.classList.add("hidden");
       return;
     }
-    if (commClock) {
-      commClock.textContent = beat
-        ? `${state.sheet?.title || "Cue sheet"} · ${beat.clock}`
-        : state.sheet?.title || "Cue sheet";
-    }
-    if (commPhase) commPhase.textContent = beat?.phase || "Waiting for a beat";
+    if (commClock) commClock.textContent = commentatorClockText(beat);
+    if (commPhase) commPhase.textContent = beatTitle(beat) || "Waiting for a beat";
     if (commCue) commCue.textContent = beat?.cue || state.sheet?.note || packDisclaimer();
     if (pulse && commCue) {
       commCue.classList.remove("is-pulse");
@@ -470,7 +478,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `commentator-beat${row.id === state.beatId ? " active" : ""}`;
-        btn.innerHTML = `<span class="commentator-beat-clock">${row.clock}</span><span>${row.cue}</span>`;
+        btn.innerHTML = `<span class="commentator-beat-clock">${row.clock} · ${beatTitle(row)}</span><span>${row.cue}</span>`;
         btn.addEventListener("click", () => pickPhase(row.id, { seek: true }));
         item.appendChild(btn);
         commBeats.appendChild(item);
@@ -480,6 +488,25 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
 
   function packDisclaimer() {
     return state.cuePack?.disclaimer || "Public educational beats — not official telemetry.";
+  }
+
+  function idleCommentatorClock() {
+    const sheet = state.sheet?.title;
+    return sheet ? `Off until Start · ${sheet}` : "Off until Start";
+  }
+
+  function commentatorClockText(beat) {
+    const sheet = state.sheet?.title || "Cue sheet";
+    const vod = formatTime(playerSeconds());
+    if (recapFollowBeats().length) {
+      const recap = beat?.clock ? `${vod} recap · ${beat.clock}` : `${vod} recap`;
+      return `${sheet} · ${recap}`;
+    }
+    const mission = vodMissionSeconds();
+    if (mission != null) {
+      return `${sheet} · VOD ${vod} · ${formatMissionClock(mission)}`;
+    }
+    return beat?.clock ? `${sheet} · ${beat.clock}` : sheet;
   }
 
   async function setCommentaryOn(on, { beat, seek = false } = {}) {
@@ -1016,6 +1043,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       clock.textContent = state.isLive
         ? `Live public stream · ${formatTime(t)}`
         : `VOD · ${formatTime(t)} / ${formatTime(effectiveDuration())}`;
+      if (state.commentaryOn && commClock) commClock.textContent = commentatorClockText(currentBeat());
       if (d && Math.abs(d - prev) > 1) renderChapters();
       clearPendingSeekIfClose(t);
       if (state.pendingSeek != null) applyJump();

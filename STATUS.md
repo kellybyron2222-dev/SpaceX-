@@ -12,10 +12,11 @@
 - [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37) latest-VOD fallback · [#39](https://github.com/kellybyron2222-dev/SpaceX-/pull/39) prefer completed Starship VOD over a recent Falcon
 - [#41](https://github.com/kellybyron2222-dev/SpaceX-/pull/41) Flight 13 VOD cue sync — surveyed T-0 **3:05:36** on the NSF webcast clock (not LL2 start vs NET)
 - [#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) Learn catalog in plain English
+- **This PR:** Commentator beat titles use cue-sheet `event` (Liftoff / Super Heavy MECO, not `meco`). Dual clock shows YouTube VOD time + mission T+ while commentary is on.
 
 ## Open PRs
 
-**None.**
+**None** after merge.
 
 ## Next
 

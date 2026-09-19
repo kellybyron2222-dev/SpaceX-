@@ -17,6 +17,7 @@ import {
   pickSheet,
   recapBeats,
   resolveT0Offset,
+  beatTitle,
 } from "./cues.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -43,6 +44,8 @@ describe("broadcast cue JSON from #33", () => {
         assert.ok(beat.phase, `${sheet.id} missing phase`);
         assert.ok(beat.clock, `${beat.id} missing clock`);
         assert.ok(beat.cue, `${beat.id} missing cue`);
+        assert.ok(beat.event, `${beat.id} missing event title`);
+        assert.equal(beatTitle(beat), beat.event);
         assert.equal(beat.cue.includes("\n"), false, `${beat.id} should be one line`);
         if (beat.learnId) assert.ok(catalogById(beat.learnId), beat.learnId);
         if (beat.hotspotId) assert.ok(hotspotIds.has(beat.hotspotId), beat.hotspotId);
@@ -75,6 +78,9 @@ describe("broadcast cue JSON from #33", () => {
     assert.equal(resolveT0Offset(sheet, { webcastPick: { youtubeId: "lC3RDO7tdLc", t0Offset: 11118 }, videoId: "lC3RDO7tdLc" }), 11136);
     const lift = beatById(sheet, "liftoff");
     assert.equal(lift.clockSeconds, 0);
+    assert.equal(lift.event, "Liftoff");
+    assert.equal(beatTitle(lift), "Liftoff");
+    assert.equal(beatTitle(beatById(sheet, "meco")), "Super Heavy MECO");
     assert.equal(lift.learnId, "mechazilla-tower");
     assert.ok(lift.hotspotIds.length > 1);
     assert.ok(lift.learnIds.includes("booster-cluster"));
@@ -131,6 +137,9 @@ describe("beat helpers", () => {
     assert.equal(beat.presetId, "stack-on-pad");
     assert.equal(beat.recapSeconds, 12);
     assert.equal(beat.cue, "Flaps out.");
+    assert.equal(beat.event, "");
+    assert.equal(beatTitle(beat), "flaps");
+    assert.equal(beatTitle(normalizeBeat({ phase: "hot-staging", event: "Hot-staging", cue: "x", clock: "T+0" })), "Hot-staging");
   });
 
   it("merges hotspotIds / learnIds lists on a beat", () => {
