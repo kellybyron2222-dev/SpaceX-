@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#70](https://github.com/kellybyron2222-dev/SpaceX-/pull/70) cue sheet through Explore peel, isolate fade, and Why-tiles frame
-- **This PR:** Isolated heat-shield tiles stay black. Gold wash was contradicting “Black tiles on the belly.”
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#71](https://github.com/kellybyron2222-dev/SpaceX-/pull/71) cue sheet through Explore peel, Why-tiles frame, and black tiles
+- **This PR:** Scale on the Starship-only scene — person and Falcon 9 beside the ~52 m ship. Falcon is taller.
 
 ## Open PRs
 
-Keep tiles black (this branch). **None** after merge.
+Starship scale (this branch). **None** after merge.
 
 ## Next
 
-Keep reviewing teaching 3D (Starship-only scale, person readability, mobile peel chrome). Contest wrap parked — do not submit.
+Keep reviewing teaching 3D (person readability, mobile peel chrome). Contest wrap parked — do not submit.
