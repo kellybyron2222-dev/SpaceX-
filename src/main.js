@@ -21,7 +21,7 @@ import {
   replaceShareUrl,
   serializeDeepLink,
 } from "./data/deeplink.js";
-import { calloutKicker, peelBusy, peelHintFor, teachLabel, whyShapeFor } from "./data/teachingPeel.js";
+import { calloutKicker, peelBusy, peelHintFor, teachLabel, whyFramesPart, whyShapeFor } from "./data/teachingPeel.js";
 import { sceneForWebcast, webcastPose } from "./data/webcastCamera.js";
 
 const app = document.getElementById("app");
@@ -292,7 +292,7 @@ function renderWhyShape() {
     btn.className = `why-row${row.partId === isolated ? " active" : ""}`;
     btn.innerHTML = `<strong>${row.title}</strong><span>${row.body}</span>`;
     btn.addEventListener("click", () => {
-      viewer.highlightById(row.partId, { frame: true });
+      viewer.highlightById(row.partId, { frame: whyFramesPart(window.innerWidth) });
       const part = viewer.findByPartId(row.partId)?.userData?.part;
       if (state.mode === "explore") showCallout(part);
       syncPeelChrome();

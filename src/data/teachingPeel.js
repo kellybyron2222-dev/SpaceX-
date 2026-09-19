@@ -201,3 +201,8 @@ export const WHY_SHAPE = {
 export function whyShapeFor(sceneId) {
   return WHY_SHAPE[sceneId] || [];
 }
+
+/** Phones keep the current stack in view; desktop may zoom to the part. */
+export function whyFramesPart(viewportWidth) {
+  return Number(viewportWidth) >= 861;
+}
