@@ -8,12 +8,12 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#77](https://github.com/kellybyron2222-dev/SpaceX-/pull/77) cue sheet through Explore peel, scale, Why, phone chrome, and engine person scale
-- **This PR:** Why this shape on the heat-shield panel (hexes, 9 m curve, gaps)
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#78](https://github.com/kellybyron2222-dev/SpaceX-/pull/78) cue sheet through Explore peel, scale, Why, phone chrome, engine person, and heat-shield Why
+- **This PR:** Teaching 3D iterate-loop report update — still **8/10**. Nine fix PRs (#69–#75, #77–#78), then stop.
 
 ## Open PRs
 
-Why on the heat-shield panel (this branch).
+Iterate-loop report update (this branch). **None** after merge.
 
 ## Next
 

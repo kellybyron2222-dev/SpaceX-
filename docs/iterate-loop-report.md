@@ -8,23 +8,23 @@ Vite `base` `/SpaceX-/`. Public educational approximations only (not SpaceX CAD 
 
 ## Teaching 3D readiness: **8 / 10**
 
-A novice can explode / isolate / cutaway / put back, compare Super Heavy and Starship to a person and Falcon 9, read Why this shape on the stack, engines, and tower, and match the gulf-side webcast pose. Isolate no longer leaves Falcon glowing. Why-tiles shows a black belly, not a gold hex strip. Phones keep the stack on screen when Why is open.
+A novice can explode / isolate / cutaway / put back, compare Super Heavy and Starship to a person and Falcon 9, stand a person next to a ~3 m Raptor, read Why this shape on the stack, engines, heat-shield panel, and tower, and match the gulf-side webcast pose. Isolate no longer leaves Falcon glowing. Why-tiles shows a black belly, not a gold hex strip. Phones keep the stack on screen when Why is open.
 
 Not a 9: the 1.8 m person is still a small mark at fullstack distance (honest scale), phone Why still uses a large caption panel, and meshes stay textbook — not hangar CAD.
 
 | Surface | Score | Note |
 | --- | --- | --- |
 | Peel (explode / isolate / cutaway / reassemble) | 8 | Isolate fades scale refs; cutaway stays independent of Put back |
-| Scale (person / Falcon) | 8 | Full stack, Super Heavy, and Starship. Falcon is taller than the ship and stays in frame |
-| Why this shape | 8 | Stack, Starship, Super Heavy, compare, Raptor, Mechazilla. Tiles stay black |
-| Raptor vs Merlin | 8 | Same camera; Why isolates two preburners vs one gas generator |
+| Scale (person / Falcon) | 9 | Vehicles get person + Falcon. Raptor and compare get a person only (no 70 m Falcon in a 3 m frame) |
+| Why this shape | 9 | Stack, Starship, Super Heavy, compare, Raptor, heat-shield panel, Mechazilla. Tiles stay black |
+| Raptor vs Merlin | 9 | Same camera; person between the bells; Why isolates two preburners vs one gas generator |
 | Match webcast | 8 | Tower left, stack right. Idle rotate pauses |
 | Phone chrome | 7 | Duplicate callout gone; Why isolate does not zoom to a black field |
 | Learn copy next to those models | 8 | No new slop found beside peel / compare / tiles |
 
-## Passes (7 fixes, then stop)
+## Passes (9 fixes, then stop)
 
-Stopped after pass 8 review — no further user-visible in-scope bug. Not 20 no-op PRs.
+Stopped after pass 11 review — no further user-visible in-scope bug. Not 20 no-op PRs.
 
 | Pass | PR | Change |
 | --- | --- | --- |
@@ -35,9 +35,12 @@ Stopped after pass 8 review — no further user-visible in-scope bug. Not 20 no-
 | 5 | [#73](https://github.com/kellybyron2222-dev/SpaceX-/pull/73) | High-vis scale person |
 | 6 | [#74](https://github.com/kellybyron2222-dev/SpaceX-/pull/74) | Phone Why hides the duplicate callout; isolate stays in the current frame |
 | 7 | [#75](https://github.com/kellybyron2222-dev/SpaceX-/pull/75) | Why on Raptor and Mechazilla; ghost booster stays visible for “9 m” |
-| 8 | — | Review only. Stop |
+| 8 | [#76](https://github.com/kellybyron2222-dev/SpaceX-/pull/76) | First stop report (8/10). Later passes continued. |
+| 9 | [#77](https://github.com/kellybyron2222-dev/SpaceX-/pull/77) | Person scale on Raptor and Raptor vs Merlin |
+| 10 | [#78](https://github.com/kellybyron2222-dev/SpaceX-/pull/78) | Why this shape on the heat-shield panel |
+| 11 | — | Review only. Stop |
 
-Did not re-merge #64–#68.
+Did not re-merge #64–#69.
 
 ## Out of scope (held)
 
