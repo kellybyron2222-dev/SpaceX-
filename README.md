@@ -6,7 +6,7 @@ GitHub repository: **[SpaceX-](https://github.com/kellybyron2222-dev/SpaceX-)**.
 
 This Pages app is the **Starship Component Viewer**. The related Grok bot is **Starship Render Lab** (public template + X quote-tweet later, ~Sep 29). Contest **not submitted**.
 
-**Snapshot:** [STATUS.md](STATUS.md)
+**Snapshot:** [STATUS.md](STATUS.md) · [Contest loop report](docs/contest-loop-report.md) (readiness 7/10). Contest **not submitted**.
 
 Bot / share links stay on `/SpaceX-/` as query (or hash): `?mode=learn&id=raptor`, `?mode=explore&scene=raptor`, `?mode=live&commentary=1&phase=catch`. In-app nav rewrites the URL so you can copy it.
 

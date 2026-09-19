@@ -9,13 +9,13 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#61](https://github.com/kellybyron2222-dev/SpaceX-/pull/61) playable Starship VOD, Copy share, bot wrap, ads honesty
-- **This PR:** Header: companion for a Grok Bot, contest not submitted. Footer: Copy share uses playable Starship VOD; ads stay.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#62](https://github.com/kellybyron2222-dev/SpaceX-/pull/62) playable Starship VOD, Copy share, Mute voice, Show hold, bot wrap README
+- **This PR:** [Contest loop report](docs/contest-loop-report.md) — 20 passes, rejected items, gaps. Readiness **7/10**. Contest **not submitted**.
 
 ## Open PRs
 
-Contest companion brand (this PR). **None** after merge.
+Loop report (this PR). **None** after merge.
 
 ## Next
 
-Grok Bot template that wraps/opens this companion ~Sep 29. Byron submits. Do not submit the contest.
+Grok Bot template that wraps Copy share URL ~Sep 29. Byron submits. Do not submit the contest.
