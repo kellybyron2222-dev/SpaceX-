@@ -43,6 +43,8 @@ describe("teaching peel", () => {
     assert.match(peelHintFor("compare-engines"), /two preburners/i);
     assert.match(peelHintFor("compare-engines"), /gas generator/i);
     assert.equal(peelHintFor("compare-engines").includes("?mode="), false);
+    assert.match(peelHintFor("mechazilla"), /gulf-side/i);
+    assert.match(peelHintFor("mechazilla"), /tower left/i);
   });
 
   it("toggles isolate and reassembles without clearing cutaway", () => {

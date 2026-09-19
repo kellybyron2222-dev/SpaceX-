@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#66](https://github.com/kellybyron2222-dev/SpaceX-/pull/66) cue sheet through Explore peel, Super Heavy scale, and Why this shape
-- **This PR:** **Raptor vs Merlin** — same camera, two cycles. Left is methane full-flow (two preburners). Right is RP-1 gas-generator (one can). Why rows isolate the contrast. Not CAD.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#67](https://github.com/kellybyron2222-dev/SpaceX-/pull/67) cue sheet through Explore peel, scale, Why this shape, and Raptor vs Merlin
+- **This PR:** **Match webcast** — one click (Explore or Live) poses Mechazilla like the gulf-side pad camera: tower left, stack right. Teaching pose, not a surveyed camera. Idle rotate pauses so the view holds.
 
 ## Open PRs
 
-Raptor vs Merlin (this branch). **None** after merge.
+Match webcast camera (this branch). **None** after merge.
 
 ## Next
 
-Match Explore camera to the Live Launch webcast view (tower left, stack right of Mechazilla).
+Teaching-3D list is complete after this lands. Contest wrap stays parked — do not submit.
