@@ -20,6 +20,8 @@ import {
   recapBeats,
   resolveT0Offset,
   beatTitle,
+  isPreT0Beat,
+  visibleBeats,
 } from "./cues.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -124,6 +126,13 @@ describe("broadcast cue JSON from #33", () => {
     const lift = beatById(generic, "liftoff");
     assert.equal(lift.clockSeconds, 0);
     assert.ok(missionBeats(generic).length >= 8);
+    const hold = generic.beats.filter(isPreT0Beat);
+    assert.ok(hold.length >= 1);
+    const collapsed = visibleBeats(generic.beats, { showHold: false, currentId: lift.id });
+    assert.equal(collapsed.some(isPreT0Beat), false);
+    assert.ok(collapsed.some((b) => b.id === lift.id));
+    const open = visibleBeats(generic.beats, { showHold: true });
+    assert.ok(open.length > collapsed.length);
   });
 });
 

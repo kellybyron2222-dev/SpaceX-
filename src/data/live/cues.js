@@ -183,6 +183,16 @@ export function missionBeats(sheet) {
   return (sheet?.beats || []).filter((b) => b.clockSeconds != null);
 }
 
+export function isPreT0Beat(beat) {
+  return Number.isFinite(beat?.clockSeconds) && beat.clockSeconds < 0;
+}
+
+/** Beat list: T-0 and later unless Show hold, always keep the active row. */
+export function visibleBeats(beats, { showHold = false, currentId = "" } = {}) {
+  const id = String(currentId || "");
+  return (beats || []).filter((b) => showHold || !isPreT0Beat(b) || b.id === id);
+}
+
 /** Latest beat whose clock field is at or before t. */
 export function beatAtClock(beats, t, key = "t") {
   const usable = (beats || []).filter((b) => Number.isFinite(b[key]));
