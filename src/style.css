@@ -603,13 +603,19 @@ body,
   }
 
   .why-shape {
-    max-height: 34vh;
+    max-height: 28vh;
     overflow: auto;
   }
 
-  #app[data-why="1"] .callout {
-    top: auto;
-    bottom: calc(var(--chrome-bottom) + 250px);
+  .why-shape button.why-row:not(.active) span {
+    display: none;
+  }
+
+  /* Why already has the caption. A second callout ate the 3D on phones. */
+  #app[data-why="1"] .callout,
+  #app[data-why="1"] #peel-hint,
+  #app[data-why="1"] .orbit-hint {
+    display: none !important;
   }
 
   .footer {

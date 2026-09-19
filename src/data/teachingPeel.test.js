@@ -9,6 +9,7 @@ import {
   reducePeel,
   sceneSupportsCutaway,
   teachLabel,
+  whyFramesPart,
   whyShapeFor,
 } from "./teachingPeel.js";
 
@@ -84,5 +85,10 @@ describe("teaching peel", () => {
     assert.match(rows[1].body, /gas generator|one can/i);
     assert.match(rows[2].body, /methane/i);
     assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
+  });
+
+  it("does not zoom Why parts on a phone viewport", () => {
+    assert.equal(whyFramesPart(390), false);
+    assert.equal(whyFramesPart(861), true);
   });
 });

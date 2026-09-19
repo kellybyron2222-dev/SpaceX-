@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#72](https://github.com/kellybyron2222-dev/SpaceX-/pull/72) cue sheet through Explore peel, Why-tiles, and Starship scale
-- **This PR:** High-vis scale person — caution body and a larger disc so the 1.8 m mark reads next to Falcon.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#73](https://github.com/kellybyron2222-dev/SpaceX-/pull/73) cue sheet through Explore peel, Why-tiles, Starship scale, and high-vis person
+- **This PR:** Phone Why no longer stacks a second callout over the 3D. The tiled belly stays visible.
 
 ## Open PRs
 
-Scale person readability (this branch). **None** after merge.
+Mobile Why chrome (this branch). **None** after merge.
 
 ## Next
 
-Keep reviewing teaching 3D (mobile peel chrome, Why on Raptor / Mechazilla). Contest wrap parked — do not submit.
+Keep reviewing teaching 3D (Why on Raptor / Mechazilla if still a real gap). Contest wrap parked — do not submit.
