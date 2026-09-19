@@ -16,11 +16,12 @@
 - [#48](https://github.com/kellybyron2222-dev/SpaceX-/pull/48) Collapse pre-T-0 hold beats; Show hold
 - [#49](https://github.com/kellybyron2222-dev/SpaceX-/pull/49) Help: Copy share + `?mode=live&commentary=1&video=`
 - [#50](https://github.com/kellybyron2222-dev/SpaceX-/pull/50) Idle Commentator Start one-liner
-- **This PR:** Commentator **Now playing** line from YouTube oEmbed title (in-page Starship VOD, not Falcon).
+- [#51](https://github.com/kellybyron2222-dev/SpaceX-/pull/51) Now playing oEmbed title
+- **This PR:** README Live Launch demo: Start commentary + Copy share link. Contest not submitted.
 
 ## Open PRs
 
-Now playing title (this PR). **None** after merge.
+README Live Launch (this PR). **None** after merge.
 
 ## Next
 
