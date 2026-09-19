@@ -118,3 +118,57 @@ export function reducePeel(state, action) {
   }
   return next;
 }
+
+/** Visible feature → job. Spoken English, not a second catalog. */
+export const WHY_SHAPE = {
+  fullstack: [
+    {
+      partId: "starship.tiles",
+      title: "Black tiles on the belly",
+      body: "They take reentry heat so the stainless tank does not cook on the way down.",
+    },
+    {
+      partId: "booster.barrel",
+      title: "The steel is the tank",
+      body: "Those rings are the airframe. Methane and oxygen live inside.",
+    },
+    {
+      partId: "starship.aftFlaps",
+      title: "Flaps keep that face in the flow",
+      body: "On the way down the ship flies belly-first. The flaps hold the tiled side into the wind.",
+    },
+  ],
+  starship: [
+    {
+      partId: "starship.tiles",
+      title: "Black tiles on the belly",
+      body: "They take reentry heat so the stainless tank does not cook on the way down.",
+    },
+    {
+      partId: "starship.barrel",
+      title: "The steel is the tank",
+      body: "The barrel is the methane and oxygen tanks. That is the ship.",
+    },
+    {
+      partId: "starship.aftFlaps",
+      title: "Flaps keep that face in the flow",
+      body: "On the way down the ship flies belly-first. The flaps hold the tiled side into the wind.",
+    },
+  ],
+  booster: [
+    {
+      partId: "booster.barrel",
+      title: "The steel is the tank",
+      body: "Those rings are the airframe. Methane and oxygen live inside.",
+    },
+    {
+      partId: "booster.engines",
+      title: "Thirty-three engines under one tank",
+      body: "A 9 m barrel is wide enough to pack the cluster. That width is the shape.",
+    },
+  ],
+};
+
+export function whyShapeFor(sceneId) {
+  return WHY_SHAPE[sceneId] || [];
+}

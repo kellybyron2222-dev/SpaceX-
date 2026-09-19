@@ -122,6 +122,9 @@
           <button type="button" id="btn-scale" class="tool explore-learn" aria-pressed="true" title="Person and Falcon 9 for scale">
             Scale
           </button>
+          <button type="button" id="btn-why" class="tool explore-learn" aria-pressed="false" title="Why this shape">
+            Why
+          </button>
           <button type="button" id="btn-reassemble" class="tool explore-learn" disabled title="Put the pieces back together (B)">
             Put back<span class="tool-more"> together</span>
           </button>
@@ -188,6 +191,11 @@
           <button type="button" class="chip" data-family="ground">Ground</button>
         </div>
         <nav id="catalog-nav" class="catalog-nav"></nav>
+      </aside>
+
+      <aside id="why-shape" class="why-shape hidden explore-only" aria-label="Why this shape">
+        <p class="callout-kicker">Why this shape</p>
+        <div id="why-shape-list"></div>
       </aside>
 
       <aside id="callout" class="callout hidden explore-only" role="status">
@@ -314,6 +322,7 @@
             <li><kbd>E</kbd> Explode — float parts apart</li>
             <li><kbd>X</kbd> Cutaway — open tank shells</li>
             <li>Scale shows a person and a Falcon 9 beside Super Heavy</li>
+            <li>Why ties tiles, steel tanks, and flaps to the job they do</li>
             <li><kbd>B</kbd> Put the pieces back together</li>
             <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> <kbd>-</kbd> Switch 3D scene (minus = ASDS droneship)</li>
             <li><kbd>F</kbd> Fullscreen</li>

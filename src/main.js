@@ -21,7 +21,7 @@ import {
   replaceShareUrl,
   serializeDeepLink,
 } from "./data/deeplink.js";
-import { calloutKicker, peelBusy, peelHintFor, teachLabel } from "./data/teachingPeel.js";
+import { calloutKicker, peelBusy, peelHintFor, teachLabel, whyShapeFor } from "./data/teachingPeel.js";
 
 const app = document.getElementById("app");
 const canvas = document.getElementById("view");
@@ -36,6 +36,9 @@ const help = document.getElementById("help");
 const btnExplode = document.getElementById("btn-explode");
 const btnCutaway = document.getElementById("btn-cutaway");
 const btnScale = document.getElementById("btn-scale");
+const btnWhy = document.getElementById("btn-why");
+const whyShape = document.getElementById("why-shape");
+const whyShapeList = document.getElementById("why-shape-list");
 const btnReassemble = document.getElementById("btn-reassemble");
 const btnCalloutTogether = document.getElementById("btn-callout-together");
 const calloutKickerEl = document.getElementById("callout-kicker");
@@ -109,6 +112,7 @@ const state = {
   catalogFamily: "all",
   catalogQuery: "",
   pendingCatalog: null,
+  whyOn: false,
 };
 
 function shareQuery() {
@@ -260,6 +264,37 @@ function syncPeelChrome() {
   btnReassemble.disabled = !busy;
   btnCalloutTogether.classList.toggle("hidden", !busy);
   if (peelHint) peelHint.textContent = peelHintFor(viewer.sceneId);
+  const whyRows = whyShapeFor(viewer.sceneId);
+  btnWhy.disabled = !whyRows.length;
+  btnWhy.setAttribute("aria-pressed", state.whyOn && whyRows.length ? "true" : "false");
+  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack scenes";
+  renderWhyShape();
+}
+
+function renderWhyShape() {
+  const rows = whyShapeFor(viewer.sceneId);
+  const show = state.whyOn && rows.length && state.mode === "explore";
+  app.dataset.why = show ? "1" : "0";
+  whyShape.classList.toggle("hidden", !show);
+  if (!show) {
+    whyShapeList.innerHTML = "";
+    return;
+  }
+  const isolated = viewer.peelState().isolateId;
+  whyShapeList.innerHTML = "";
+  for (const row of rows) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `why-row${row.partId === isolated ? " active" : ""}`;
+    btn.innerHTML = `<strong>${row.title}</strong><span>${row.body}</span>`;
+    btn.addEventListener("click", () => {
+      viewer.highlightById(row.partId, { frame: true });
+      const part = viewer.findByPartId(row.partId)?.userData?.part;
+      if (state.mode === "explore") showCallout(part);
+      syncPeelChrome();
+    });
+    whyShapeList.appendChild(btn);
+  }
 }
 
 function applyExplodeButton() {
@@ -610,6 +645,12 @@ btnCutaway.addEventListener("click", () => {
 btnScale.addEventListener("click", () => {
   const next = btnScale.getAttribute("aria-pressed") !== "true";
   viewer.setScale(next);
+  syncPeelChrome();
+});
+
+btnWhy.addEventListener("click", () => {
+  if (btnWhy.disabled) return;
+  state.whyOn = btnWhy.getAttribute("aria-pressed") !== "true";
   syncPeelChrome();
 });
 
