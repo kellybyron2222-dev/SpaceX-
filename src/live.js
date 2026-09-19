@@ -13,6 +13,7 @@ import {
   recapBeats,
   resolveT0Offset,
 } from "./data/live/cues.js";
+import { companionShareUrl, copyText, serializeDeepLink, shareVideoId } from "./data/deeplink.js";
 import { isStaleDefaultId, resolveAutoWebcast, DEFAULT_IFRAME_BLOCKED_IDS } from "./data/live/webcast.js";
 import {
   fetchYouTubeOembed,
@@ -164,6 +165,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const commPause = document.getElementById("comm-pause");
   const commMute = document.getElementById("comm-mute");
   const btnCommStart = document.getElementById("btn-comm-start");
+  const btnCommCopy = document.getElementById("btn-comm-copy");
   const btnCommLearn = document.getElementById("btn-comm-learn");
   const btnCommentary = document.getElementById("btn-commentary");
 
@@ -370,6 +372,52 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
 
   function syncShareQuery() {
     onShareChange?.();
+  }
+
+  function sharePlayableVideoId() {
+    return shareVideoId(state.videoId, autoBlockedIds());
+  }
+
+  function commentatorShareSearch() {
+    return serializeDeepLink({
+      mode: "live",
+      video: sharePlayableVideoId(),
+      commentary: true,
+      phase: state.commentaryOn ? state.beatId || "" : "",
+    });
+  }
+
+  async function copyCommentatorShare() {
+    if (!btnCommCopy) return;
+    const url = companionShareUrl(commentatorShareSearch(), typeof location !== "undefined" ? location : {});
+    let ok = false;
+    try {
+      ok = await copyText(url);
+    } catch {
+      ok = false;
+    }
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand("copy");
+        ta.remove();
+      } catch {
+        ok = false;
+      }
+    }
+    const prev = btnCommCopy.textContent;
+    btnCommCopy.textContent = ok ? "Copied" : "Copy failed";
+    window.setTimeout(() => {
+      if (btnCommCopy.textContent === "Copied" || btnCommCopy.textContent === "Copy failed") {
+        btnCommCopy.textContent = prev || "Copy share link";
+      }
+    }, 1600);
   }
 
   function applyBeat(beat, { seek = false, speak = true } = {}) {
@@ -1509,6 +1557,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   btnHotspots.addEventListener("click", () => toggleHotspots());
   btnCommentary?.addEventListener("click", () => toggleCommentary());
   btnCommStart?.addEventListener("click", () => toggleCommentary());
+  btnCommCopy?.addEventListener("click", () => copyCommentatorShare());
   commPause?.addEventListener("change", () => {
     state.pauseAdvance = commPause.checked;
   });
@@ -1560,7 +1609,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     shareSnapshot() {
       return {
         presetId: state.presetId,
-        videoId: state.videoId === fallbackId ? "" : state.videoId,
+        videoId: sharePlayableVideoId(),
         catalogId: state.catalogId,
         hotspotsOn: state.hotspotsOn,
         commentaryOn: state.commentaryOn,

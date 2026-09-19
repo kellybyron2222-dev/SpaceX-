@@ -113,3 +113,35 @@ export function replaceShareUrl(search, loc, hist) {
   hist.replaceState(null, "", next);
   return next;
 }
+
+export const PAGES_ORIGIN = "https://kellybyron2222-dev.github.io";
+export const PAGES_PATH = "/SpaceX-/";
+
+/**
+ * Absolute companion URL under GitHub Pages `/SpaceX-/`.
+ * Uses the in-page origin/path when given (local Vite) so Copy works in preview.
+ */
+export function companionShareUrl(search = "", loc = {}) {
+  const origin = String(loc.origin || PAGES_ORIGIN).replace(/\/$/, "");
+  let path = String(loc.pathname || PAGES_PATH);
+  if (path.endsWith("index.html")) path = path.slice(0, -"index.html".length);
+  if (!path.endsWith("/")) path += "/";
+  const q = String(search || "").replace(/^\?/, "");
+  return q ? `${origin}${path}?${q}` : `${origin}${path}`;
+}
+
+/** Video id to put on a share link: what is actually loaded (blocked 101/150 only if that clip is loaded). */
+export function shareVideoId(loadedId, _blockedIds = []) {
+  return String(loadedId || "");
+}
+
+export async function copyText(text, clipboard) {
+  const value = String(text || "");
+  if (!value) return false;
+  const clip = clipboard || (typeof navigator !== "undefined" ? navigator.clipboard : null);
+  if (clip?.writeText) {
+    await clip.writeText(value);
+    return true;
+  }
+  return false;
+}

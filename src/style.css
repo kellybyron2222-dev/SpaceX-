@@ -1692,6 +1692,12 @@ a.live-fallback-cta.tool.primary {
   justify-content: center;
 }
 
+.commentator-controls #btn-comm-copy {
+  width: 100%;
+  justify-content: center;
+  min-height: 44px;
+}
+
 .commentator-controls select {
   width: 100%;
   min-height: 40px;
