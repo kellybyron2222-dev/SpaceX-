@@ -12,6 +12,7 @@ import {
   pickSheet,
   recapBeats,
   resolveT0Offset,
+  visibleBeats,
 } from "./data/live/cues.js";
 import { companionShareUrl, copyText, serializeDeepLink, shareVideoId } from "./data/deeplink.js";
 import { isStaleDefaultId, resolveAutoWebcast, DEFAULT_IFRAME_BLOCKED_IDS } from "./data/live/webcast.js";
@@ -163,6 +164,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const commBeats = document.getElementById("comm-beats");
   const commPick = document.getElementById("comm-phase-pick");
   const commPause = document.getElementById("comm-pause");
+  const commShowHold = document.getElementById("comm-show-hold");
   const commMute = document.getElementById("comm-mute");
   const btnCommStart = document.getElementById("btn-comm-start");
   const btnCommCopy = document.getElementById("btn-comm-copy");
@@ -213,6 +215,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     sheet: null,
     commentaryOn: false,
     pauseAdvance: false,
+    showHold: false,
     muted: false,
     beatId: null,
     pendingPhase: null,
@@ -470,6 +473,10 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       commPause.disabled = !state.commentaryOn;
       commPause.checked = state.pauseAdvance;
     }
+    if (commShowHold) {
+      commShowHold.disabled = !state.commentaryOn;
+      commShowHold.checked = state.showHold;
+    }
     if (commMute) {
       commMute.disabled = !state.commentaryOn;
       commMute.checked = state.muted;
@@ -525,7 +532,11 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (commBeats) {
       commBeats.hidden = false;
       commBeats.replaceChildren();
-      for (const row of state.sheet?.beats || []) {
+      const rows = visibleBeats(state.sheet?.beats || [], {
+        showHold: state.showHold,
+        currentId: state.beatId,
+      });
+      for (const row of rows) {
         const item = document.createElement("li");
         const btn = document.createElement("button");
         btn.type = "button";
@@ -1560,6 +1571,10 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   btnCommCopy?.addEventListener("click", () => copyCommentatorShare());
   commPause?.addEventListener("change", () => {
     state.pauseAdvance = commPause.checked;
+  });
+  commShowHold?.addEventListener("change", () => {
+    state.showHold = commShowHold.checked;
+    renderCommentator();
   });
   commMute?.addEventListener("change", () => {
     state.muted = commMute.checked;
