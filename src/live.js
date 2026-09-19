@@ -6,13 +6,14 @@ import {
   beatById,
   beatTitle,
   fetchCuePack,
+  iframeBlockedIds,
   latestSheetVideoId,
   missionBeats,
   pickSheet,
   recapBeats,
   resolveT0Offset,
 } from "./data/live/cues.js";
-import { isStaleDefaultId, resolveAutoWebcast } from "./data/live/webcast.js";
+import { isStaleDefaultId, resolveAutoWebcast, DEFAULT_IFRAME_BLOCKED_IDS } from "./data/live/webcast.js";
 import {
   fetchYouTubeOembed,
   loadHotspotsVisible,
@@ -144,6 +145,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const fallbackRetry = document.getElementById("live-fallback-retry");
   const btnEmbedHelp = document.getElementById("btn-embed-help");
   const frameOpen = document.getElementById("live-frame-yt");
+  const openBlocked = document.getElementById("live-open-blocked");
   const fitNav = document.getElementById("live-fits");
   const fitBlurb = document.getElementById("live-fit-blurb");
   const countdownEl = document.getElementById("live-countdown");
@@ -213,6 +215,8 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     beatId: null,
     pendingPhase: null,
     fromQueryYoutube: false,
+    userPicked: false,
+    runtimeBlockedIds: [],
     beatHotspotIds: [],
     beatLearnIds: [],
   };
@@ -429,7 +433,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       if (commPhase) commPhase.textContent = "Public play-by-play";
       if (commCue) {
         commCue.textContent =
-          "Start commentary to follow the latest Starship webcast from T-0 (that long YouTube hold is the countdown, not a broken player). Beats sit beside the stream — hot stage, flaps, catch. Educational approximation — not official telemetry.";
+          "Start commentary to follow the newest Starship webcast that plays in-page. If Flight 13 blocks embedding (YouTube 101/150), we skip to the next completed Starship VOD — Watch on YouTube for the blocked stream. Ads cannot be stripped.";
       }
       if (commTags) {
         commTags.hidden = true;
@@ -636,6 +640,17 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     openLink.href = href;
     fallbackOpen.href = href;
     if (frameOpen) frameOpen.href = href;
+    const blockedId = parseYouTubeId(state.webcastPick?.blockedLatest?.youtubeId);
+    if (openBlocked) {
+      const show = Boolean(blockedId && blockedId !== state.videoId);
+      openBlocked.hidden = !show;
+      openBlocked.classList.toggle("hidden", !show);
+      if (show) {
+        openBlocked.href = youtubeWatchUrl(blockedId);
+        const label = state.webcastPick?.blockedLatest?.mission || "latest webcast";
+        openBlocked.textContent = `Watch ${label} on YouTube`;
+      }
+    }
   }
 
   function setFallbackThumb(preferred) {
@@ -696,7 +711,16 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       return `${pick.mission || pick.title} looks live on Launch Library 2. Prefilling that public YouTube webcast — not official telemetry. Paste another ID if this is the wrong stream.`;
     }
     if (pick?.reason === "latest-completed") {
+      if (pick.blockedLatest?.youtubeId) {
+        const skipped = pick.blockedLatest.mission || pick.blockedLatest.title || "the newer Starship webcast";
+        return `Nothing live on Launch Library 2 / YouTube. Prefilling the newest completed Starship webcast that plays in-page: ${pick.mission || pick.title}. ${skipped} disables embedding (YouTube 101/150). Watch it on YouTube. Ads cannot be stripped.`;
+      }
       return `Nothing live on Launch Library 2 / YouTube. Prefilling the latest completed public webcast: ${pick.mission || pick.title}. Educational embed — not official telemetry.`;
+    }
+    if (pick?.reason === "embed-fallback") {
+      const blocked = pick.blockedLatest;
+      const name = blocked?.mission || blocked?.title || "the latest Starship webcast";
+      return `${name} disables in-page play (YouTube 101/150 — uploader embedding off). No newer Starship VOD allowed embedding, so the in-page player is the Flight 5 recap. Watch the latest webcast on YouTube. Ads cannot be stripped.`;
     }
     const launch = state.windowLaunch;
     if (launch?.status === "in-flight") {
@@ -1103,6 +1127,36 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (state.pendingSeek != null) highlightChapterAt(state.pendingSeek);
   }
 
+  function autoBlockedIds() {
+    return [...DEFAULT_IFRAME_BLOCKED_IDS, ...iframeBlockedIds(state.cuePack), ...state.runtimeBlockedIds];
+  }
+
+  function rememberBlocked(id, extra = {}) {
+    const parsed = parseYouTubeId(id);
+    if (parsed && !state.runtimeBlockedIds.includes(parsed)) state.runtimeBlockedIds.push(parsed);
+    const prev = extra.mission || state.webcastPick?.mission || state.oembed?.title || "Starship webcast";
+    return {
+      youtubeId: parsed,
+      title: extra.title || state.oembed?.title || "",
+      mission: prev,
+    };
+  }
+
+  function loadNextPlayableStarship(skippedId) {
+    const skipped = rememberBlocked(skippedId);
+    const pick = resolveAutoWebcast({
+      bundle: state.launchBundle,
+      fallbackId,
+      latestSheetVideoId: latestSheetVideoId(state.cuePack),
+      iframeBlockedIds: autoBlockedIds(),
+    });
+    if (!pick?.youtubeId || pick.youtubeId === skippedId) return false;
+    if (!pick.blockedLatest) pick.blockedLatest = skipped;
+    state.webcastPick = pick;
+    loadVideo(pick.youtubeId, { persist: false });
+    return true;
+  }
+
   function onPlayerError(ev) {
     const code = ev?.data;
     const short = YT_ERRORS[code] || `YouTube player error (${code ?? "?"}).`;
@@ -1112,11 +1166,14 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       createPlayer(state.videoId, { nocookie: true });
       return;
     }
+    if (fallbackOpen) fallbackOpen.textContent = blocked ? "Watch on YouTube" : "Open on YouTube";
+    const autoSwap = blocked && !state.fromQueryYoutube && !state.userPicked;
+    if (autoSwap && loadNextPlayableStarship(state.videoId)) return;
     showFallback({
-      title: "Open on YouTube",
+      title: blocked ? "Watch on YouTube" : "Open on YouTube",
       detail: blocked
-        ? "Embedding is disabled for this video (player error 101/150). Some SpaceX webcast IDs block in-page play. Use Open on YouTube, or paste an ID that allows embedding."
-        : `${short} YouTube may also show a sign-in / bot check inside the embed. Use Open on YouTube if the in-page player stays unavailable.`,
+        ? "The uploader disabled embedding (YouTube player 101/150). Watch on YouTube instead. We cannot skip ads or force in-page play. Paste an ID that allows embedding."
+        : `${short} YouTube may also show a sign-in / bot check inside the embed. Use Watch on YouTube if the in-page player stays unavailable.`,
       thumb: state.oembed?.thumbnail,
     });
     clearPendingSeek();
@@ -1188,6 +1245,9 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   }
 
   async function createPlayer(id, { nocookie = false, persist = false } = {}) {
+    if (!state.userPicked && !state.fromQueryYoutube && autoBlockedIds().includes(id)) {
+      if (loadNextPlayableStarship(id)) return;
+    }
     const gen = ++state.oembedGen;
     const result = await fetchYouTubeOembed(id);
     if (gen !== state.oembedGen) return;
@@ -1205,11 +1265,12 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       return;
     }
     if (result.embeddable === false && !state.embedBlockedManual) {
+      if (!state.userPicked && !state.fromQueryYoutube && loadNextPlayableStarship(id)) return;
       destroyPlayer();
       showFallback({
-        title: result.title || "Open on YouTube",
+        title: result.title || "Watch on YouTube",
         detail:
-          "YouTube oEmbed returned unauthorized — this ID has embedding disabled (common on some SpaceX webcasts). Open it on YouTube instead, or paste an ID that allows embeds.",
+          "The uploader disabled embedding (YouTube oEmbed 401 / player 101/150). Watch on YouTube instead. Ads cannot be stripped. Paste an ID that allows embeds, or wait for the companion to skip to the next Starship VOD.",
         thumb: result.thumbnail,
       });
       syncChrome();
@@ -1292,7 +1353,12 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     }
     clearPendingSeek();
     queueStartSeconds(startSeconds);
-    if (persist) state.webcastPick = null;
+    if (persist) {
+      state.webcastPick = null;
+      state.userPicked = true;
+    } else {
+      state.userPicked = false;
+    }
     if (state.active) {
       createPlayer(id, { persist });
       return;
@@ -1314,13 +1380,15 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   async function applyAutoWebcast(bundle, { force = false } = {}) {
     if (bundle) state.launchBundle = bundle;
     if (state.fromQueryYoutube && !force) return;
-    const stored = loadStoredVideoId();
-    if (stored && !isStaleDefaultId(stored, fallbackId) && !force) return;
     await ensureCues();
+    const blocked = autoBlockedIds();
+    const stored = loadStoredVideoId();
+    if (stored && !isStaleDefaultId(stored, fallbackId, blocked) && !force) return;
     const pick = resolveAutoWebcast({
       bundle: state.launchBundle,
       fallbackId,
       latestSheetVideoId: latestSheetVideoId(state.cuePack),
+      iframeBlockedIds: blocked,
     });
     if (!pick?.youtubeId) return;
     state.webcastPick = pick;

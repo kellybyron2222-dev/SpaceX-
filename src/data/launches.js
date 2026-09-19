@@ -192,7 +192,7 @@ async function fetchFromBase(base) {
   const [up, prev, prevStarship] = await Promise.all([
     getJson(`${base}/launches/upcoming/?${q}`),
     getJson(`${base}/launches/previous/?lsp__name=SpaceX&limit=8&mode=detailed`),
-    getJson(`${base}/launches/previous/?search=Starship&limit=4&mode=detailed`).catch(() => ({ results: [] })),
+    getJson(`${base}/launches/previous/?search=Starship&limit=8&mode=detailed`).catch(() => ({ results: [] })),
   ]);
   if (!Array.isArray(up?.results) || !Array.isArray(prev?.results)) throw new Error("Unexpected LL2 shape");
   const starshipRecent = Array.isArray(prevStarship?.results) ? prevStarship.results.map(normalizeLaunch) : [];

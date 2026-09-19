@@ -10,6 +10,8 @@ import {
   beatById,
   cuesUrl,
   latestSheetVideoId,
+  latestEmbeddableSheetVideoId,
+  iframeBlockedIds,
   missionBeats,
   missionSecondsAtVideoClock,
   normalizeBeat,
@@ -35,6 +37,13 @@ describe("broadcast cue JSON from #33", () => {
     assert.ok(pack.sheets.some((s) => s.id === "flight-13"));
     assert.ok(pack.sheets.some((s) => s.id === "generic-launch-test"));
     assert.equal(latestSheetVideoId(pack), "lC3RDO7tdLc");
+    assert.equal(latestEmbeddableSheetVideoId(pack), "hI9HQfCAw64");
+    const blocked = iframeBlockedIds(pack);
+    assert.ok(blocked.includes("lC3RDO7tdLc"));
+    assert.ok(blocked.includes("Ew0Xu1RT8oc"));
+    assert.equal(blocked.includes("hI9HQfCAw64"), false);
+    assert.equal(pickSheet(pack, "lC3RDO7tdLc").iframeBlocked, false);
+    assert.deepEqual(pickSheet(pack, "lC3RDO7tdLc").iframeBlockedIds.slice(0, 2).sort(), ["Ew0Xu1RT8oc", "lC3RDO7tdLc"].sort());
   });
 
   it("keeps beats bot-readable with clock, cue, optional hotspot + Learn", () => {

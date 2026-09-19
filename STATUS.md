@@ -8,15 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33) cue sheet · [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34) deep-links · [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35) Commentator
-- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37) latest-VOD fallback · [#39](https://github.com/kellybyron2222-dev/SpaceX-/pull/39) prefer completed Starship VOD over a recent Falcon
-- [#41](https://github.com/kellybyron2222-dev/SpaceX-/pull/41) Flight 13 VOD cue sync — surveyed T-0 **3:05:36** on the NSF webcast clock (not LL2 start vs NET)
-- [#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) Learn catalog in plain English
-- **This PR [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44):** Commentator beat titles use cue-sheet `event` (Liftoff / Super Heavy MECO, not `meco`). Dual clock shows YouTube VOD time + mission T+ while commentary is on.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) cue sheet, deep-links, Commentator, latest-VOD, Learn English
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44) Commentator English beat titles + VOD/T+ clock
+- **This PR:** When nothing is live, auto-play the newest completed **Starship** VOD that embeds. Skip Flight 13 `lC3RDO7tdLc` / `Ew0Xu1RT8oc` (IFrame 101/150). Next in-page candidate is another F13 clip or Flight 12. Watch on YouTube for the blocked newest. Not Falcon. Ads cannot be stripped.
 
 ## Open PRs
 
-[#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44) Commentator English titles + dual clock. **None** after merge.
+This PR (playable Starship VOD). **None** after merge.
 
 ## Next
 
