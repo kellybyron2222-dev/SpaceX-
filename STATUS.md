@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#63](https://github.com/kellybyron2222-dev/SpaceX-/pull/63) cue sheet through contest-loop report (readiness 7/10)
-- **This PR:** Explore teaching peel on Full stack / Super Heavy / Starship — explode floats tanks, engines, flaps; click isolates (others fade); cutaway opens tank shells and header tanks; **Put back together**. Plain English labels. Not CAD.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#64](https://github.com/kellybyron2222-dev/SpaceX-/pull/64) cue sheet through Explore teaching peel
+- **This PR:** Scale next to Super Heavy — a ~1.8 m person and a ~70 × 3.7 m Falcon 9 stick so the 9 m stack is not a grey tube in a void. Toggle **Scale**. Not CAD.
 
 ## Open PRs
 
-Teaching peel (this branch). **None** after merge.
+Scale figures (this branch). **None** after merge.
 
 ## Next
 
-Scale figure (person, optional Falcon/747) beside Super Heavy. Then why-this-shape captions, Raptor vs Merlin compare, match Live camera.
+Why-this-shape captions (tiles = belly heat, flaps keep that face in the flow). Then Raptor vs Merlin compare, match Live camera.

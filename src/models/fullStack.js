@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { createStarship, shipHeight } from "./starship.js";
 import { createSuperHeavy } from "./superHeavy.js";
-import { SCALE, createMaterials, createPad, enableShadows, homeAndExplode, tag } from "./helpers.js";
+import { SCALE, addScaleRefs, createMaterials, createPad, enableShadows, homeAndExplode, tag } from "./helpers.js";
 
 export function createFullStack() {
   const mats = createMaterials();
@@ -30,6 +30,7 @@ export function createFullStack() {
   const pad = createPad(mats, 18, { deluge: true });
   pad.position.y = -0.55;
   g.add(pad);
+  addScaleRefs(g, mats);
 
   enableShadows(g);
   g.userData.supportsExplode = true;

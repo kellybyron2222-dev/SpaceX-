@@ -2,6 +2,7 @@ import * as THREE from "three";
 import {
   SCALE,
   addPickProxy,
+  addScaleRefs,
   addTeachingTanks,
   addWeldRings,
   createGridFin,
@@ -183,6 +184,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
     const pad = createPad(mats, 16, { deluge: true });
     pad.position.y = -0.55;
     g.add(pad);
+    addScaleRefs(g, mats);
   }
 
   enableShadows(g);
