@@ -20,6 +20,7 @@ describe("teaching peel", () => {
     assert.equal(teachLabel({ id: "mechazilla.arms" }), "Chopsticks — tower arms");
     assert.equal(teachLabel({ id: "scale.person" }), "A person — about 1.8 m");
     assert.equal(teachLabel({ id: "scale.falcon" }), "Falcon 9 — for scale");
+    assert.match(TEACH_LABELS["scale.person"], /1\.8 m/);
     assert.equal(teachLabel({ id: "merlin.gasGen" }), "Gas generator — one can");
     assert.equal(teachLabel({ id: "merlin.engine" }), "Merlin 1D — the right engine");
     assert.equal(teachLabel({ id: "unknown.part", name: "Fallback" }), "Fallback");

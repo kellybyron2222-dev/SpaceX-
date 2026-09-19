@@ -261,10 +261,10 @@ export function addTeachingTanks(parent, { radius, yBottom, yTop, splitY, mats, 
   return { ch4, lox, dome };
 }
 
-/** ~1.8 m teaching figure — not a crew portrait. */
+/** ~1.8 m teaching figure — high-vis so it reads next to a 70 m Falcon. Not a crew portrait. */
 export function createScalePerson(mats) {
   const g = new THREE.Group();
-  const body = mats.darkSteel;
+  const body = mats.caution;
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), mats.stainlessDark);
   head.position.y = 1.68;
   const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.62, 10), body);
@@ -275,18 +275,20 @@ export function createScalePerson(mats) {
   armL.position.set(-0.22, 1.2, 0);
   const armR = armL.clone();
   armR.position.x = 0.22;
-  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.06, 20), mats.caution);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.06, 24), mats.caution);
   disc.position.y = 0.03;
   g.add(head, torso, legs, armL, armR, disc);
+  const blurb =
+    "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Starship alone is about 52 m. High-vis mark, not a crew portrait.";
   tag(g, {
     id: "scale.person",
     name: "Person (for scale)",
-    blurb: "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Not a crew portrait.",
+    blurb,
   });
   addPickProxy(g, new THREE.Vector3(0, 0.9, 0), 2.2, {
     id: "scale.person",
     name: "Person (for scale)",
-    blurb: "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Not a crew portrait.",
+    blurb,
   });
   return g;
 }
@@ -313,12 +315,12 @@ export function createScaleFalcon(mats) {
     id: "scale.falcon",
     name: "Falcon 9 (for scale)",
     blurb:
-      "About 70 m tall and 3.7 m across. Nearly as tall as Super Heavy, much thinner. A teaching stick, not a Falcon CAD model.",
+      "About 70 m tall and 3.7 m across. Taller than Starship (~52 m), nearly as tall as Super Heavy, much thinner. A teaching stick, not a Falcon CAD model.",
   });
   return g;
 }
 
-/** Person + Falcon 9 next to Super Heavy. Skipped from camera framing. */
+/** Person + Falcon 9 next to Super Heavy or Starship. Person skips the camera box. */
 export function addScaleRefs(parent, mats, { personX = 11, falconX = 22 } = {}) {
   const group = new THREE.Group();
   group.userData.scaleRefs = true;
