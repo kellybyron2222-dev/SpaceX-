@@ -101,7 +101,17 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "falcon9",
     partId: "falcon9.engines",
-    matchIds: ["falcon9.engines", "falcon9.octaweb"],
+    matchIds: [
+      "falcon9.engines",
+      "falcon9.octaweb",
+      "merlin.engine",
+      "merlin.nozzle",
+      "merlin.chamber",
+      "merlin.gasGen",
+      "merlin.pump",
+      "merlin.gimbal",
+      "merlin.plumbing",
+    ],
     blurb: "RP-1 and liquid oxygen, gas-generator cycle. Nine on Falcon 9, 27 on Heavy. Simple bells, public counts.",
     overview:
       "Merlin 1D is the kerosene engine on Falcon. Nine on Falcon 9, twenty-seven on Heavy. Public user’s guides publish thrust-class numbers that changed with Block upgrades. These bells are teaching shapes.",

@@ -236,7 +236,8 @@ function renderNav(activeId, relatedSceneIds = []) {
     if (scene.id === activeId) btn.classList.add("active");
     if (relatedSceneIds.includes(scene.id)) btn.classList.add("related");
     btn.dataset.id = scene.id;
-    const key = index < 9 ? String(index + 1) : index === 9 ? "0" : index === 10 ? "-" : "";
+    const key =
+      index < 9 ? String(index + 1) : index === 9 ? "0" : index === 10 ? "-" : index === 11 ? "=" : "";
     btn.innerHTML = `${scene.name}<small>${key ? `${key} · ` : ""}${scene.summary}</small>`;
     if (scene.expand) btn.title = scene.expand;
     btn.addEventListener("click", () => selectScene(scene.id));
@@ -790,6 +791,10 @@ window.addEventListener("keydown", (event) => {
   }
   if (key === "-" || key === "_") {
     const scene = viewer.scenes()[10];
+    if (scene) selectScene(scene.id);
+  }
+  if (key === "=" || key === "+") {
+    const scene = viewer.scenes()[11];
     if (scene) selectScene(scene.id);
   }
   if (key >= "1" && key <= "9") {

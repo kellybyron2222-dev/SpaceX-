@@ -8,6 +8,7 @@ import { createTilePanel } from "./tilePanel.js";
 import { createFalcon9, createFalconHeavy } from "./falcon9.js";
 import { createFalconPad } from "./falconPad.js";
 import { createAsds } from "./asds.js";
+import { createCompareEngines } from "./compareEngines.js";
 import { SCALE } from "./helpers.js";
 
 export const SCENES = [
@@ -123,6 +124,17 @@ export const SCENES = [
     explodeHint: "No explode on this scene",
     family: "falcon",
     build: createAsds,
+  },
+  {
+    id: "compare-engines",
+    name: "Raptor vs Merlin",
+    summary: "Same camera, two cycles",
+    expand: "Raptor (methane, full-flow) beside Merlin (RP-1, gas-generator). Teaching sketch, not CAD.",
+    height: "~3 m class",
+    diameter: "two bells, one view",
+    explodeHint: "Floats both engines’ pumps and bells apart",
+    family: "starship",
+    build: createCompareEngines,
   },
 ];
 
