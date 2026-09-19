@@ -116,7 +116,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
       const a = (i / ring.count) * Math.PI * 2 + ring.count * 0.01;
       const eng = createMiniRaptor(mats);
       eng.position.set(Math.cos(a) * ring.radius, 0.55, Math.sin(a) * ring.radius);
-      homeAndExplode(eng, new THREE.Vector3(0, -9.2 - ring.radius * 0.35, 0));
+      homeAndExplode(eng, new THREE.Vector3(Math.cos(a) * 2.4, -3.4, Math.sin(a) * 2.4));
       engines.add(eng);
     }
   }

@@ -268,7 +268,7 @@ export class Viewer {
     const target = this.controls.target.clone();
     const dir = this.camera.position.clone().sub(target);
     if (dir.lengthSq() < 1e-6) return;
-    const next = target.clone().add(dir.multiplyScalar(1.48));
+    const next = target.clone().add(dir.multiplyScalar(1.22));
     this._tweenTo(next, target, 0.85);
   }
 
