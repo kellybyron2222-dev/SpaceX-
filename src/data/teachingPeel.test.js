@@ -46,7 +46,9 @@ describe("teaching peel", () => {
     assert.equal(peelHintFor("fullstack").includes("?mode="), false);
     assert.match(peelHintFor("compare-engines"), /two preburners/i);
     assert.match(peelHintFor("compare-engines"), /gas generator/i);
+    assert.match(peelHintFor("compare-engines"), /person/i);
     assert.equal(peelHintFor("compare-engines").includes("?mode="), false);
+    assert.match(peelHintFor("raptor"), /person/i);
     assert.match(peelHintFor("mechazilla"), /gulf-side/i);
     assert.match(peelHintFor("mechazilla"), /tower left/i);
   });

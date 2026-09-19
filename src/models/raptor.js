@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createMaterials, enableShadows, homeAndExplode, ids, latheBell, pipe, tag } from "./helpers.js";
+import { addScaleRefs, createMaterials, enableShadows, homeAndExplode, ids, latheBell, pipe, tag } from "./helpers.js";
 
 const PARTS = ids("raptor", {
   nozzle: {
@@ -55,7 +55,7 @@ const PARTS = ids("raptor", {
 });
 
 /** Textbook FFSC teaching layout (regen rings, two preburners, pumps, gimbal) — not a factory-floor look-alike. */
-export function createRaptor() {
+export function createRaptor({ scale = true } = {}) {
   const mats = createMaterials();
   const g = new THREE.Group();
 
@@ -197,5 +197,8 @@ export function createRaptor() {
       "Methane/LOX full-flow staged-combustion engine. This assembly is a teaching approximation of nozzle, chamber, gimbal, and feed plumbing.",
   });
   g.userData.supportsExplode = true;
+  if (scale) {
+    addScaleRefs(g, mats, { includeFalcon: false, personX: 2.25, personY: -1.22, personZ: 0.55 });
+  }
   return g;
 }
