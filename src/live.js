@@ -9,6 +9,7 @@ import {
   missionBeats,
   pickSheet,
   recapBeats,
+  resolveT0Offset,
 } from "./data/live/cues.js";
 import { isStaleDefaultId, resolveAutoWebcast } from "./data/live/webcast.js";
 import {
@@ -143,6 +144,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const commClock = document.getElementById("comm-clock");
   const commPhase = document.getElementById("comm-phase");
   const commCue = document.getElementById("comm-cue");
+  const commTags = document.getElementById("comm-tags");
   const commBeats = document.getElementById("comm-beats");
   const commPick = document.getElementById("comm-phase-pick");
   const commPause = document.getElementById("comm-pause");
@@ -199,16 +201,34 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     beatId: null,
     pendingPhase: null,
     fromQueryYoutube: false,
+    beatHotspotIds: [],
+    beatLearnIds: [],
   };
 
   function learnIdForBeat(beat) {
     if (beat?.learnId) return beat.learnId;
+    if (beat?.learnIds?.length) return beat.learnIds[0];
     if (!beat?.hotspotId) return null;
     for (const preset of presets) {
       const hs = preset.hotspots?.find((h) => h.id === beat.hotspotId);
       if (hs?.catalogId) return hs.catalogId;
     }
     return null;
+  }
+
+  function catalogIdsForBeat(beat) {
+    if (!beat) return [];
+    if (beat.learnIds?.length) return [...beat.learnIds];
+    const ids = [];
+    const primary = learnIdForBeat(beat);
+    if (primary) ids.push(primary);
+    for (const hid of beat.hotspotIds || []) {
+      for (const preset of presets) {
+        const hs = preset.hotspots?.find((h) => h.id === hid);
+        if (hs?.catalogId && !ids.includes(hs.catalogId)) ids.push(hs.catalogId);
+      }
+    }
+    return ids;
   }
 
   function currentBeat() {
@@ -259,15 +279,10 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
 
   function bindSheet() {
     state.sheet = pickSheet(state.cuePack, state.videoId);
-    if (recapBeats(state.sheet).length) {
-      state.t0Offset = null;
-    } else if (state.webcastPick?.youtubeId === state.videoId && state.webcastPick.t0Offset != null) {
-      state.t0Offset = state.webcastPick.t0Offset;
-    } else if (state.sheet?.t0OffsetSeconds != null) {
-      state.t0Offset = state.sheet.t0OffsetSeconds;
-    } else {
-      state.t0Offset = 0;
-    }
+    state.t0Offset = resolveT0Offset(state.sheet, {
+      webcastPick: state.webcastPick,
+      videoId: state.videoId,
+    });
     renderPhasePicker();
     if (state.commentaryOn) renderCommentator();
   }
@@ -345,9 +360,12 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (!beat) return;
     const same = state.beatId === beat.id;
     state.beatId = beat.id;
+    state.beatHotspotIds = beat.hotspotIds || (beat.hotspotId ? [beat.hotspotId] : []);
+    state.beatLearnIds = catalogIdsForBeat(beat);
     if (beat.presetId) selectPreset(beat.presetId, { manual: false });
     const learnId = learnIdForBeat(beat);
     if (learnId) selectHotspot(learnId);
+    else renderHotspots();
     const jump = beatSeekSeconds(beat);
     if (seek && jump != null) {
       seekTo(jump, { play: jump > 0 || state.commentaryOn });
@@ -401,6 +419,10 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
         commCue.textContent =
           "Sports-style beats sit beside the stream. Start commentary to follow T-0, hot stage, flaps, catch. Educational approximation — not official telemetry.";
       }
+      if (commTags) {
+        commTags.hidden = true;
+        commTags.replaceChildren();
+      }
       if (commBeats) commBeats.hidden = true;
       btnCommLearn?.classList.add("hidden");
       return;
@@ -416,6 +438,24 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       commCue.classList.remove("is-pulse");
       void commCue.offsetWidth;
       commCue.classList.add("is-pulse");
+    }
+    if (commTags) {
+      const tagIds = catalogIdsForBeat(beat);
+      commTags.replaceChildren();
+      commTags.hidden = !tagIds.length;
+      for (const id of tagIds) {
+        const entry = catalogById(id);
+        if (!entry) continue;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `comm-tag${id === state.catalogId ? " active" : ""}`;
+        btn.textContent = entry.name;
+        btn.addEventListener("click", () => {
+          selectHotspot(id);
+          onLearn?.(id);
+        });
+        commTags.appendChild(btn);
+      }
     }
     if (commPick && beat) commPick.value = beat.id;
     if (btnCommLearn) {
@@ -449,6 +489,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (!state.commentaryOn) {
       stopSpeech();
       renderCommentator();
+      renderHotspots();
       syncShareQuery();
       return;
     }
@@ -779,10 +820,23 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     const preset = currentPreset();
     if (!preset) return;
 
+    const beat = currentBeat();
+    const featuredIds = new Set();
+    if (state.commentaryOn) {
+      for (const id of catalogIdsForBeat(beat)) featuredIds.add(id);
+      for (const hid of beat?.hotspotIds || []) {
+        const hs = preset.hotspots?.find((h) => h.id === hid);
+        if (hs?.catalogId) featuredIds.add(hs.catalogId);
+      }
+    }
+    const hotspotRows = featuredIds.size
+      ? preset.hotspots.filter((hs) => featuredIds.has(hs.catalogId))
+      : preset.hotspots;
+
     const defs = svgEl("defs", {});
     svg.appendChild(defs);
 
-    for (const hs of preset.hotspots) {
+    for (const hs of hotspotRows) {
       const entry = catalogById(hs.catalogId);
       if (!entry) continue;
       const selected = state.catalogId === hs.catalogId;
@@ -802,6 +856,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       }
       shape.classList.add("hotspot");
       if (selected) shape.classList.add("selected");
+      if (featuredIds.has(hs.catalogId)) shape.classList.add("featured");
       shape.setAttribute("tabindex", "0");
       shape.setAttribute("role", "button");
       shape.setAttribute("aria-label", `${hs.label || entry.name}. Open Learn panel.`);
@@ -836,7 +891,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
 
       const row = document.createElement("button");
       row.type = "button";
-      row.className = `cat-btn live-hotspot-row${selected ? " active" : ""}`;
+      row.className = `cat-btn live-hotspot-row${selected ? " active" : ""}${featuredIds.has(hs.catalogId) ? " tagged" : ""}`;
       row.innerHTML = `${entry.name}<small>${hs.label || entry.category}</small>`;
       row.addEventListener("click", () => selectHotspot(hs.catalogId));
       hotspotNav.appendChild(row);
@@ -1241,8 +1296,8 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     });
     if (!pick?.youtubeId) return;
     state.webcastPick = pick;
-    if (pick.t0Offset != null) state.t0Offset = pick.t0Offset;
-    const start = pick.t0Offset > 0 ? pick.t0Offset : undefined;
+    bindSheet();
+    const start = state.t0Offset > 0 ? state.t0Offset : undefined;
     if (pick.youtubeId !== state.videoId) {
       loadVideo(pick.youtubeId, { persist: false, startSeconds: start });
     } else {

@@ -1,6 +1,6 @@
 {
   "schema": "spacex-companion.broadcast-cues/v1",
-  "updated": "2026-09-18",
+  "updated": "2026-09-19",
   "disclaimer": "Public educational approximations only — not official SpaceX telemetry, countdown, range status, or CAD. Clocks are approximate teaching beats from public webcasts and encyclopedia timelines. Recap VOD timestamps are not mission elapsed time.",
   "audience": ["live-launch-commentator", "grok-bot"],
   "defaultSheet": "flight-13",
@@ -13,8 +13,10 @@
     "phase": "Stable phase key for the in-app Commentator overlay.",
     "clock": "Display clock (T− / T+ or a generic phase label).",
     "cue": "One-line sports-style line for the overlay (and the Grok Bot).",
-    "hotspotId": "Optional overlays.json hotspot id.",
-    "learnId": "Optional Learn catalog id (src/data/catalog.js).",
+    "hotspotId": "Optional overlays.json hotspot id (primary). Prefer hotspotIds when the shot shows more than one part.",
+    "hotspotIds": "Optional list of overlay hotspot ids visible in the shot. Commentator + tagged-component list follow these.",
+    "learnId": "Optional Learn catalog id (src/data/catalog.js). Primary card.",
+    "learnIds": "Optional list of Learn ids for the same shot.",
     "deepLink": "Optional companion query: ?mode=learn&id=… / ?mode=live / ?mode=explore. Do not invent a second URL scheme if deep-links already shipped."
   },
   "sheets": [
@@ -261,7 +263,7 @@
       "kind": "historical-vod",
       "date": "2026-07-24",
       "clockKind": "mission-elapsed",
-      "note": "Public webcast / encyclopedia teaching beats for the 24 Jul 2026 flight test (Ship 40 / Booster 20). Times are approximate SpaceX timeline figures — not official telemetry. Default VOD is the NASASpaceflight Launch & Landing stream listed on Launch Library 2; recapSeconds is omitted so the in-app clock uses VOD time minus t0OffsetSeconds (T-0 ~3:05:18 on that upload).",
+      "note": "Public webcast teaching beats for the 24 Jul 2026 flight test (Ship 40 / Booster 20). Times are approximate — not official telemetry. Default VOD is the NASASpaceflight Launch & Landing stream (lC3RDO7tdLc). T-0 is surveyed on that YouTube video clock (~3:05:36, visual liftoff), not LL2 start vs NET (that 3:05:18 offset made 3:07:46 look like boostback/grid fins while the camera was still early ascent).",
       "sources": [
         {
           "label": "SpaceX: Starship's Thirteenth Flight Test",
@@ -280,8 +282,8 @@
         "youtubeId": "lC3RDO7tdLc",
         "aliases": ["Ew0Xu1RT8oc", "-pR0eOj9hK0", "7dMblISWtz8", "uI6pKTGyNq4", "0EnOQCjgq4E"],
         "title": "SpaceX Starship Flight 13 — Launch & Landing",
-        "t0OffsetSeconds": 11118,
-        "note": "Public unofficial webcast VOD. Official SpaceX Flight 13 stream was on X. T-0 offset is NSF start 19:45:42Z vs public NET 22:51:00Z on 24 Jul 2026."
+        "t0OffsetSeconds": 11136,
+        "note": "Public unofficial webcast VOD. Official SpaceX Flight 13 stream was on X. T-0 is ~3:05:36 on this YouTube clock (visual liftoff / ignition in the picture). Do not use LL2 start_time vs NET (11118s / 3:05:18) for this upload — that mapping fires grid-fin/catch beats while the stack is still climbing."
       },
       "beats": [
         {
@@ -302,9 +304,11 @@
           "clock": "T−00:21:30",
           "clockSeconds": -1290,
           "event": "Engine chill",
-          "cue": "Chill-down on the bells — V3 Raptors take the cold sip.",
+          "cue": "Chill-down on the bells — V3 Raptors take the cold sip. Stack still on the mount.",
           "hotspotId": "pad-raptors",
+          "hotspotIds": ["pad-raptors", "pad-tanks", "pad-olm", "pad-tower"],
           "learnId": "raptor",
+          "learnIds": ["raptor", "booster-cluster", "starship-tanks", "olm", "mechazilla-tower"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=learn&id=raptor"
         },
@@ -314,8 +318,11 @@
           "clock": "T−00:00:30",
           "clockSeconds": -30,
           "event": "Go for launch",
-          "cue": "Flight director says go. Thirty seconds. Hold your mark.",
-          "learnId": "olm",
+          "cue": "Flight director says go. Thirty seconds. Tower, chopsticks, OLM — hold your mark.",
+          "hotspotId": "pad-tower",
+          "hotspotIds": ["pad-tower", "pad-chopsticks", "pad-olm", "pad-qd"],
+          "learnId": "mechazilla-tower",
+          "learnIds": ["mechazilla-tower", "chopsticks", "olm", "qd-arm"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=live"
         },
@@ -325,9 +332,11 @@
           "clock": "T−00:00:17",
           "clockSeconds": -17,
           "event": "Flame deflector / deluge",
-          "cue": "Water wall up — rainbirds take the punch so the mount doesn't.",
+          "cue": "Water wall up — rainbirds, OLM, and the stick take the punch together.",
           "hotspotId": "pad-deluge",
+          "hotspotIds": ["pad-deluge", "pad-olm", "pad-raptors", "pad-tower"],
           "learnId": "deluge",
+          "learnIds": ["deluge", "olm", "booster-cluster", "mechazilla-tower"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=learn&id=deluge"
         },
@@ -337,9 +346,11 @@
           "clock": "T−00:00:03",
           "clockSeconds": -3,
           "event": "Super Heavy ignition",
-          "cue": "Thirty-three spin up. Ignition. This is the snap.",
+          "cue": "Thirty-three spin up. Plume, deluge, mount, tower — ignition. This is the snap.",
           "hotspotId": "pad-raptors",
+          "hotspotIds": ["pad-raptors", "pad-deluge", "pad-olm", "pad-tower", "pad-chopsticks"],
           "learnId": "booster-cluster",
+          "learnIds": ["booster-cluster", "deluge", "olm", "mechazilla-tower", "chopsticks"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=learn&id=booster-cluster"
         },
@@ -349,9 +360,11 @@
           "clock": "T+00:00:00",
           "clockSeconds": 0,
           "event": "Liftoff",
-          "cue": "Liftoff — Flight 13, all 33. Super Heavy clears Pad 2.",
-          "hotspotId": "pad-raptors",
-          "learnId": "booster-cluster",
+          "cue": "Liftoff — Flight 13. Tower and chopsticks still in frame, water wall, all 33, Super Heavy clears Pad 2.",
+          "hotspotId": "pad-tower",
+          "hotspotIds": ["pad-tower", "pad-chopsticks", "pad-olm", "pad-deluge", "pad-raptors", "pad-tanks"],
+          "learnId": "mechazilla-tower",
+          "learnIds": ["mechazilla-tower", "chopsticks", "olm", "deluge", "booster-cluster", "starship-tanks"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=live"
         },
@@ -361,9 +374,25 @@
           "clock": "T+00:00:58",
           "clockSeconds": 58,
           "event": "Max-Q",
-          "cue": "Max-Q — hardest aero hit of the climb, and the stack keeps going.",
+          "cue": "Max-Q — hardest aero hit of the climb. Stack still one vehicle, heading downrange.",
           "hotspotId": "pad-tanks",
+          "hotspotIds": ["pad-tanks", "pad-flaps", "pad-tiles", "pad-hot-stage"],
           "learnId": "starship-tanks",
+          "learnIds": ["starship-tanks", "flaps", "tiles", "hot-stage"],
+          "overlayPresetId": "stack-on-pad",
+          "deepLink": "?mode=learn&id=starship-tanks"
+        },
+        {
+          "id": "f13-ascent",
+          "phase": "ascent",
+          "clock": "T+00:01:20",
+          "clockSeconds": 80,
+          "event": "Downrange ascent",
+          "cue": "Still climbing — stack is a spark downrange. One vehicle, early ascent.",
+          "hotspotId": "pad-tanks",
+          "hotspotIds": ["pad-tanks", "pad-hot-stage", "pad-flaps", "pad-tiles"],
+          "learnId": "starship-tanks",
+          "learnIds": ["starship-tanks", "hot-stage", "flaps", "tiles"],
           "overlayPresetId": "stack-on-pad",
           "deepLink": "?mode=learn&id=starship-tanks"
         },

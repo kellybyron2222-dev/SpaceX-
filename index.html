@@ -43,7 +43,7 @@
               <h3 id="live-fallback-title">Watch on YouTube</h3>
               <p id="live-fallback-copy">
                 YouTube may block embeds (sign-in / bot check), or the uploader may disable embedding.
-                Some SpaceX video IDs cannot play in-page.
+                Some SpaceX video IDs cannot play in-page. Pre-roll ads in the embed are YouTube’s — we cannot skip them.
               </p>
               <div class="live-fallback-actions">
                 <a
@@ -67,6 +67,7 @@
             Sports-style beats sit beside the stream. Start commentary to follow T-0, hot stage, flaps, catch.
             Educational approximation — not official telemetry.
           </p>
+          <nav id="comm-tags" class="comm-tags" hidden aria-label="Tagged components on this beat"></nav>
           <div class="commentator-controls">
             <button type="button" id="btn-comm-start" class="tool primary">Start commentary</button>
             <label class="field-label" for="comm-phase-pick">Phase</label>
@@ -217,6 +218,10 @@
           <button type="button" id="btn-embed-help" class="text-btn">Can't play here?</button>
           <button type="button" id="btn-live-default" class="text-btn">Reset to latest webcast</button>
         </div>
+        <p class="hint" id="live-yt-ads">
+          YouTube may play its own pre-roll ads in this embed. The IFrame API cannot skip them — those ads are YouTube’s, not ours.
+          Use <strong>Open on YouTube</strong> for YouTube’s player. We do not strip ads.
+        </p>
         <p id="live-url-error" class="hint" hidden role="alert"></p>
         <p class="hint">
           <strong>Commentator</strong> is beside the stream (toolbar or C). It stays off until Start so the video stays clear.
