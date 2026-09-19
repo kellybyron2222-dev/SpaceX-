@@ -296,7 +296,7 @@ function showTeach(entry) {
     teachMeta.textContent = liveMode ? "Live Launch" : "Learn";
     teachTitle.textContent = liveMode ? "Select a tagged component" : "Select a component";
     teachBlurb.textContent = liveMode
-      ? "Start Commentary (C) for sports-style beats, or turn on Hotspots (H) and pick a tag. Overview / History / Function / Sources / Physics use the same catalog as Learn."
+      ? "Start commentary (C) for play-by-play, Copy share link for a bot URL, or Hotspots (H) then pick a tag. YouTube ads cannot be stripped. Same Learn catalog."
       : "Pick an entry in the catalog. The 3D view will focus that part.";
     teachBody.innerHTML = "";
     return;
