@@ -10,11 +10,12 @@
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) cue sheet, deep-links, Commentator, latest-VOD, Learn English
 - [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44) Commentator English beat titles + VOD/T+ clock
-- **This PR:** When nothing is live, auto-play the newest completed **Starship** VOD that embeds. Skip Flight 13 `lC3RDO7tdLc` / `Ew0Xu1RT8oc` (IFrame 101/150). Next in-page candidate is another F13 clip or Flight 12. Watch on YouTube for the blocked newest. Not Falcon. Ads cannot be stripped.
+- [#45](https://github.com/kellybyron2222-dev/SpaceX-/pull/45) newest embeddable Starship VOD; skip Flight 13 101/150 (`lC3RDO7tdLc` / `Ew0Xu1RT8oc`)
+- **This PR:** Commentator **Copy share link** — Pages URL under `/SpaceX-/` with `mode=live`, `commentary=1`, `phase`, and the **in-page playable** `video=` id (not a blocked Flight 13 101/150 id unless that clip is actually loaded). Same deep-link scheme. Ads cannot be stripped.
 
 ## Open PRs
 
-[#45](https://github.com/kellybyron2222-dev/SpaceX-/pull/45) playable Starship VOD (skip Flight 13 101/150). **None** after merge.
+[#46](https://github.com/kellybyron2222-dev/SpaceX-/pull/46) Copy share link. **None** after merge.
 
 ## Next
 

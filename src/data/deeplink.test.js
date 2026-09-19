@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  companionShareUrl,
+  copyText,
   hasDeepLink,
   inferredMode,
   parseDeepLink,
+  PAGES_PATH,
   replaceShareUrl,
   serializeDeepLink,
+  shareVideoId,
 } from "./deeplink.js";
 
 describe("parseDeepLink", () => {
@@ -71,6 +75,41 @@ describe("serializeDeepLink", () => {
     assert.equal(inferredMode(parseDeepLink("id=raptor")), "learn");
     assert.equal(inferredMode(parseDeepLink("scene=mechazilla")), "explore");
     assert.equal(inferredMode(parseDeepLink("preset=stack-on-pad")), "live");
+  });
+});
+
+describe("companionShareUrl", () => {
+  it("pins GitHub Pages /SpaceX-/ with live commentary query", () => {
+    const search = serializeDeepLink({
+      mode: "live",
+      video: "UfQHy4mVcBo",
+      commentary: true,
+      phase: "liftoff",
+    });
+    assert.equal(
+      companionShareUrl(search),
+      "https://kellybyron2222-dev.github.io/SpaceX-/?mode=live&video=UfQHy4mVcBo&commentary=1&phase=liftoff",
+    );
+    assert.equal(PAGES_PATH, "/SpaceX-/");
+    assert.equal(
+      companionShareUrl(search, { origin: "http://127.0.0.1:47321", pathname: "/SpaceX-/" }),
+      `http://127.0.0.1:47321/SpaceX-/?${search}`,
+    );
+  });
+
+  it("copies the in-page playable id, including a blocked id only when that is loaded", () => {
+    assert.equal(shareVideoId("UfQHy4mVcBo", ["lC3RDO7tdLc", "Ew0Xu1RT8oc"]), "UfQHy4mVcBo");
+    assert.equal(shareVideoId("lC3RDO7tdLc", ["lC3RDO7tdLc"]), "lC3RDO7tdLc");
+    assert.equal(shareVideoId("", ["lC3RDO7tdLc"]), "");
+  });
+
+  it("writes the URL through clipboard.writeText", async () => {
+    const calls = [];
+    const ok = await copyText("https://kellybyron2222-dev.github.io/SpaceX-/?mode=live", {
+      writeText: async (v) => calls.push(v),
+    });
+    assert.equal(ok, true);
+    assert.deepEqual(calls, ["https://kellybyron2222-dev.github.io/SpaceX-/?mode=live"]);
   });
 });
 
