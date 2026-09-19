@@ -29,6 +29,7 @@ export function normalizeBeat(raw = {}, index = 0) {
   const phase = String(raw.phase || id);
   const clock = String(raw.clock || raw.tLabel || raw.typicalClock || "");
   const cue = String(raw.cue || raw.line || raw.text || "").trim();
+  const event = String(raw.event || raw.title || raw.name || "").trim();
   const recapSeconds = finiteNumber(raw.recapSeconds);
   const clockSeconds = finiteNumber(raw.clockSeconds ?? raw.t ?? raw.at ?? raw.seconds);
   const hotspotIds = uniqueStrings(raw.hotspotIds, raw.hotspots, raw.hotspotId, raw.hotspot);
@@ -37,6 +38,7 @@ export function normalizeBeat(raw = {}, index = 0) {
   return {
     id,
     phase,
+    event,
     clock,
     cue,
     recapSeconds,
@@ -128,6 +130,14 @@ export function missionSecondsAtVideoClock(videoSeconds, t0OffsetSeconds) {
   const t0 = Number(t0OffsetSeconds);
   if (!Number.isFinite(t) || !Number.isFinite(t0)) return null;
   return t - t0;
+}
+
+/** Spoken heading for the overlay: encyclopedia `event`, else the phase key. */
+export function beatTitle(beat) {
+  if (!beat) return "";
+  const event = String(beat.event || "").trim();
+  if (event) return event;
+  return String(beat.phase || beat.id || "").replace(/-/g, " ");
 }
 
 export function beatById(sheet, id) {
