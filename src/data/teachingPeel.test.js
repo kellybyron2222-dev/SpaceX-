@@ -9,6 +9,7 @@ import {
   reducePeel,
   sceneSupportsCutaway,
   teachLabel,
+  whyShapeFor,
 } from "./teachingPeel.js";
 
 describe("teaching peel", () => {
@@ -52,5 +53,15 @@ describe("teaching peel", () => {
     assert.deepEqual(s, { explode: false, isolateId: null, cutaway: true });
     s = reducePeel(s, { type: "reset" });
     assert.deepEqual(s, { explode: false, isolateId: null, cutaway: false });
+  });
+
+  it("ties tiles, steel, and flaps to a job", () => {
+    const rows = whyShapeFor("fullstack");
+    assert.equal(rows.length, 3);
+    assert.match(rows[0].body, /belly|heat|tank/i);
+    assert.match(rows[1].title, /steel is the tank/i);
+    assert.match(rows[2].body, /belly-first|tiled side/i);
+    assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
+    assert.deepEqual(whyShapeFor("raptor"), []);
   });
 });

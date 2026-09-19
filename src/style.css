@@ -305,7 +305,8 @@ body,
   flex-shrink: 0;
 }
 
-.callout {
+.callout,
+.why-shape {
   position: absolute;
   right: 14px;
   top: 118px;
@@ -317,6 +318,52 @@ body,
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
   border-left: 3px solid var(--accent);
+  z-index: 2;
+}
+
+.why-shape button.why-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--steel);
+  padding: 8px 0;
+  margin: 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.why-shape button.why-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.why-shape button.why-row strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.why-shape button.why-row span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.why-shape button.why-row:hover,
+.why-shape button.why-row:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.why-shape button.why-row.active strong {
+  color: var(--accent);
+}
+
+#app[data-why="1"] .callout {
+  top: 368px;
 }
 
 .callout.hidden,
@@ -545,13 +592,24 @@ body,
     line-height: 1.35;
   }
 
-  .callout {
+  .callout,
+  .why-shape {
     top: auto;
     bottom: calc(var(--chrome-bottom) + 76px);
     right: max(8px, var(--safe-right));
     left: max(8px, var(--safe-left));
     width: auto;
     padding: 12px 14px 10px;
+  }
+
+  .why-shape {
+    max-height: 34vh;
+    overflow: auto;
+  }
+
+  #app[data-why="1"] .callout {
+    top: auto;
+    bottom: calc(var(--chrome-bottom) + 250px);
   }
 
   .footer {

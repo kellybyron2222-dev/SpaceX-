@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#64](https://github.com/kellybyron2222-dev/SpaceX-/pull/64) cue sheet through Explore teaching peel
-- **This PR:** Scale next to Super Heavy — a ~1.8 m person and a ~70 × 3.7 m Falcon 9 stick so the 9 m stack is not a grey tube in a void. Toggle **Scale**. Not CAD.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#65](https://github.com/kellybyron2222-dev/SpaceX-/pull/65) cue sheet through Explore peel + Super Heavy scale
+- **This PR:** **Why this shape** on Full stack / Ship / Super Heavy — tiles take belly heat, steel is the tank, flaps keep that face in the flow. Click a line to isolate the part. Not CAD.
 
 ## Open PRs
 
-Scale figures (this branch). **None** after merge.
+Why this shape (this branch). **None** after merge.
 
 ## Next
 
-Why-this-shape captions (tiles = belly heat, flaps keep that face in the flow). Then Raptor vs Merlin compare, match Live camera.
+Raptor vs Merlin compare (same camera). Then match Explore camera to the Live Launch webcast view.
