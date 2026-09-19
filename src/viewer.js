@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createStarfield, disposeHierarchy } from "./models/helpers.js";
 import { SCENES, sceneById } from "./models/index.js";
+import { meshTakesLook } from "./data/lookPass.js";
 
 const tmpBox = new THREE.Box3();
 const tmpSize = new THREE.Vector3();
@@ -560,7 +561,7 @@ export class Viewer {
     const selectedId = this.selected?.userData?.part?.id || null;
     this.root.traverse((child) => {
       if (child.userData.cutawayInterior) child.visible = this.cutawayOn;
-      if (!child.isMesh || !child.material || child.userData.pickProxy || child.userData.skipFrame) return;
+      if (!meshTakesLook(child)) return;
       const orig = this.baseMats.get(child);
       if (!orig) return;
       if (child.userData._lookMat) {
