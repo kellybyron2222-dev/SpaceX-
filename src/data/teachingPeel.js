@@ -223,6 +223,7 @@ export const WHY_SHAPE = {
       partId: "mechazilla.arms",
       title: "Wide enough for 9 m",
       body: "The chopsticks open around the booster, then close on the pins. Not the grid fins.",
+      keepIds: ["mechazilla.ghost"],
     },
     {
       partId: "mechazilla.ghost",

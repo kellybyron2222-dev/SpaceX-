@@ -7,3 +7,8 @@ export function meshTakesLook(child) {
 export function selectKeepsHue(part) {
   return Boolean(part?.keepHue);
 }
+
+export function isolateFadesPart(partId, isolatedId, keepIds = []) {
+  if (!isolatedId || !partId || partId === isolatedId) return false;
+  return !keepIds.includes(partId);
+}

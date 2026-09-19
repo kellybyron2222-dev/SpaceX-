@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { meshTakesLook, selectKeepsHue } from "./lookPass.js";
+import { isolateFadesPart, meshTakesLook, selectKeepsHue } from "./lookPass.js";
 
 describe("isolate look pass", () => {
   it("still fades skipFrame scale meshes", () => {
@@ -19,5 +19,10 @@ describe("isolate look pass", () => {
   it("does not gold-wash heat-shield tiles", () => {
     assert.equal(selectKeepsHue({ keepHue: true, id: "starship.tiles" }), true);
     assert.equal(selectKeepsHue({ id: "booster.engines" }), false);
+  });
+
+  it("keeps the ghost booster visible when isolating chopsticks", () => {
+    assert.equal(isolateFadesPart("mechazilla.ghost", "mechazilla.arms", ["mechazilla.ghost"]), false);
+    assert.equal(isolateFadesPart("mechazilla.tower", "mechazilla.arms", ["mechazilla.ghost"]), true);
   });
 });

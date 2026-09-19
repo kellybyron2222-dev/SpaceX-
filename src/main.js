@@ -292,7 +292,10 @@ function renderWhyShape() {
     btn.className = `why-row${row.partId === isolated ? " active" : ""}`;
     btn.innerHTML = `<strong>${row.title}</strong><span>${row.body}</span>`;
     btn.addEventListener("click", () => {
-      viewer.highlightById(row.partId, { frame: whyFramesPart(window.innerWidth) });
+      viewer.highlightById(row.partId, {
+        frame: whyFramesPart(window.innerWidth),
+        keepIds: row.keepIds || [],
+      });
       const part = viewer.findByPartId(row.partId)?.userData?.part;
       if (state.mode === "explore") showCallout(part);
       syncPeelChrome();
