@@ -607,6 +607,10 @@ body,
     overflow: auto;
   }
 
+  .why-shape button.why-row:not(.active) span {
+    display: none;
+  }
+
   /* Why already has the caption. A second callout ate the 3D on phones. */
   #app[data-why="1"] .callout,
   #app[data-why="1"] #peel-hint,
