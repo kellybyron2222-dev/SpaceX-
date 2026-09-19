@@ -316,14 +316,12 @@ function showTeach(entry) {
       )
       .join("");
     teachBody.innerHTML = items
-      ? `<p>Public architecture references — not drawings of flight hardware.</p><ul class="sources">${items}</ul>`
-      : `<p>No public sources recorded for this entry.</p>`;
+      ? `<p>These are public pages. Not SpaceX drawings, and not flight-hardware specs.</p><ul class="sources">${items}</ul>`
+      : `<p>No public source list on this card yet.</p>`;
     return;
   }
   if (tab === "overview") {
-    const extra = entry.expand ? ` — ${entry.expand}` : "";
-    teachBody.innerHTML = `<p>At a glance: <strong>${entry.category}</strong> · ${entry.family} · ${entry.domain}${extra}.</p>
-      <p>The lede above is the short briefing. Open <strong>History</strong> for the public timeline, <strong>Function</strong> for what the hardware does, and <strong>Sources</strong> for citations. Physics notes stay collapsed until you opt in.</p>`;
+    teachBody.innerHTML = `<p>${entry.overview || entry.blurb}</p>`;
     return;
   }
   const text = tab === "history" ? entry.history : tab === "function" ? entry.function : entry.physics;

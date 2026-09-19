@@ -14,7 +14,7 @@
 
 ## Open PRs
 
-**None** after merge.
+- [#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) Learn catalog in plain English
 
 ## Next
 
