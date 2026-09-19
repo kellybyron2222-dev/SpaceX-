@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#79](https://github.com/kellybyron2222-dev/SpaceX-/pull/79) cue sheet through teaching 3D peel, scale, Why, and iterate report
-- **This PR:** Phone first-run chrome — sentence-case nav, Explode / Why / Scale first, Screenshot no longer the gold CTA
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#80](https://github.com/kellybyron2222-dev/SpaceX-/pull/80) cue sheet through teaching 3D and phone first-run chrome
+- **This PR:** Desktop power-user chrome — one-row header, `O` Why / `G` Scale
 
 ## Open PRs
 
-iPhone first-run chrome (this branch). **None** after merge.
+Desktop power chrome (this branch). **None** after merge.
 
 ## Next
 
-Persona UX cycle continues (desktop, a11y, Live, Learn). Contest wrap stays parked — do not submit.
+Persona UX cycle continues (a11y, Live, Learn). Contest wrap stays parked — do not submit.

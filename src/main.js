@@ -262,8 +262,8 @@ function syncPeelChrome() {
   btnScale.disabled = !peel.supportsScale;
   btnScale.setAttribute("aria-pressed", peel.scale ? "true" : "false");
   btnScale.title = peel.supportsScale
-    ? "Person (~1.8 m) for scale. Vehicle scenes also put Falcon 9 (~70 × 3.7 m) beside the stack"
-    : "Scale figures are on the Super Heavy, Starship, and engine scenes";
+    ? "Person (~1.8 m) for scale. Vehicle scenes also put Falcon 9 (~70 × 3.7 m) beside the stack (G)"
+    : "Scale figures are on the Super Heavy, Starship, and engine scenes (G)";
   const busy = peelBusy(peel);
   btnReassemble.disabled = !busy;
   btnCalloutTogether.classList.toggle("hidden", !busy);
@@ -271,7 +271,9 @@ function syncPeelChrome() {
   const whyRows = whyShapeFor(viewer.sceneId);
   btnWhy.disabled = !whyRows.length;
   btnWhy.setAttribute("aria-pressed", state.whyOn && whyRows.length ? "true" : "false");
-  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack, engines, tiles, and tower";
+  btnWhy.title = whyRows.length
+    ? "Why this shape (O)"
+    : "Why this shape is for the stack, engines, tiles, and tower (O)";
   renderWhyShape();
 }
 
@@ -803,6 +805,8 @@ window.addEventListener("keydown", (event) => {
     viewer.screenshot();
   }
   if (key === "e") btnExplode.click();
+  if (key === "o") btnWhy.click();
+  if (key === "g") btnScale.click();
   if (key === "x") btnCutaway.click();
   if (key === "b") putBackTogether();
   if (key === "w") matchWebcastCamera();
