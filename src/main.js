@@ -271,7 +271,7 @@ function syncPeelChrome() {
   const whyRows = whyShapeFor(viewer.sceneId);
   btnWhy.disabled = !whyRows.length;
   btnWhy.setAttribute("aria-pressed", state.whyOn && whyRows.length ? "true" : "false");
-  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack scenes";
+  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack, engines, and tower";
   renderWhyShape();
 }
 
@@ -292,7 +292,10 @@ function renderWhyShape() {
     btn.className = `why-row${row.partId === isolated ? " active" : ""}`;
     btn.innerHTML = `<strong>${row.title}</strong><span>${row.body}</span>`;
     btn.addEventListener("click", () => {
-      viewer.highlightById(row.partId, { frame: whyFramesPart(window.innerWidth) });
+      viewer.highlightById(row.partId, {
+        frame: whyFramesPart(window.innerWidth),
+        keepIds: row.keepIds || [],
+      });
       const part = viewer.findByPartId(row.partId)?.userData?.part;
       if (state.mode === "explore") showCallout(part);
       syncPeelChrome();

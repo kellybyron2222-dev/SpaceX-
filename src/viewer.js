@@ -3,7 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createStarfield, disposeHierarchy } from "./models/helpers.js";
 import { SCENES, sceneById } from "./models/index.js";
-import { meshTakesLook, selectKeepsHue } from "./data/lookPass.js";
+import { isolateFadesPart, meshTakesLook, selectKeepsHue } from "./data/lookPass.js";
 import { unionFilteredBounds } from "./data/meshBounds.js";
 
 const tmpBox = new THREE.Box3();
@@ -29,6 +29,7 @@ export class Viewer {
     this.explodeT = 0;
     this.cutawayOn = false;
     this.isolatedId = null;
+    this.keepVisibleIds = [];
     this.scaleOn = true;
     this.selected = null;
     this.baseMats = new WeakMap();
@@ -183,6 +184,7 @@ export class Viewer {
     const spec = sceneById(id);
     this.sceneId = spec.id;
     this.isolatedId = null;
+    this.keepVisibleIds = [];
     this.cutawayOn = false;
     this.scaleOn = true;
     this.explodeTarget = 0;
@@ -244,12 +246,14 @@ export class Viewer {
 
   isolateById(id) {
     this.isolatedId = id || null;
+    if (!id) this.keepVisibleIds = [];
     this._syncLook();
     return this.isolatedId;
   }
 
   toggleIsolate(id) {
     this.isolatedId = this.isolatedId === id ? null : id || null;
+    if (!this.isolatedId) this.keepVisibleIds = [];
     this._syncLook();
     return this.isolatedId;
   }
@@ -257,6 +261,7 @@ export class Viewer {
   reassemble() {
     this.explodeTarget = 0;
     this.isolatedId = null;
+    this.keepVisibleIds = [];
     this._syncLook();
     return this.peelState();
   }
@@ -284,6 +289,7 @@ export class Viewer {
   resetCamera() {
     this.explodeTarget = 0;
     this.isolatedId = null;
+    this.keepVisibleIds = [];
     this._syncLook();
     this._tweenTo(this.defaultCam.position, this.defaultCam.target, 0.85);
   }
@@ -313,15 +319,17 @@ export class Viewer {
     return found;
   }
 
-  highlightById(id, { frame = true } = {}) {
+  highlightById(id, { frame = true, keepIds = [] } = {}) {
     const obj = this.findByPartId(id);
     if (!obj) {
       this.isolatedId = null;
+      this.keepVisibleIds = [];
       this.clearSelection();
       this.onSelect?.(null);
       return false;
     }
     this.isolatedId = id;
+    this.keepVisibleIds = Array.isArray(keepIds) ? keepIds : [];
     this._highlight(obj);
     if (frame) this._frameObject(obj, false);
     this.onSelect?.(obj.userData.part, obj);
@@ -451,6 +459,7 @@ export class Viewer {
     const obj = this._pickBest(hits);
     if (!obj) {
       this.isolatedId = null;
+      this.keepVisibleIds = [];
       this.clearSelection();
       this._syncLook();
       this.onSelect?.(null);
@@ -459,12 +468,14 @@ export class Viewer {
     const id = obj.userData?.part?.id;
     if (this.isolatedId && this.isolatedId === id) {
       this.isolatedId = null;
+      this.keepVisibleIds = [];
       this.clearSelection();
       this._syncLook();
       this.onSelect?.(null);
       return;
     }
     this.isolatedId = id || null;
+    this.keepVisibleIds = [];
     this._highlight(obj);
     this.onSelect?.(obj.userData.part, obj);
   }
@@ -559,7 +570,7 @@ export class Viewer {
       }
       const part = this._partOf(child)?.userData?.part;
       const partId = part?.id;
-      const faded = Boolean(this.isolatedId && partId && partId !== this.isolatedId);
+      const faded = isolateFadesPart(partId, this.isolatedId, this.keepVisibleIds);
       const selected = Boolean(selectedId && partId === selectedId);
       const clip = this.cutawayOn && child.userData.cutawayShell;
       if (!faded && !selected && !clip) {

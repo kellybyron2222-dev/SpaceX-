@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#73](https://github.com/kellybyron2222-dev/SpaceX-/pull/73) cue sheet through Explore peel, Why-tiles, Starship scale, and high-vis person
-- **This PR:** Phone Why no longer stacks a second callout over the 3D. The tiled belly stays visible.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#74](https://github.com/kellybyron2222-dev/SpaceX-/pull/74) cue sheet through Explore peel, scale, Why-tiles, and phone Why chrome
+- **This PR:** Why this shape on Raptor (preburners / bell / gimbal) and Mechazilla (height / 9 m arms / keep-out).
 
 ## Open PRs
 
-Mobile Why chrome (this branch). **None** after merge.
+Raptor and tower Why (this branch). **None** after merge.
 
 ## Next
 
-Keep reviewing teaching 3D (Why on Raptor / Mechazilla if still a real gap). Contest wrap parked — do not submit.
+Keep reviewing teaching 3D. Contest wrap parked — do not submit.

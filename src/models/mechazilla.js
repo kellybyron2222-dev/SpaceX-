@@ -13,7 +13,7 @@ const PARTS = ids("mechazilla", {
   arms: {
     name: "Chopstick catch arms",
     pickPriority: 8,
-    frameTight: 1.28,
+    frameTight: 1.85,
     frameBias: { x: 0.55, y: 0.42, z: 1.05 },
     blurb:
       "Two large mechanical arms (publicly nicknamed chopsticks) open around the vehicle to stack stages and catch returning boosters.",
