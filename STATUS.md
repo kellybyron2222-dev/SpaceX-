@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#74](https://github.com/kellybyron2222-dev/SpaceX-/pull/74) cue sheet through Explore peel, scale, Why-tiles, and phone Why chrome
-- **This PR:** Why this shape on Raptor (preburners / bell / gimbal) and Mechazilla (height / 9 m arms / keep-out).
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#75](https://github.com/kellybyron2222-dev/SpaceX-/pull/75) cue sheet through Explore peel, scale, Why, and phone chrome
+- **This PR:** Teaching 3D iterate-loop report — **8/10**. Seven fix PRs (#69–#75), then stop.
 
 ## Open PRs
 
-Raptor and tower Why (this branch). **None** after merge.
+Iterate-loop report (this branch). **None** after merge.
 
 ## Next
 
-Keep reviewing teaching 3D. Contest wrap parked — do not submit.
+Contest wrap stays parked — do not submit.
