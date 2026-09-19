@@ -13,11 +13,12 @@
 - [#45](https://github.com/kellybyron2222-dev/SpaceX-/pull/45) newest embeddable Starship VOD; skip Flight 13 101/150 (`lC3RDO7tdLc` / `Ew0Xu1RT8oc`)
 - [#46](https://github.com/kellybyron2222-dev/SpaceX-/pull/46) Commentator Copy share link (playable `video=` under `/SpaceX-/`)
 - [#47](https://github.com/kellybyron2222-dev/SpaceX-/pull/47) Mute voice (speech only, not YouTube)
-- **This PR:** Beat list hides pre-T-0 hold by default. **Show hold** reveals prop load / chill. Phase picker still has every beat. Start still jumps to T-0.
+- [#48](https://github.com/kellybyron2222-dev/SpaceX-/pull/48) Collapse pre-T-0 hold beats; Show hold
+- **This PR:** Help lists Copy share link + bot query `?mode=live&commentary=1&video=` under `/SpaceX-/`.
 
 ## Open PRs
 
-Show hold (this PR). **None** after merge.
+Help share URL (this PR). **None** after merge.
 
 ## Next
 
