@@ -26,6 +26,17 @@ Booth walkthrough (~120s) — keep the footer disclaimer on screen the whole tim
 
 If LL2 or YouTube fails: Sample banner + 3D path; keep talking.
 
+## Grok Bot wrap (~Sep 29, Byron submits)
+
+Contest **not submitted**. The shareable entry is a Grok Bot that **opens** this companion’s Commentator. Play-by-play is in-app.
+
+1. On Live Launch, **Start commentary**, then **Copy share link**.
+2. Paste that Pages URL (`https://kellybyron2222-dev.github.io/SpaceX-/?mode=live&commentary=1&video=…`) into the bot template so a tap opens Commentator on the **in-page playable** Starship VOD.
+3. If Flight 13 NSF/SFN returns IFrame 101/150, the companion already skipped to the next Starship clip — Watch on YouTube for the blocked newest. Ads cannot be stripped.
+4. Do not wrap a Falcon VOD. Do not claim CAD or official telemetry.
+
+Byron submits via Grok Bot chat ~Sep 29. Do not submit from this repo.
+
 ## Deploy (GitHub Pages)
 
 Pushes to `main` run `npm ci` → `npm run build` and publish `dist/` with GitHub Actions. Vite `base` is `/SpaceX-/` so asset URLs match this project-pages path.
