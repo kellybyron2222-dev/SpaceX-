@@ -12,6 +12,18 @@ function finiteNumber(value) {
   return Number.isFinite(n) ? n : null;
 }
 
+function uniqueStrings(...groups) {
+  const out = [];
+  for (const group of groups) {
+    const items = Array.isArray(group) ? group : group == null || group === "" ? [] : [group];
+    for (const item of items) {
+      const s = String(item || "").trim();
+      if (s && !out.includes(s)) out.push(s);
+    }
+  }
+  return out;
+}
+
 export function normalizeBeat(raw = {}, index = 0) {
   const id = String(raw.id || raw.phase || `beat-${index}`);
   const phase = String(raw.phase || id);
@@ -19,8 +31,8 @@ export function normalizeBeat(raw = {}, index = 0) {
   const cue = String(raw.cue || raw.line || raw.text || "").trim();
   const recapSeconds = finiteNumber(raw.recapSeconds);
   const clockSeconds = finiteNumber(raw.clockSeconds ?? raw.t ?? raw.at ?? raw.seconds);
-  const hotspotId = raw.hotspotId || raw.hotspot || null;
-  const learnId = raw.learnId || raw.learn || raw.catalogId || null;
+  const hotspotIds = uniqueStrings(raw.hotspotIds, raw.hotspots, raw.hotspotId, raw.hotspot);
+  const learnIds = uniqueStrings(raw.learnIds, raw.learns, raw.learnId, raw.learn, raw.catalogId);
   const presetId = raw.overlayPresetId || raw.presetId || raw.preset || null;
   return {
     id,
@@ -30,8 +42,10 @@ export function normalizeBeat(raw = {}, index = 0) {
     recapSeconds,
     clockSeconds,
     t: recapSeconds ?? clockSeconds ?? 0,
-    hotspotId: hotspotId ? String(hotspotId) : null,
-    learnId: learnId ? String(learnId) : null,
+    hotspotId: hotspotIds[0] || null,
+    learnId: learnIds[0] || null,
+    hotspotIds,
+    learnIds,
     presetId: presetId ? String(presetId) : null,
     deepLink: raw.deepLink ? String(raw.deepLink) : null,
   };
@@ -93,6 +107,27 @@ export function latestSheetVideoId(pack) {
     sheetById(pack, pack?.defaultSheet) ||
     pack?.sheets?.find((s) => s.id !== "generic-launch-test" && s.videoId);
   return latest?.videoId || null;
+}
+
+/**
+ * VOD T-0 from a surveyed cue-sheet offset wins over LL2 start vs NET.
+ * Recap sheets (Flight 5) have no T-0; they follow recapSeconds.
+ */
+export function resolveT0Offset(sheet, { webcastPick, videoId } = {}) {
+  if (recapBeats(sheet).length) return null;
+  if (sheet?.t0OffsetSeconds != null) return sheet.t0OffsetSeconds;
+  if (webcastPick?.youtubeId && webcastPick.youtubeId === String(videoId || "") && Number.isFinite(webcastPick.t0Offset)) {
+    return webcastPick.t0Offset;
+  }
+  return 0;
+}
+
+/** YouTube video clock (seconds) minus surveyed T-0. */
+export function missionSecondsAtVideoClock(videoSeconds, t0OffsetSeconds) {
+  const t = Number(videoSeconds);
+  const t0 = Number(t0OffsetSeconds);
+  if (!Number.isFinite(t) || !Number.isFinite(t0)) return null;
+  return t - t0;
 }
 
 export function beatById(sheet, id) {

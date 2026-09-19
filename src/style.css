@@ -1356,6 +1356,12 @@ body,
   filter: drop-shadow(0 0 6px rgba(125, 211, 252, 0.45));
 }
 
+.hotspot.featured:not(.selected) {
+  fill: rgba(245, 193, 108, 0.12);
+  stroke: rgba(245, 193, 108, 0.75);
+  stroke-width: 1.2px;
+}
+
 .live-labels {
   position: absolute;
   inset: 0;
@@ -1603,7 +1609,8 @@ a.live-fallback-cta.tool.primary {
 .commentator.is-idle .field-label,
 .commentator.is-idle select,
 .commentator.is-idle .follow-row,
-.commentator.is-idle .hint {
+.commentator.is-idle .hint,
+.commentator.is-idle .comm-tags {
   display: none;
 }
 
@@ -1638,6 +1645,30 @@ a.live-fallback-cta.tool.primary {
 
 .commentator-cue.is-pulse {
   animation: comm-pulse 0.6s ease;
+}
+
+.comm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.comm-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: rgba(12, 18, 26, 0.7);
+  color: var(--steel);
+  cursor: pointer;
+}
+
+.comm-tag.active {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 @keyframes comm-pulse {
@@ -1837,6 +1868,10 @@ a.text-btn {
 #live-hotspot-list .cat-btn {
   min-height: 44px;
   padding: 12px 14px;
+}
+
+#live-hotspot-list .live-hotspot-row.tagged:not(.active) {
+  outline: 1px solid rgba(245, 193, 108, 0.35);
 }
 
 @media (max-width: 860px), (hover: none) and (pointer: coarse) {
