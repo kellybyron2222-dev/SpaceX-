@@ -62,7 +62,8 @@ export const PEEL_HINTS = {
   fullstack:
     "Explode floats ship, tanks, engines, and flaps apart. Click a piece to fade the rest. Cutaway opens the tank shells. Scale puts a person and a Falcon 9 beside the stack.",
   booster: "Explode drops the engine cluster and spreads the fins. Click a piece to isolate it. Cutaway opens the tanks. Scale puts a person and a Falcon 9 beside the booster.",
-  starship: "Explode spreads flaps and engines. Click a piece to isolate it. Cutaway opens the tanks and header tanks.",
+  starship:
+    "Explode spreads flaps and engines. Click a piece to isolate it. Cutaway opens the tanks and header tanks. Scale puts a person and a Falcon 9 beside the ship — Falcon is taller.",
   mechazilla:
     "Explode opens the chopsticks away from the booster. Click the arms or the vehicle to isolate one. Match webcast poses the camera like the gulf-side Live Launch view — tower left, stack right.",
   raptor: "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest.",

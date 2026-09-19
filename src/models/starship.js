@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import {
   SCALE,
+  addScaleRefs,
   addTeachingTanks,
   addWeldRings,
   createFlap,
@@ -258,6 +259,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
     const pad = createPad(mats, 14, { deluge: true });
     pad.position.y = -0.4;
     g.add(pad);
+    addScaleRefs(g, mats, { personX: 10, falconX: 20 });
   }
 
   enableShadows(g);
