@@ -37,8 +37,11 @@ export class Viewer {
     this.root = null;
     this.explodeTarget = 0;
     this.explodeT = 0;
+    this.cutawayOn = false;
+    this.isolatedId = null;
     this.selected = null;
-    this.baseEmissive = new WeakMap();
+    this.baseMats = new WeakMap();
+    this.cutawayPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
     this.clock = new THREE.Clock();
     this.defaultCam = { position: new THREE.Vector3(), target: new THREE.Vector3() };
     this._camTween = null;
@@ -61,6 +64,7 @@ export class Viewer {
     this.renderer.toneMappingExposure = 1.08;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.localClippingEnabled = true;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x070b10);
@@ -187,9 +191,12 @@ export class Viewer {
   load(id, { partId, framePart = true } = {}) {
     const spec = sceneById(id);
     this.sceneId = spec.id;
-    this.clearSelection();
+    this.isolatedId = null;
+    this.cutawayOn = false;
     this.explodeTarget = 0;
     this.explodeT = 0;
+    this.selected = null;
+    this._disposeLookMats();
 
     if (this.root) {
       this.scene.remove(this.root);
@@ -199,6 +206,8 @@ export class Viewer {
 
     this.root = spec.build();
     this.scene.add(this.root);
+    this._captureOriginals();
+    this._syncLook();
     this._fitShadow();
     const whole = this._prepareFrame();
     this.defaultCam.position.copy(whole.pos);
@@ -218,8 +227,46 @@ export class Viewer {
     return { allowed, hint: spec.explodeHint };
   }
 
+  setCutaway(on) {
+    const allowed = Boolean(this.root?.userData.supportsCutaway);
+    this.cutawayOn = Boolean(on && allowed);
+    this._syncLook();
+    return { allowed, on: this.cutawayOn };
+  }
+
+  isolateById(id) {
+    this.isolatedId = id || null;
+    this._syncLook();
+    return this.isolatedId;
+  }
+
+  toggleIsolate(id) {
+    this.isolatedId = this.isolatedId === id ? null : id || null;
+    this._syncLook();
+    return this.isolatedId;
+  }
+
+  reassemble() {
+    this.explodeTarget = 0;
+    this.isolatedId = null;
+    this._syncLook();
+    return this.peelState();
+  }
+
+  peelState() {
+    return {
+      explode: this.explodeTarget > 0.5,
+      isolateId: this.isolatedId,
+      cutaway: this.cutawayOn,
+      supportsExplode: Boolean(this.root?.userData.supportsExplode),
+      supportsCutaway: Boolean(this.root?.userData.supportsCutaway),
+    };
+  }
+
   resetCamera() {
     this.explodeTarget = 0;
+    this.isolatedId = null;
+    this._syncLook();
     this._tweenTo(this.defaultCam.position, this.defaultCam.target, 0.85);
   }
 
@@ -239,10 +286,12 @@ export class Viewer {
   highlightById(id, { frame = true } = {}) {
     const obj = this.findByPartId(id);
     if (!obj) {
+      this.isolatedId = null;
       this.clearSelection();
       this.onSelect?.(null);
       return false;
     }
+    this.isolatedId = id;
     this._highlight(obj);
     if (frame) this._frameObject(obj, false);
     this.onSelect?.(obj.userData.part, obj);
@@ -371,10 +420,21 @@ export class Viewer {
     const hits = this.raycaster.intersectObject(this.root, true);
     const obj = this._pickBest(hits);
     if (!obj) {
+      this.isolatedId = null;
       this.clearSelection();
+      this._syncLook();
       this.onSelect?.(null);
       return;
     }
+    const id = obj.userData?.part?.id;
+    if (this.isolatedId && this.isolatedId === id) {
+      this.isolatedId = null;
+      this.clearSelection();
+      this._syncLook();
+      this.onSelect?.(null);
+      return;
+    }
+    this.isolatedId = id || null;
     this._highlight(obj);
     this.onSelect?.(obj.userData.part, obj);
   }
@@ -425,34 +485,75 @@ export class Viewer {
   }
 
   _highlight(obj) {
-    this.clearSelection();
     this.selected = obj;
-    obj.traverse((child) => {
-      if (!child.isMesh || !child.material || child.userData.pickProxy) return;
-      const orig = child.material;
-      this.baseEmissive.set(child, orig);
-      const mat = orig.clone();
-      if (mat.emissive) {
-        mat.emissive.setHex(0xf5c16c);
-        mat.emissiveIntensity = 0.38;
-      }
-      child.material = mat;
-      child.userData._highlightMat = mat;
-    });
+    this._syncLook();
   }
 
   clearSelection() {
-    if (!this.selected) return;
-    this.selected.traverse((child) => {
-      const orig = this.baseEmissive.get(child);
-      if (!orig) return;
-      if (child.userData._highlightMat) {
-        child.userData._highlightMat.dispose();
-        child.userData._highlightMat = null;
-      }
-      child.material = orig;
-    });
     this.selected = null;
+    this._syncLook();
+  }
+
+  _captureOriginals() {
+    if (!this.root) return;
+    this.root.traverse((child) => {
+      if (child.isMesh && child.material && !child.userData.pickProxy) {
+        this.baseMats.set(child, child.material);
+      }
+    });
+  }
+
+  _disposeLookMats() {
+    if (!this.root) return;
+    this.root.traverse((child) => {
+      if (child.userData._lookMat) {
+        child.userData._lookMat.dispose();
+        child.userData._lookMat = null;
+      }
+      const orig = this.baseMats.get(child);
+      if (orig) child.material = orig;
+    });
+  }
+
+  _syncLook() {
+    if (!this.root) return;
+    const selectedId = this.selected?.userData?.part?.id || null;
+    this.root.traverse((child) => {
+      if (child.userData.cutawayInterior) child.visible = this.cutawayOn;
+      if (!child.isMesh || !child.material || child.userData.pickProxy) return;
+      const orig = this.baseMats.get(child);
+      if (!orig) return;
+      if (child.userData._lookMat) {
+        child.userData._lookMat.dispose();
+        child.userData._lookMat = null;
+      }
+      const partId = this._partOf(child)?.userData?.part?.id;
+      const faded = Boolean(this.isolatedId && partId && partId !== this.isolatedId);
+      const selected = Boolean(selectedId && partId === selectedId);
+      const clip = this.cutawayOn && child.userData.cutawayShell;
+      if (!faded && !selected && !clip) {
+        child.material = orig;
+        return;
+      }
+      const mat = orig.clone();
+      if (faded) {
+        mat.transparent = true;
+        mat.opacity = Math.min(orig.opacity ?? 1, 1) * 0.12;
+        mat.depthWrite = false;
+        if (mat.emissive) mat.emissiveIntensity = 0;
+      }
+      if (selected && mat.emissive && !faded) {
+        mat.emissive.setHex(0xf5c16c);
+        mat.emissiveIntensity = 0.38;
+      }
+      if (clip) {
+        mat.clippingPlanes = [this.cutawayPlane];
+        mat.clipShadows = true;
+        mat.side = THREE.DoubleSide;
+      }
+      child.material = mat;
+      child.userData._lookMat = mat;
+    });
   }
 
   _applyExplode() {

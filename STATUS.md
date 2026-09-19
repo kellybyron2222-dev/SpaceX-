@@ -4,18 +4,17 @@
 
 ## Contest entry
 
-**Grok Bot** that opens this companion’s Live Launch **Commentator**. Play-by-play is **in-app** on Live Launch (not only a chat bot). Byron submits ~Sep 29.
+**Grok Bot** that opens this companion’s Live Launch **Commentator**. Play-by-play is **in-app** on Live Launch (not only a chat bot). Byron submits ~Sep 29. Contest wrap is parked.
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#62](https://github.com/kellybyron2222-dev/SpaceX-/pull/62) playable Starship VOD, Copy share, Mute voice, Show hold, bot wrap README
-- **This PR:** [Contest loop report](docs/contest-loop-report.md) — 20 passes, rejected items, gaps. Readiness **7/10**. Contest **not submitted**.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#63](https://github.com/kellybyron2222-dev/SpaceX-/pull/63) cue sheet through contest-loop report (readiness 7/10)
+- **This PR:** Explore teaching peel on Full stack / Super Heavy / Starship — explode floats tanks, engines, flaps; click isolates (others fade); cutaway opens tank shells and header tanks; **Put back together**. Plain English labels. Not CAD.
 
 ## Open PRs
 
-Loop report [#63](https://github.com/kellybyron2222-dev/SpaceX-/pull/63). **None** after merge.
+Teaching peel (this branch). **None** after merge.
 
 ## Next
 
-Grok Bot template that wraps Copy share URL ~Sep 29. Byron submits. Do not submit the contest.
+Scale figure (person, optional Falcon/747) beside Super Heavy. Then why-this-shape captions, Raptor vs Merlin compare, match Live camera.

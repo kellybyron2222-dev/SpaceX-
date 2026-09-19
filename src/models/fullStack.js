@@ -33,6 +33,7 @@ export function createFullStack() {
 
   enableShadows(g);
   g.userData.supportsExplode = true;
+  g.userData.supportsCutaway = true;
   g.userData.approxHeight = SCALE.boosterH - 0.4 + shipHeight();
   return g;
 }

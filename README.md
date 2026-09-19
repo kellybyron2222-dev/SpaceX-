@@ -18,7 +18,7 @@ Interactive Three.js mesh viewer of **approximate, publicly described** Starship
 
 Booth walkthrough (~120s) — keep the footer disclaimer on screen the whole time. Laptop path; phone is backup only.
 
-1. **Explore (25s).** Open on Full stack. Let idle rotate show the PBR/IBL lighting, then orbit the ~124 m vehicle. Hit **Explode** to lift the ship, then **Reset camera** (tween; also collapses explode). Skip the grid-fin vs catch-pin click if it is fiddly at booth distance — they are distinct Learn catalog picks.
+1. **Explore (25s).** Open on Full stack. Hit **Explode** to float ship, tanks, engines, and flaps apart. Click one piece to isolate it (the rest fade). **Cutaway** opens the tank shells. **Put back together** reassembles. Skip the grid-fin vs catch-pin click if it is fiddly at booth distance — they are distinct Learn catalog picks.
 2. **Tracker (20s).** Switch to **Tracker**. Point at Live data vs Sample and the “not official SpaceX telemetry” banner. Click a Starship Flight 14 row if listed, otherwise a Falcon 9 card. Use one related chip to jump into Learn.
 3. **Learn + physics (30s).** Select **Raptor**. Flip Overview → **Sources**, then opt in to physics notes. Search **`ASDS`** or **`catch hardpoints`** — not bare `catch` (that substring is noisy).
 4. **Falcon 9 (15s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Skip Mechazilla if time is tight (or swap this beat for Mechazilla, not both).
@@ -201,7 +201,7 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 
 - **T** Tracker · **V** Explore · **L** Learn · **Y** Live Launch
 - **H** toggle Live Launch hotspots
 - **Orbit** one-finger / left-drag · **pan** two-finger / right-drag · **zoom** pinch / wheel
-- **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** exploded view
+- **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** explode (float apart) · **X** cutaway tanks · **B** put back together
 - **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest / demo notes

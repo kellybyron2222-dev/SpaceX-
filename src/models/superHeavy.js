@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import {
   SCALE,
+  addPickProxy,
+  addTeachingTanks,
   addWeldRings,
   createGridFin,
   createMaterials,
@@ -9,15 +11,29 @@ import {
   enableShadows,
   homeAndExplode,
   ids,
+  markCutawayShell,
   tag,
-  addPickProxy,
 } from "./helpers.js";
 
 const PARTS = ids("booster", {
   barrel: {
     name: "Stainless barrel / tanks",
     blurb:
-      "Public descriptions put Super Heavy at about 9 m diameter and ~72 m tall, stacked from steel ring sections that form the methane and liquid-oxygen tanks.",
+      "About 9 m across and ~72 m tall. Cutaway opens the steel so you can see a teaching methane tank above a liquid-oxygen tank — not a weld map.",
+  },
+  ch4: {
+    name: "Booster methane tank",
+    blurb:
+      "The lighter volume is methane on this teaching cutaway. It sits above the common dome in the usual public diagram — not a measured tank.",
+  },
+  lox: {
+    name: "Booster oxygen tank",
+    blurb:
+      "The cooler-tinted volume is liquid oxygen, nearer the engines. Height here is a teaching guess.",
+  },
+  dome: {
+    name: "Booster common dome",
+    blurb: "A simple dome stands in for the wall between the two propellants. Not a bulkhead drawing.",
   },
   raceway: {
     name: "Downcomer raceway",
@@ -66,12 +82,22 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
   body.position.y = 3 + (h - 6) / 2;
   barrel.add(body);
   addWeldRings(barrel, r, 4.2, h - 4.5, SCALE.ring, mats.weld);
+  addTeachingTanks(barrel, {
+    radius: r,
+    yBottom: 5.2,
+    yTop: h - 5.2,
+    splitY: 38,
+    mats,
+    parts: PARTS,
+  });
   tag(barrel, PARTS.barrel);
+  markCutawayShell(barrel);
   g.add(barrel);
 
   const skirt = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.98, r * 1.02, 3.2, 48), mats.soot);
   skirt.position.y = 1.7;
   tag(skirt, PARTS.octaweb);
+  markCutawayShell(skirt);
   g.add(skirt);
 
   const web = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.95, r * 0.95, 0.5, 48), mats.darkSteel);
@@ -108,6 +134,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
     vent.lookAt(0, h - 1.1, 0);
     staging.add(vent);
   }
+  homeAndExplode(staging, new THREE.Vector3(0, 4.8, 0));
   tag(staging, PARTS.staging);
   g.add(staging);
 
@@ -118,6 +145,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
     fin.position.set(Math.cos(a) * (r + 0.35), h - 12, Math.sin(a) * (r + 0.35));
     fin.lookAt(new THREE.Vector3(Math.cos(a) * 20, h - 12, Math.sin(a) * 20));
     fin.rotateY(Math.PI);
+    homeAndExplode(fin, new THREE.Vector3(Math.cos(a) * 5.4, 1.1, Math.sin(a) * 5.4));
     fins.add(fin);
   }
   tag(fins, PARTS.fins);
@@ -125,6 +153,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
 
   const race = new THREE.Mesh(new THREE.BoxGeometry(1.15, h * 0.72, 0.42), mats.stainlessDark);
   race.position.set(r + 0.15, h * 0.46, 0);
+  homeAndExplode(race, new THREE.Vector3(2.8, 0, 0));
   tag(race, PARTS.raceway);
   g.add(race);
 
@@ -145,6 +174,7 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
     addPickProxy(pins, new THREE.Vector3(0, pinY, sign * (r + 0.9)), 2.15, PARTS.hardpoints);
     if (!pinFocus) pinFocus = pin;
   }
+  homeAndExplode(pins, new THREE.Vector3(0, 2.4, 0));
   tag(pins, PARTS.hardpoints);
   pins.userData.frameFocus = pinFocus;
   g.add(pins);
@@ -157,5 +187,6 @@ export function createSuperHeavy({ withPad = true, forStack = false } = {}) {
 
   enableShadows(g);
   g.userData.supportsExplode = true;
+  g.userData.supportsCutaway = true;
   return g;
 }

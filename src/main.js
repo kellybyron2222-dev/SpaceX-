@@ -21,6 +21,7 @@ import {
   replaceShareUrl,
   serializeDeepLink,
 } from "./data/deeplink.js";
+import { calloutKicker, peelBusy, peelHintFor, teachLabel } from "./data/teachingPeel.js";
 
 const app = document.getElementById("app");
 const canvas = document.getElementById("view");
@@ -33,6 +34,12 @@ const calloutBody = document.getElementById("callout-body");
 const btnTeach = document.getElementById("btn-teach");
 const help = document.getElementById("help");
 const btnExplode = document.getElementById("btn-explode");
+const btnCutaway = document.getElementById("btn-cutaway");
+const btnReassemble = document.getElementById("btn-reassemble");
+const btnCalloutTogether = document.getElementById("btn-callout-together");
+const calloutKickerEl = document.getElementById("callout-kicker");
+const calloutHint = document.getElementById("callout-hint");
+const peelHint = document.getElementById("peel-hint");
 const btnIdle = document.getElementById("btn-idle");
 const btnReset = document.getElementById("btn-reset");
 const btnShot = document.getElementById("btn-shot");
@@ -232,11 +239,25 @@ function renderNav(activeId, relatedSceneIds = []) {
   });
 }
 
-function applyExplodeButton(spec) {
-  const allowed = Boolean(viewer.root?.userData.supportsExplode);
-  btnExplode.disabled = !allowed;
-  btnExplode.setAttribute("aria-pressed", "false");
-  btnExplode.title = allowed ? `${spec.explodeHint} (E)` : "Explode not used on this scene";
+function syncPeelChrome() {
+  const peel = viewer.peelState();
+  const spec = viewer.scenes().find((s) => s.id === viewer.sceneId);
+  btnExplode.disabled = !peel.supportsExplode;
+  btnExplode.setAttribute("aria-pressed", peel.explode ? "true" : "false");
+  btnExplode.title = peel.supportsExplode
+    ? `${spec?.explodeHint || "Float the parts apart"} (E)`
+    : "Explode not used on this scene";
+  btnCutaway.disabled = !peel.supportsCutaway;
+  btnCutaway.setAttribute("aria-pressed", peel.cutaway ? "true" : "false");
+  btnCutaway.title = peel.supportsCutaway ? "Open the tank shells (X)" : "Cutaway is for tank scenes";
+  const busy = peelBusy(peel);
+  btnReassemble.disabled = !busy;
+  btnCalloutTogether.classList.toggle("hidden", !busy);
+  if (peelHint) peelHint.textContent = peelHintFor(viewer.sceneId);
+}
+
+function applyExplodeButton() {
+  syncPeelChrome();
 }
 
 function selectScene(id, { partId, framePart = true } = {}) {
@@ -261,7 +282,9 @@ function selectScene(id, { partId, framePart = true } = {}) {
 function hideCallout() {
   callout.classList.add("hidden");
   btnTeach.classList.add("hidden");
+  btnCalloutTogether.classList.add("hidden");
   state.pendingCatalog = null;
+  syncPeelChrome();
 }
 
 function showCallout(part) {
@@ -269,12 +292,22 @@ function showCallout(part) {
     hideCallout();
     return;
   }
-  calloutTitle.textContent = part.name;
+  calloutTitle.textContent = teachLabel(part);
   calloutBody.textContent = part.blurb;
+  const peel = viewer.peelState();
+  calloutKickerEl.textContent = calloutKicker(peel);
+  if (peel.isolateId) {
+    calloutHint.textContent = "The rest of the stack faded. Click this piece again, or Put back together.";
+  } else if (peel.explode) {
+    calloutHint.textContent = "Pieces are floated apart. Click one to isolate it.";
+  } else {
+    calloutHint.textContent = "Click another piece to isolate it. Explode floats the whole system apart.";
+  }
   callout.classList.remove("hidden");
   const entry = findCatalogByPart(part);
   state.pendingCatalog = entry;
   btnTeach.classList.toggle("hidden", !entry);
+  syncPeelChrome();
 }
 
 function syncPhysicsTab() {
@@ -345,6 +378,7 @@ function selectCatalog(id, { loadScene = true } = {}) {
   }
   showTeach(entry);
   syncShareUrl();
+  syncPeelChrome();
 }
 
 function renderCatalog() {
@@ -541,10 +575,11 @@ viewer.onSelect = (part) => {
       showTeach(entry);
     } else if (part) {
       teachMeta.textContent = "Mesh pick";
-      teachTitle.textContent = part.name;
+      teachTitle.textContent = teachLabel(part);
       teachBlurb.textContent = part.blurb;
       teachBody.innerHTML = "";
     }
+    syncPeelChrome();
     return;
   }
   showCallout(part);
@@ -556,9 +591,25 @@ document.querySelectorAll(".mode-btn").forEach((btn) => {
 
 btnExplode.addEventListener("click", () => {
   const next = btnExplode.getAttribute("aria-pressed") !== "true";
-  const { allowed } = viewer.setExplode(next);
-  btnExplode.setAttribute("aria-pressed", allowed && next ? "true" : "false");
+  viewer.setExplode(next);
+  syncPeelChrome();
 });
+
+btnCutaway.addEventListener("click", () => {
+  const next = btnCutaway.getAttribute("aria-pressed") !== "true";
+  viewer.setCutaway(next);
+  syncPeelChrome();
+});
+
+function putBackTogether() {
+  viewer.reassemble();
+  viewer.clearSelection();
+  hideCallout();
+  syncPeelChrome();
+}
+
+btnReassemble.addEventListener("click", () => putBackTogether());
+btnCalloutTogether.addEventListener("click", () => putBackTogether());
 
 btnIdle.addEventListener("click", () => {
   const next = btnIdle.getAttribute("aria-pressed") !== "true";
@@ -568,7 +619,8 @@ btnIdle.addEventListener("click", () => {
 
 function resetView() {
   viewer.resetCamera();
-  btnExplode.setAttribute("aria-pressed", "false");
+  hideCallout();
+  syncPeelChrome();
 }
 btnReset.addEventListener("click", () => resetView());
 btnShot.addEventListener("click", () => viewer.screenshot());
@@ -576,6 +628,7 @@ btnHelp.addEventListener("click", () => help.classList.toggle("hidden"));
 btnRefresh.addEventListener("click", () => refreshLaunches());
 document.getElementById("help-close").addEventListener("click", () => help.classList.add("hidden"));
 document.getElementById("callout-close").addEventListener("click", () => {
+  viewer.isolateById(null);
   viewer.clearSelection();
   hideCallout();
 });
@@ -651,6 +704,7 @@ window.addEventListener("keydown", (event) => {
   if (key === "?" || (event.shiftKey && key === "/")) help.classList.toggle("hidden");
   if (key === "escape") {
     help.classList.add("hidden");
+    viewer.isolateById(null);
     viewer.clearSelection();
     hideCallout();
     if (state.mode === "live") {
@@ -675,6 +729,8 @@ window.addEventListener("keydown", (event) => {
     viewer.screenshot();
   }
   if (key === "e") btnExplode.click();
+  if (key === "x") btnCutaway.click();
+  if (key === "b") putBackTogether();
   if (key === "0") {
     const scene = viewer.scenes()[9];
     if (scene) selectScene(scene.id);

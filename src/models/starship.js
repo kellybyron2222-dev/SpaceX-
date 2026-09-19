@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import {
   SCALE,
+  addTeachingTanks,
   addWeldRings,
   createFlap,
   createMaterials,
@@ -9,6 +10,7 @@ import {
   enableShadows,
   homeAndExplode,
   ids,
+  markCutawayShell,
   tag,
 } from "./helpers.js";
 
@@ -21,7 +23,31 @@ const PARTS = ids("starship", {
   barrel: {
     name: "Ship barrel / tanks",
     blurb:
-      "Same ~9 m stainless barrel language as the booster, split into methane and liquid-oxygen tanks with visible ring welds.",
+      "Same ~9 m stainless barrel as the booster. Cutaway shows a teaching split: methane above a common dome, oxygen nearer the engines — not a tank map.",
+  },
+  ch4: {
+    name: "Ship methane tank",
+    blurb:
+      "The lighter volume is the methane tank on this teaching cutaway. Real header tanks for landing sit in the nose, not here.",
+  },
+  lox: {
+    name: "Ship oxygen tank",
+    blurb:
+      "The cooler-tinted volume is liquid oxygen on this teaching cutaway — nearer the engines. Not a measured tank height.",
+  },
+  dome: {
+    name: "Ship common dome",
+    blurb: "A simple dome stands in for the wall between the two propellants. Not a bulkhead drawing.",
+  },
+  ch4Header: {
+    name: "Methane header tank",
+    blurb:
+      "Public flight-article photos put a methane landing header in the nose, under the oxygen header. This ball is a teaching stand-in.",
+  },
+  loxHeader: {
+    name: "Oxygen header tank",
+    blurb:
+      "Public photos put the oxygen landing header at the nose tip. Small on purpose — not a tank CAD model.",
   },
   tiles: {
     name: "Windward heat shield",
@@ -83,17 +109,51 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
   body.position.y = barrelH / 2 + 2.2;
   barrel.add(body);
   addWeldRings(barrel, r, 3.4, barrelH + 1.4, SCALE.ring, mats.weld);
+  addTeachingTanks(barrel, {
+    radius: r,
+    yBottom: 3.6,
+    yTop: barrelH + 1.6,
+    splitY: 18.4,
+    mats,
+    parts: PARTS,
+  });
   tag(barrel, PARTS.barrel);
+  markCutawayShell(barrel);
   g.add(barrel);
 
   const nose = new THREE.Group();
   const cone = new THREE.Mesh(noseLathe(r, noseH), mats.stainless);
   cone.position.y = barrelH + 2.2;
   nose.add(cone);
-  const header = new THREE.Mesh(new THREE.SphereGeometry(1.15, 24, 16), mats.stainlessDark);
-  header.position.set(0, barrelH + noseH + 0.4, 0.2);
-  nose.add(header);
+  const loxHeader = new THREE.Mesh(new THREE.SphereGeometry(1.35, 20, 14), new THREE.MeshPhysicalMaterial({
+    color: 0x5e87a0,
+    metalness: 0.34,
+    roughness: 0.5,
+    transparent: true,
+    opacity: 0.8,
+  }));
+  loxHeader.position.set(0, barrelH + noseH * 0.78, 0);
+  loxHeader.userData.cutawayInterior = true;
+  loxHeader.visible = false;
+  homeAndExplode(loxHeader, new THREE.Vector3(0, 2.1, 0));
+  tag(loxHeader, PARTS.loxHeader);
+  nose.add(loxHeader);
+  const ch4Header = new THREE.Mesh(new THREE.SphereGeometry(1.55, 20, 14), new THREE.MeshPhysicalMaterial({
+    color: 0xc5cdd4,
+    metalness: 0.34,
+    roughness: 0.5,
+    transparent: true,
+    opacity: 0.8,
+  }));
+  ch4Header.position.set(0, barrelH + noseH * 0.42, 0);
+  ch4Header.userData.cutawayInterior = true;
+  ch4Header.visible = false;
+  homeAndExplode(ch4Header, new THREE.Vector3(0, 0.8, 0));
+  tag(ch4Header, PARTS.ch4Header);
+  nose.add(ch4Header);
+  homeAndExplode(nose, new THREE.Vector3(0, 5.2, 0));
   tag(nose, PARTS.nose);
+  markCutawayShell(nose);
   g.add(nose);
 
   const tiles = new THREE.Group();
@@ -128,6 +188,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
   if (tileMesh.instanceColor) tileMesh.instanceColor.needsUpdate = true;
   tileMesh.instanceMatrix.needsUpdate = true;
   tiles.add(tileMesh);
+  homeAndExplode(tiles, new THREE.Vector3(0, 0, 6.5));
   tag(tiles, PARTS.tiles);
   g.add(tiles);
 
@@ -181,10 +242,12 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
   const skirt = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.98, r, 2.4, 48), mats.soot);
   skirt.position.y = 1.2;
   tag(skirt, PARTS.barrel);
+  markCutawayShell(skirt);
   g.add(skirt);
 
   const race = new THREE.Mesh(new THREE.BoxGeometry(0.95, barrelH * 0.78, 0.32), mats.stainlessDark);
   race.position.set(-(r + 0.12), barrelH * 0.52, -1.4);
+  homeAndExplode(race, new THREE.Vector3(-2.6, 0, -1.2));
   tag(race, PARTS.raceway);
   g.add(race);
 
@@ -196,6 +259,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
 
   enableShadows(g);
   g.userData.supportsExplode = true;
+  g.userData.supportsCutaway = true;
   g.userData.approxHeight = total + 2.2;
   return g;
 }

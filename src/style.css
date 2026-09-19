@@ -337,6 +337,13 @@ body,
   line-height: 1.5;
 }
 
+.callout-hint {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .text-btn {
   margin-top: 10px;
   appearance: none;
@@ -520,9 +527,15 @@ body,
   }
 
   .telemetry,
-  .sidebar > .hint,
+  .sidebar > .hint:not(#peel-hint),
   .tracker-panel > .hint {
     display: none;
+  }
+
+  #peel-hint {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.35;
   }
 
   .callout {
@@ -1869,7 +1882,6 @@ a.text-btn {
   font-size: 12px;
   margin: 0 0 8px;
   min-height: 44px;
-}
   cursor: pointer;
 }
 
