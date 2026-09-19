@@ -52,7 +52,7 @@
                   href="https://www.youtube.com/watch?v=hI9HQfCAw64"
                   target="_blank"
                   rel="noopener noreferrer"
-                >Open on YouTube</a>
+                >Watch on YouTube</a>
                 <button type="button" id="live-fallback-retry" class="text-btn">Retry embed</button>
               </div>
             </div>
@@ -64,8 +64,7 @@
           <p id="comm-clock" class="commentator-clock">Off until Start</p>
           <h2 id="comm-phase">Public play-by-play</h2>
           <p id="comm-cue" class="commentator-cue">
-            Start commentary to follow the latest Starship webcast from T-0 (that long YouTube hold is the countdown, not a broken player).
-            Beats sit beside the stream. Educational approximation — not official telemetry.
+            Start commentary to follow the newest Starship webcast that plays in-page. If Flight 13 blocks embedding (YouTube 101/150), we skip to the next completed Starship VOD — Watch on YouTube for the blocked stream. Ads cannot be stripped.
           </p>
           <nav id="comm-tags" class="comm-tags" hidden aria-label="Tagged components on this beat"></nav>
           <div class="commentator-controls">
@@ -215,6 +214,7 @@
         </div>
         <div class="live-url-actions">
           <a id="live-open-yt" class="tool primary" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+          <a id="live-open-blocked" class="tool hidden" hidden href="https://www.youtube.com/watch?v=lC3RDO7tdLc" target="_blank" rel="noopener noreferrer">Watch latest webcast on YouTube</a>
           <button type="button" id="btn-embed-help" class="text-btn">Can't play here?</button>
           <button type="button" id="btn-live-default" class="text-btn">Reset to latest webcast</button>
         </div>

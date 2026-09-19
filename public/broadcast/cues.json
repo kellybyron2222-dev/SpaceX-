@@ -283,7 +283,8 @@
         "aliases": ["Ew0Xu1RT8oc", "-pR0eOj9hK0", "7dMblISWtz8", "uI6pKTGyNq4", "0EnOQCjgq4E"],
         "title": "SpaceX Starship Flight 13 — Launch & Landing",
         "t0OffsetSeconds": 11136,
-        "note": "Public unofficial webcast VOD. Official SpaceX Flight 13 stream was on X. T-0 is ~3:05:36 on this YouTube clock (visual liftoff / ignition in the picture). Do not use LL2 start_time vs NET (11118s / 3:05:18) for this upload — that mapping fires grid-fin/catch beats while the stack is still climbing."
+        "iframeBlockedIds": ["lC3RDO7tdLc", "Ew0Xu1RT8oc"],
+        "note": "Public unofficial webcast VOD. Official SpaceX Flight 13 stream was on X. T-0 is ~3:05:36 on this YouTube clock (visual liftoff / ignition in the picture). Do not use LL2 start_time vs NET (11118s / 3:05:18) for this upload — that mapping fires grid-fin/catch beats while the stack is still climbing. NSF `lC3RDO7tdLc` and Spaceflight Now `Ew0Xu1RT8oc` disable embedding (IFrame 101/150); oEmbed may still return 200. Auto in-page play skips those ids to the next Starship VOD that allows embedding. Watch on YouTube for the blocked newest. Ads cannot be stripped."
       },
       "beats": [
         {

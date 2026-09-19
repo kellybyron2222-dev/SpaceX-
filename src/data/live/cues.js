@@ -67,6 +67,8 @@ export function normalizeSheet(raw = {}) {
     t0OffsetSeconds: finiteNumber(raw.video?.t0OffsetSeconds ?? raw.t0OffsetSeconds),
     clockKind: String(raw.clockKind || ""),
     expectedDurationSeconds: finiteNumber(raw.expectedDurationSeconds || raw.video?.expectedDurationSeconds),
+    iframeBlocked: Boolean(raw.video?.iframeBlocked || raw.iframeBlocked),
+    iframeBlockedIds: uniqueStrings(raw.video?.iframeBlockedIds, raw.iframeBlockedIds),
     note: String(raw.note || ""),
     beats,
   };
@@ -108,6 +110,29 @@ export function latestSheetVideoId(pack) {
     sheetById(pack, "flight-13") ||
     sheetById(pack, pack?.defaultSheet) ||
     pack?.sheets?.find((s) => s.id !== "generic-launch-test" && s.videoId);
+  return latest?.videoId || null;
+}
+
+/** YouTube ids whose IFrame embed is known-blocked (101/150) even when oEmbed is 200. */
+export function iframeBlockedIds(pack) {
+  const ids = [];
+  for (const sheet of pack?.sheets || []) {
+    const listed = [
+      ...(sheet.iframeBlockedIds || []),
+      ...(sheet.iframeBlocked ? sheet.videoIds || [] : []),
+    ];
+    for (const id of listed) {
+      if (id && !ids.includes(id)) ids.push(id);
+    }
+  }
+  return ids;
+}
+
+/** Latest cue-sheet VOD that is allowed to play in-page (Flight 5 recap today). */
+export function latestEmbeddableSheetVideoId(pack) {
+  const f5 = sheetById(pack, "flight-5");
+  if (f5?.videoId && !f5.iframeBlocked) return f5.videoId;
+  const latest = (pack?.sheets || []).find((s) => s.videoId && !s.iframeBlocked && s.id !== "generic-launch-test");
   return latest?.videoId || null;
 }
 
