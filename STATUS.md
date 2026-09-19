@@ -8,22 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#42](https://github.com/kellybyron2222-dev/SpaceX-/pull/42) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44) Commentator English beat titles + VOD/T+ clock
-- [#45](https://github.com/kellybyron2222-dev/SpaceX-/pull/45) newest embeddable Starship VOD; skip Flight 13 101/150 (`lC3RDO7tdLc` / `Ew0Xu1RT8oc`)
-- [#46](https://github.com/kellybyron2222-dev/SpaceX-/pull/46) Commentator Copy share link (playable `video=` under `/SpaceX-/`)
-- [#47](https://github.com/kellybyron2222-dev/SpaceX-/pull/47) Mute voice (speech only, not YouTube)
-- [#48](https://github.com/kellybyron2222-dev/SpaceX-/pull/48) Collapse pre-T-0 hold beats; Show hold
-- [#49](https://github.com/kellybyron2222-dev/SpaceX-/pull/49) Help: Copy share + `?mode=live&commentary=1&video=`
-- [#50](https://github.com/kellybyron2222-dev/SpaceX-/pull/50) Idle Commentator Start one-liner
-- [#51](https://github.com/kellybyron2222-dev/SpaceX-/pull/51) Now playing oEmbed title
-- [#52](https://github.com/kellybyron2222-dev/SpaceX-/pull/52) README Live Launch → Commentator + Copy share
-- [#53](https://github.com/kellybyron2222-dev/SpaceX-/pull/53) Live sidebar Copy commentator link
-- **This PR:** 44px Commentator Mute / Show hold / Copy and Live sidebar copy so phones can tap without covering the YouTube play control.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#54](https://github.com/kellybyron2222-dev/SpaceX-/pull/54) English beats, playable Starship VOD (skip F13 101/150), Copy share, Mute voice, Show hold, help/README, sidebar copy, 44px phones
+- **This PR:** Live **Reset to latest playable Starship** — not Falcon, skip iframe 101/150. Ads stay.
 
 ## Open PRs
 
-Mobile 44px copy (this PR). **None** after merge.
+Reset playable Starship (this PR). **None** after merge.
 
 ## Next
 
