@@ -9,12 +9,12 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#57](https://github.com/kellybyron2222-dev/SpaceX-/pull/57) playable Starship VOD, Copy share, chopsticks English, Tracker Live chip
-- **This PR:** Tagged-components kicker: pick a name to open Learn. Hotspots stay off until H.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#58](https://github.com/kellybyron2222-dev/SpaceX-/pull/58) playable Starship VOD, Copy share, Learn English, Tracker Live chip
+- **This PR:** README Grok Bot wrap: paste Copy share URL. Contest **not submitted**.
 
 ## Open PRs
 
-Hotspot Learn kicker (this PR). **None** after merge.
+Bot wrap README (this PR). **None** after merge.
 
 ## Next
 
