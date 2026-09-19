@@ -200,6 +200,67 @@ export function homeAndExplode(object, offset) {
   return object;
 }
 
+/** Shell meshes clip in cutaway. Interiors stay whole. */
+export function markCutawayShell(object) {
+  object.traverse((child) => {
+    if (!child.isMesh || child.userData.pickProxy || child.userData.cutawayInterior) return;
+    child.userData.cutawayShell = true;
+  });
+  return object;
+}
+
+function tankVolumeMaterial(color) {
+  return new THREE.MeshPhysicalMaterial({
+    color,
+    metalness: 0.34,
+    roughness: 0.5,
+    transparent: true,
+    opacity: 0.78,
+    envMapIntensity: 0.65,
+  });
+}
+
+/**
+ * Methane above / LOX below a common dome — a public-diagram teaching split, not a tank map.
+ * Volumes stay hidden until the viewer turns cutaway on.
+ */
+export function addTeachingTanks(parent, { radius, yBottom, yTop, splitY, mats, parts }) {
+  const innerR = radius * 0.84;
+  const ch4H = Math.max(1.2, yTop - splitY);
+  const loxH = Math.max(1.2, splitY - yBottom);
+  const ch4Mat = tankVolumeMaterial(0xc5cdd4);
+  const loxMat = tankVolumeMaterial(0x5e87a0);
+
+  const ch4 = new THREE.Mesh(new THREE.CylinderGeometry(innerR, innerR, ch4H * 0.9, 28), ch4Mat);
+  ch4.position.y = splitY + ch4H * 0.5;
+  ch4.userData.cutawayInterior = true;
+  ch4.visible = false;
+  homeAndExplode(ch4, new THREE.Vector3(0, Math.min(4.2, ch4H * 0.28), 0));
+  tag(ch4, parts.ch4);
+  parent.add(ch4);
+
+  const lox = new THREE.Mesh(new THREE.CylinderGeometry(innerR, innerR, loxH * 0.9, 28), loxMat);
+  lox.position.y = yBottom + loxH * 0.5;
+  lox.userData.cutawayInterior = true;
+  lox.visible = false;
+  homeAndExplode(lox, new THREE.Vector3(0, -Math.min(3.6, loxH * 0.22), 0));
+  tag(lox, parts.lox);
+  parent.add(lox);
+
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(innerR * 0.98, 24, 14, 0, Math.PI * 2, 0, Math.PI / 2),
+    mats.stainlessDark,
+  );
+  dome.rotation.x = Math.PI;
+  dome.position.y = splitY;
+  dome.userData.cutawayInterior = true;
+  dome.visible = false;
+  tag(dome, parts.dome);
+  parent.add(dome);
+
+  return { ch4, lox, dome };
+}
+
 export function enableShadows(root) {
   root.traverse((child) => {
     if (child.isMesh && !child.userData.pickProxy) {

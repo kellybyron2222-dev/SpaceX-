@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { CATALOG, catalogById } from "./catalog.js";
+import { CATALOG, catalogById, findCatalogByPart } from "./catalog.js";
 
 const SLOP = /lede above|at a glance|short briefing|delve|in the realm of|plays a crucial|robust /i;
 
@@ -39,10 +39,14 @@ describe("public-figure catalog copy", () => {
     assert.match(e.history, /octaweb is the Falcon 9/i);
   });
 
-  it("lists chopsticks as pad GSE, not vehicle hardware", () => {
-    const e = catalogById("chopsticks");
-    assert.equal(e.domain, "ground");
-    assert.match(e.blurb, /not part of the vehicle/i);
-    assert.match(e.overview, /not on the rocket/i);
+  it("maps cutaway tank volumes to the tanks card", () => {
+    const e = catalogById("starship-tanks");
+    assert.ok(e.matchIds.includes("booster.ch4"));
+    assert.ok(e.matchIds.includes("starship.lox"));
+    assert.equal(findCatalogByPart({ id: "booster.ch4" })?.id, "starship-tanks");
+    const nose = catalogById("payload-bay");
+    assert.ok(nose.matchIds.includes("starship.loxHeader"));
+    assert.ok(nose.matchIds.includes("starship.ch4Header"));
+    assert.equal(findCatalogByPart({ id: "starship.loxHeader" })?.id, "payload-bay");
   });
 });

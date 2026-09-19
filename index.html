@@ -113,8 +113,14 @@
           <button type="button" id="btn-idle" class="tool explore-learn" aria-pressed="true" title="Idle rotate (I)">
             Idle<span class="tool-more"> rotate</span>
           </button>
-          <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Exploded view (E)">
+          <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Float the parts apart (E)">
             Explode
+          </button>
+          <button type="button" id="btn-cutaway" class="tool explore-learn" aria-pressed="false" title="Open tank shells (X)">
+            Cutaway
+          </button>
+          <button type="button" id="btn-reassemble" class="tool explore-learn" disabled title="Put the pieces back together (B)">
+            Put back<span class="tool-more"> together</span>
           </button>
           <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera and collapse explode (R)">Reset<span class="tool-more"> camera</span></button>
           <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
@@ -136,10 +142,12 @@
           <div><dt>Height</dt><dd id="tel-height">—</dd></div>
           <div><dt>Diameter</dt><dd id="tel-dia">—</dd></div>
         </dl>
-        <p class="hint">Click a mesh for a public-architecture callout. Drag to orbit · scroll to zoom · right-drag to pan.</p>
+        <p class="hint" id="peel-hint">
+          Explode floats the pieces apart. Click one to isolate it — the rest fade. Cutaway opens the tanks. Put back together when you are done.
+        </p>
       </aside>
 
-      <p id="orbit-hint" class="orbit-hint">Drag with one finger to orbit · pinch to zoom · tap a part</p>
+      <p id="orbit-hint" class="orbit-hint">Tap a part to isolate it · Explode floats pieces · Cutaway opens tanks</p>
 
       <section class="panel tracker-panel tracker-only" aria-label="Launch tracker">
         <header class="panel-head">
@@ -180,11 +188,13 @@
       </aside>
 
       <aside id="callout" class="callout hidden explore-only" role="status">
-        <p class="callout-kicker">Selected part</p>
+        <p class="callout-kicker" id="callout-kicker">Selected part</p>
         <h2 id="callout-title">—</h2>
         <p id="callout-body"></p>
+        <p id="callout-hint" class="callout-hint"></p>
         <div class="callout-actions">
           <button type="button" id="btn-teach" class="tool hidden">Open in Learn</button>
+          <button type="button" id="btn-callout-together" class="text-btn">Put back together</button>
           <button type="button" id="callout-close" class="text-btn">Clear (Esc)</button>
         </div>
       </aside>
@@ -298,7 +308,9 @@
             <li><kbd>R</kbd> Reset camera and explode</li>
             <li><kbd>I</kbd> Idle rotate</li>
             <li><kbd>S</kbd> Screenshot</li>
-            <li><kbd>E</kbd> Toggle exploded view</li>
+            <li><kbd>E</kbd> Explode — float parts apart</li>
+            <li><kbd>X</kbd> Cutaway — open tank shells</li>
+            <li><kbd>B</kbd> Put the pieces back together</li>
             <li><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> <kbd>-</kbd> Switch 3D scene (minus = ASDS droneship)</li>
             <li><kbd>F</kbd> Fullscreen</li>
             <li><kbd>?</kbd> Toggle this panel</li>

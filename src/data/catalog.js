@@ -142,7 +142,16 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "booster",
     partId: "booster.barrel",
-    matchIds: ["booster.barrel", "starship.barrel"],
+    matchIds: [
+      "booster.barrel",
+      "starship.barrel",
+      "booster.ch4",
+      "booster.lox",
+      "booster.dome",
+      "starship.ch4",
+      "starship.lox",
+      "starship.dome",
+    ],
     blurb: "Stainless rings, about 9 m across, stacked into methane and LOX tanks on both stages.",
     overview:
       "Both Starship and Super Heavy are mostly tank. Stacked stainless rings, about 9 m across, hold methane and liquid oxygen. That is the airframe. Exact alloy temper and weld maps are not public drawings.",
@@ -203,7 +212,7 @@ export const CATALOG = [
     domain: "vehicle",
     sceneId: "starship",
     partId: "starship.nose",
-    matchIds: ["starship.nose"],
+    matchIds: ["starship.nose", "starship.ch4Header", "starship.loxHeader"],
     blurb: "Ogive nose on the ~52 m upper stage. Public write-ups put payload volume and landing header tanks up here.",
     overview:
       "The nose closes the stack and can hold cargo or crew volume. Public flight-article photos put both landing header tanks here — LOX at the tip, methane just below. This ogive is a scale stand-in, not a dispenser CAD model.",
