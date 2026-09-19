@@ -15,11 +15,12 @@
 - [#47](https://github.com/kellybyron2222-dev/SpaceX-/pull/47) Mute voice (speech only, not YouTube)
 - [#48](https://github.com/kellybyron2222-dev/SpaceX-/pull/48) Collapse pre-T-0 hold beats; Show hold
 - [#49](https://github.com/kellybyron2222-dev/SpaceX-/pull/49) Help: Copy share + `?mode=live&commentary=1&video=`
-- **This PR:** Idle Commentator one-liner — Start jumps to T-0 on the newest playable Starship VOD. 101/150 Watch on YouTube. Ads stay.
+- [#50](https://github.com/kellybyron2222-dev/SpaceX-/pull/50) Idle Commentator Start one-liner
+- **This PR:** Commentator **Now playing** line from YouTube oEmbed title (in-page Starship VOD, not Falcon).
 
 ## Open PRs
 
-Idle Start copy (this PR). **None** after merge.
+Now playing title (this PR). **None** after merge.
 
 ## Next
 

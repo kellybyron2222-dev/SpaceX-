@@ -158,6 +158,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const countdownStatus = document.getElementById("live-countdown-status");
   const commentator = document.getElementById("commentator");
   const commClock = document.getElementById("comm-clock");
+  const commNow = document.getElementById("comm-now");
   const commPhase = document.getElementById("comm-phase");
   const commCue = document.getElementById("comm-cue");
   const commTags = document.getElementById("comm-tags");
@@ -463,6 +464,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     if (!commentator) return;
     commentator.classList.toggle("is-idle", !state.commentaryOn);
     stage?.classList.toggle("is-commentating", state.commentaryOn);
+    renderNowPlaying();
     btnCommentary?.setAttribute("aria-pressed", state.commentaryOn ? "true" : "false");
     if (btnCommStart) {
       btnCommStart.textContent = state.commentaryOn ? "Stop commentary" : "Start commentary";
@@ -547,6 +549,17 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
         commBeats.appendChild(item);
       }
     }
+  }
+
+  function nowPlayingTitle() {
+    return state.oembed?.title || state.webcastPick?.title || state.webcastPick?.mission || "";
+  }
+
+  function renderNowPlaying() {
+    if (!commNow) return;
+    const title = nowPlayingTitle();
+    commNow.hidden = !title;
+    commNow.textContent = title ? `Now playing · ${title}` : "";
   }
 
   function packDisclaimer() {
@@ -846,6 +859,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
     banner.textContent = bannerText();
     applyOverlayFit();
     renderCountdown();
+    renderNowPlaying();
   }
 
   function renderFits() {
