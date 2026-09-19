@@ -169,6 +169,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   const commMute = document.getElementById("comm-mute");
   const btnCommStart = document.getElementById("btn-comm-start");
   const btnCommCopy = document.getElementById("btn-comm-copy");
+  const btnLiveCopy = document.getElementById("btn-live-copy");
   const btnCommLearn = document.getElementById("btn-comm-learn");
   const btnCommentary = document.getElementById("btn-commentary");
 
@@ -392,7 +393,6 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   }
 
   async function copyCommentatorShare() {
-    if (!btnCommCopy) return;
     const url = companionShareUrl(commentatorShareSearch(), typeof location !== "undefined" ? location : {});
     let ok = false;
     try {
@@ -415,13 +415,19 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
         ok = false;
       }
     }
-    const prev = btnCommCopy.textContent;
-    btnCommCopy.textContent = ok ? "Copied" : "Copy failed";
-    window.setTimeout(() => {
-      if (btnCommCopy.textContent === "Copied" || btnCommCopy.textContent === "Copy failed") {
-        btnCommCopy.textContent = prev || "Copy share link";
-      }
-    }, 1600);
+    const flash = (btn, fallback) => {
+      if (!btn) return;
+      const prev = btn.dataset.label || btn.textContent;
+      btn.dataset.label = prev;
+      btn.textContent = ok ? "Copied" : "Copy failed";
+      window.setTimeout(() => {
+        if (btn.textContent === "Copied" || btn.textContent === "Copy failed") {
+          btn.textContent = btn.dataset.label || fallback;
+        }
+      }, 1600);
+    };
+    flash(btnCommCopy, "Copy share link");
+    flash(btnLiveCopy, "Copy commentator link");
   }
 
   function applyBeat(beat, { seek = false, speak = true } = {}) {
@@ -1583,6 +1589,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
   btnCommentary?.addEventListener("click", () => toggleCommentary());
   btnCommStart?.addEventListener("click", () => toggleCommentary());
   btnCommCopy?.addEventListener("click", () => copyCommentatorShare());
+  btnLiveCopy?.addEventListener("click", () => copyCommentatorShare());
   commPause?.addEventListener("change", () => {
     state.pauseAdvance = commPause.checked;
   });

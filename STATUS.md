@@ -17,11 +17,12 @@
 - [#49](https://github.com/kellybyron2222-dev/SpaceX-/pull/49) Help: Copy share + `?mode=live&commentary=1&video=`
 - [#50](https://github.com/kellybyron2222-dev/SpaceX-/pull/50) Idle Commentator Start one-liner
 - [#51](https://github.com/kellybyron2222-dev/SpaceX-/pull/51) Now playing oEmbed title
-- **This PR:** README Live Launch demo: Start commentary + Copy share link. Contest not submitted.
+- [#52](https://github.com/kellybyron2222-dev/SpaceX-/pull/52) README Live Launch → Commentator + Copy share
+- **This PR:** Live sidebar **Copy commentator link** (same `/SpaceX-/` deep-link as Commentator).
 
 ## Open PRs
 
-README Live Launch (this PR). **None** after merge.
+Sidebar copy (this PR). **None** after merge.
 
 ## Next
 
