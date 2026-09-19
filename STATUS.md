@@ -8,12 +8,12 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#75](https://github.com/kellybyron2222-dev/SpaceX-/pull/75) cue sheet through Explore peel, scale, Why, and phone chrome
-- **This PR:** Teaching 3D iterate-loop report — **8/10**. Seven fix PRs (#69–#75), then stop.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#76](https://github.com/kellybyron2222-dev/SpaceX-/pull/76) cue sheet through Explore peel, scale, Why, phone chrome, and the iterate-loop report
+- **This PR:** Person scale on Raptor and Raptor vs Merlin (no Falcon — 70 m would wreck a 3 m frame)
 
 ## Open PRs
 
-Iterate-loop report (this branch). **None** after merge.
+Engine person scale (this branch).
 
 ## Next
 

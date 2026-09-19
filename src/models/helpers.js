@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { scaleRefOptions } from "../data/scaleRefs.js";
 
 /** Rounded public figures used only as teaching scale (meters). SpaceX design page, 18 Sep 2026. */
 export const SCALE = {
@@ -261,8 +262,8 @@ export function addTeachingTanks(parent, { radius, yBottom, yTop, splitY, mats, 
   return { ch4, lox, dome };
 }
 
-/** ~1.8 m teaching figure — high-vis so it reads next to a 70 m Falcon. Not a crew portrait. */
-export function createScalePerson(mats) {
+/** ~1.8 m teaching figure. Wide pad for 70 m vehicles; compact pad for ~3 m engines. */
+export function createScalePerson(mats, { compact = false } = {}) {
   const g = new THREE.Group();
   const body = mats.caution;
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), mats.stainlessDark);
@@ -275,17 +276,19 @@ export function createScalePerson(mats) {
   armL.position.set(-0.22, 1.2, 0);
   const armR = armL.clone();
   armR.position.x = 0.22;
-  const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.06, 24), mats.caution);
+  const padR = compact ? 0.38 : 1.6;
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(padR, padR, compact ? 0.04 : 0.06, compact ? 16 : 24), mats.caution);
   disc.position.y = 0.03;
   g.add(head, torso, legs, armL, armR, disc);
-  const blurb =
-    "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Starship alone is about 52 m. High-vis mark, not a crew portrait.";
+  const blurb = compact
+    ? "About 1.8 m tall. A sea-level Raptor is in the ~3 m class — about a person and a half. High-vis mark, not a crew portrait."
+    : "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Starship alone is about 52 m. High-vis mark, not a crew portrait.";
   tag(g, {
     id: "scale.person",
     name: "Person (for scale)",
     blurb,
   });
-  addPickProxy(g, new THREE.Vector3(0, 0.9, 0), 2.2, {
+  addPickProxy(g, new THREE.Vector3(0, 0.9, 0), compact ? 0.85 : 2.2, {
     id: "scale.person",
     name: "Person (for scale)",
     blurb,
@@ -320,20 +323,26 @@ export function createScaleFalcon(mats) {
   return g;
 }
 
-/** Person + Falcon 9 next to Super Heavy or Starship. Person skips the camera box. */
-export function addScaleRefs(parent, mats, { personX = 11, falconX = 22 } = {}) {
+/** Person + optional Falcon 9. Engine scenes omit Falcon and keep the person in frame. */
+export function addScaleRefs(parent, mats, opts = {}) {
+  const cfg = scaleRefOptions(opts);
   const group = new THREE.Group();
   group.userData.scaleRefs = true;
-  const person = createScalePerson(mats);
-  person.position.set(personX, 0, 12);
-  const falcon = createScaleFalcon(mats);
-  falcon.position.set(falconX, 0, -10);
-  group.add(person, falcon);
-  // Person is 1.8 m — skip so it does not steal the box. Falcon is ~70 m and
-  // taller than Starship, so it must stay in the camera frame.
-  person.traverse((child) => {
-    child.userData.skipFrame = true;
-  });
+  const person = createScalePerson(mats, { compact: cfg.compactPerson });
+  person.position.set(cfg.personX, cfg.personY, cfg.personZ);
+  group.add(person);
+  if (cfg.includeFalcon) {
+    const falcon = createScaleFalcon(mats);
+    falcon.position.set(cfg.falconX, 0, -10);
+    group.add(falcon);
+  }
+  // Person is 1.8 m — skip on vehicles so it does not steal the box. Falcon is
+  // ~70 m and taller than Starship, so it must stay in the camera frame.
+  if (cfg.personSkipFrame) {
+    person.traverse((child) => {
+      child.userData.skipFrame = true;
+    });
+  }
   parent.add(group);
   parent.userData.supportsScale = true;
   return group;

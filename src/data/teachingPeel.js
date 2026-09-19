@@ -66,9 +66,10 @@ export const PEEL_HINTS = {
     "Explode spreads flaps and engines. Click a piece to isolate it. Cutaway opens the tanks and header tanks. Scale puts a person and a Falcon 9 beside the ship — Falcon is taller.",
   mechazilla:
     "Explode opens the chopsticks away from the booster. Click the arms or the vehicle to isolate one. Match webcast poses the camera like the gulf-side Live Launch view — tower left, stack right.",
-  raptor: "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest.",
+  raptor:
+    "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest. Scale puts a person beside the engine — Raptor is about a person and a half tall.",
   "compare-engines":
-    "Same camera. Left is Raptor — two preburners, methane. Right is Merlin — one gas generator, RP-1. Explode floats both engines apart. Click a piece to isolate it.",
+    "Same camera. Left is Raptor — two preburners, methane. Right is Merlin — one gas generator, RP-1. Explode floats both engines apart. Click a piece to isolate it. Scale puts a person in front so both bells stay human-sized.",
 };
 
 const DEFAULT_HINT = "Click a piece to isolate it. Explode floats parts apart when this scene supports it.";

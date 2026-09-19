@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createMaterials, enableShadows, tag } from "./helpers.js";
+import { addScaleRefs, createMaterials, enableShadows, tag } from "./helpers.js";
 import { createRaptor } from "./raptor.js";
 import { createMerlin } from "./merlin.js";
 
@@ -8,7 +8,7 @@ export function createCompareEngines() {
   const mats = createMaterials();
   const g = new THREE.Group();
 
-  const raptor = createRaptor();
+  const raptor = createRaptor({ scale: false });
   raptor.position.x = -2.35;
   raptor.traverse((child) => {
     if (child.userData.part?.id === "raptor.engine") {
@@ -39,6 +39,7 @@ export function createCompareEngines() {
     blurb: "Same camera, two engines. Left is Raptor. Right is Merlin. Not a test-stand drawing.",
   });
   g.add(deck);
+  addScaleRefs(g, mats, { includeFalcon: false, personX: 0, personY: -1.27, personZ: 2.2 });
 
   enableShadows(g);
   g.userData.supportsExplode = true;
