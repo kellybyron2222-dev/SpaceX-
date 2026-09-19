@@ -22,7 +22,7 @@ Booth walkthrough (~120s) — keep the footer disclaimer on screen the whole tim
 2. **Tracker (20s).** Switch to **Tracker**. Point at Live data vs Sample and the “not official SpaceX telemetry” banner. Click a Starship Flight 14 row if listed, otherwise a Falcon 9 card. Use one related chip to jump into Learn.
 3. **Learn + physics (30s).** Select **Raptor**. Flip Overview → **Sources**, then opt in to physics notes. Search **`ASDS`** or **`catch hardpoints`** — not bare `catch` (that substring is noisy).
 4. **Falcon 9 (15s).** Explore → **Falcon 9**. Call out 9 Merlins, legs, fairing. Skip Mechazilla if time is tight (or swap this beat for Mechazilla, not both).
-5. **Live Launch (30s).** Public-stream disclaimer + **T−** card (LL2, not official). If the embed is blocked: **Open on YouTube**. Else: leave **Hotspots** off, pick one tagged name, then **Catch / chopsticks** (seeks to ~1:40 so the overlay is not on the pad poster). Do not paste junk IDs or use Live webcast fit/nudge unless a real webcast is up.
+5. **Live Launch (30s).** Public-stream disclaimer + **T−** card (LL2, not official). If the newest Flight 13 clip blocks the iframe (101/150): **Watch on YouTube**, in-page plays the next Starship VOD. Hit **Start commentary**, then **Copy share link** (`?mode=live&commentary=1&video=` under `/SpaceX-/`). Ads cannot be stripped. Leave **Hotspots** off unless you pick one tagged name. Do not paste junk IDs.
 
 If LL2 or YouTube fails: Sample banner + 3D path; keep talking.
 
@@ -70,7 +70,7 @@ Dependencies stay minimal: `three` and `vite`.
 | **Tracker** | Upcoming and recent SpaceX launches. Toggle **Live data** vs **Sample**. Click a mission to frame related pad/vehicle meshes. Related chips jump into Learn. |
 | **Explore 3D** | Orbitable component viewer with PBR/IBL lighting. Click a mesh for a callout; **Open in Learn** deep-links the catalog. Idle rotate resumes after a few seconds. |
 | **Learn** | Searchable **24-entry** catalog with Overview / History / Function / **Sources**. Physics notes stay collapsed until you opt in. |
-| **Live Launch** | Public YouTube embed of Starship coverage with clickable hotspot overlays. Click a tag for the same Learn panel. Not official SpaceX telemetry or internal cameras. |
+| **Live Launch** | Public YouTube embed of the newest **playable Starship** webcast (skip Flight 13 101/150). **Commentator** play-by-play, Copy share link, Hotspots → Learn. Not official SpaceX telemetry. Ads cannot be stripped. |
 
 ## Launch tracker API (Launch Library 2)
 
