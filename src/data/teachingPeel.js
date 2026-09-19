@@ -42,6 +42,14 @@ export const TEACH_LABELS = {
   "raptor.gimbal": "Gimbal",
   "raptor.plumbing": "Feed pipes",
   "raptor.tvc": "Steering rams",
+  "merlin.engine": "Merlin 1D — the right engine",
+  "merlin.nozzle": "Merlin nozzle",
+  "merlin.chamber": "Merlin chamber",
+  "merlin.gasGen": "Gas generator — one can",
+  "merlin.pump": "Merlin turbopump",
+  "merlin.gimbal": "Merlin gimbal",
+  "merlin.plumbing": "Merlin feed pipes",
+  "compare.deck": "Compare stand",
   "pad.olm": "Launch mount",
   "pad.deluge": "Water deluge",
   "scale.person": "A person — about 1.8 m",
@@ -57,6 +65,8 @@ export const PEEL_HINTS = {
   starship: "Explode spreads flaps and engines. Click a piece to isolate it. Cutaway opens the tanks and header tanks.",
   mechazilla: "Explode opens the chopsticks away from the booster. Click the arms or the vehicle to isolate one.",
   raptor: "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest.",
+  "compare-engines":
+    "Same camera. Left is Raptor — two preburners, methane. Right is Merlin — one gas generator, RP-1. Explode floats both engines apart. Click a piece to isolate it.",
 };
 
 const DEFAULT_HINT = "Click a piece to isolate it. Explode floats parts apart when this scene supports it.";
@@ -165,6 +175,23 @@ export const WHY_SHAPE = {
       partId: "booster.engines",
       title: "Thirty-three engines under one tank",
       body: "A 9 m barrel is wide enough to pack the cluster. That width is the shape.",
+    },
+  ],
+  "compare-engines": [
+    {
+      partId: "raptor.oxPre",
+      title: "Two preburners",
+      body: "Raptor is full-flow. Each pump spins on gas of its own propellant. That is the methane cycle.",
+    },
+    {
+      partId: "merlin.gasGen",
+      title: "One gas generator",
+      body: "Merlin burns a little RP-1 and oxygen in one can, spins the pump, and dumps that gas. Simpler, less efficient.",
+    },
+    {
+      partId: "merlin.plumbing",
+      title: "RP-1 versus methane",
+      body: "Right-side pipes are kerosene-colored. Left-side Raptor burns methane. Same camera so both cycles stay in one view.",
     },
   ],
 };

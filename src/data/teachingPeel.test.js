@@ -20,6 +20,8 @@ describe("teaching peel", () => {
     assert.equal(teachLabel({ id: "mechazilla.arms" }), "Chopsticks — tower arms");
     assert.equal(teachLabel({ id: "scale.person" }), "A person — about 1.8 m");
     assert.equal(teachLabel({ id: "scale.falcon" }), "Falcon 9 — for scale");
+    assert.equal(teachLabel({ id: "merlin.gasGen" }), "Gas generator — one can");
+    assert.equal(teachLabel({ id: "merlin.engine" }), "Merlin 1D — the right engine");
     assert.equal(teachLabel({ id: "unknown.part", name: "Fallback" }), "Fallback");
     assert.equal(/lede|at a glance|delve/i.test(Object.values(TEACH_LABELS).join(" ")), false);
   });
@@ -38,6 +40,9 @@ describe("teaching peel", () => {
     assert.match(peelHintFor("fullstack"), /Falcon 9/);
     assert.match(peelHintFor("fullstack"), /Click a piece/);
     assert.equal(peelHintFor("fullstack").includes("?mode="), false);
+    assert.match(peelHintFor("compare-engines"), /two preburners/i);
+    assert.match(peelHintFor("compare-engines"), /gas generator/i);
+    assert.equal(peelHintFor("compare-engines").includes("?mode="), false);
   });
 
   it("toggles isolate and reassembles without clearing cutaway", () => {
@@ -63,5 +68,16 @@ describe("teaching peel", () => {
     assert.match(rows[2].body, /belly-first|tiled side/i);
     assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
     assert.deepEqual(whyShapeFor("raptor"), []);
+  });
+
+  it("contrasts two preburners with one gas generator", () => {
+    const rows = whyShapeFor("compare-engines");
+    assert.equal(rows.length, 3);
+    assert.equal(rows[0].partId, "raptor.oxPre");
+    assert.match(rows[0].title, /two preburners/i);
+    assert.equal(rows[1].partId, "merlin.gasGen");
+    assert.match(rows[1].body, /gas generator|one can/i);
+    assert.match(rows[2].body, /methane/i);
+    assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
   });
 });

@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#65](https://github.com/kellybyron2222-dev/SpaceX-/pull/65) cue sheet through Explore peel + Super Heavy scale
-- **This PR:** **Why this shape** on Full stack / Ship / Super Heavy — tiles take belly heat, steel is the tank, flaps keep that face in the flow. Click a line to isolate the part. Not CAD.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#66](https://github.com/kellybyron2222-dev/SpaceX-/pull/66) cue sheet through Explore peel, Super Heavy scale, and Why this shape
+- **This PR:** **Raptor vs Merlin** — same camera, two cycles. Left is methane full-flow (two preburners). Right is RP-1 gas-generator (one can). Why rows isolate the contrast. Not CAD.
 
 ## Open PRs
 
-Why this shape (this branch). **None** after merge.
+Raptor vs Merlin (this branch). **None** after merge.
 
 ## Next
 
-Raptor vs Merlin compare (same camera). Then match Explore camera to the Live Launch webcast view.
+Match Explore camera to the Live Launch webcast view (tower left, stack right of Mechazilla).

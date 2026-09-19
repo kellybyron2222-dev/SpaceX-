@@ -49,4 +49,12 @@ describe("public-figure catalog copy", () => {
     assert.ok(nose.matchIds.includes("starship.ch4Header"));
     assert.equal(findCatalogByPart({ id: "starship.loxHeader" })?.id, "payload-bay");
   });
+
+  it("maps the Merlin close-up to the Merlin 1D card", () => {
+    const e = catalogById("merlin");
+    assert.ok(e.matchIds.includes("merlin.gasGen"));
+    assert.ok(e.matchIds.includes("merlin.engine"));
+    assert.equal(findCatalogByPart({ id: "merlin.gasGen" })?.id, "merlin");
+    assert.equal(e.sceneId, "falcon9");
+  });
 });

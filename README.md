@@ -172,6 +172,7 @@ All sizes are **rounded public figures** used only as rough scale (1 scene unit 
 | **Super Heavy** | First-stage booster, about **72 m**. Ring-stack barrel, raceway, three grid fins (V3 public layout; Falcon 9 still uses four), catch hardpoints, vented hot-staging ring, **33-Raptor** cluster (3 + 10 + 20). |
 | **Starship** | Upper stage, about **52 m**. Ogive nose, barrel tanks, windward hex tiles, forward/aft flaps, three sea-level and three vacuum Raptors. |
 | **Raptor engine** | Close-up methane/LOX **full-flow staged combustion** textbook teaching model: nozzle, chamber, gimbal, two preburners, pumps, pipes. Learn / Live show a licensed photo of real hardware beside the mesh. |
+| **Raptor vs Merlin** | Same camera, two cycles: methane full-flow Raptor on the left, RP-1 gas-generator Merlin on the right. Teaching sketch — not CAD or a test-stand drawing. |
 | **Mechazilla** | Launch-and-catch tower with chopsticks and a ghost booster. Tower height is a **~146 m-class** round figure. |
 | **QD arm** | Quick-disconnect swing arm from a tower stub to a ghost 9 m barrel. |
 | **Heat-shield panel** | Curved hex/rect tile grid. Explode lifts tiles along normals. |
@@ -202,7 +203,7 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 
 - **H** toggle Live Launch hotspots
 - **Orbit** one-finger / left-drag · **pan** two-finger / right-drag · **zoom** pinch / wheel
 - **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** explode (float apart) · **X** cutaway tanks · **B** put back together
-- **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **F** fullscreen · **?** help · **Esc** clear selection
+- **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **=** Raptor vs Merlin · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest / demo notes
 
