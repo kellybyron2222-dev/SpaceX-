@@ -1,4 +1,4 @@
-# Status — 2026-09-18
+# Status — 2026-09-19
 
 [Live site](https://kellybyron2222-dev.github.io/SpaceX-/) · public educational approximations only (not SpaceX CAD / not official telemetry). Contest **not submitted**. Vite `base` stays `/SpaceX-/`.
 
@@ -9,11 +9,11 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33) cue sheet · [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34) deep-links · [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35) Commentator
-- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37): no-live fallback to latest completed VOD. This PR prefers a completed **Starship** webcast (Flight 13) over a newer Falcon in the last-eight LL2 window.
+- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37) latest-VOD fallback · [#39](https://github.com/kellybyron2222-dev/SpaceX-/pull/39) prefer completed Starship VOD over a recent Falcon
 
 ## Open PRs
 
-[#39](https://github.com/kellybyron2222-dev/SpaceX-/pull/39) Starship VOD pick. After merge: **none.**
+**None.**
 
 ## Next
 
