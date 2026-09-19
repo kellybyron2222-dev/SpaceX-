@@ -26,6 +26,36 @@
   padding: 0;
 }
 
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 20;
+  padding: 10px 14px;
+  background: var(--accent);
+  color: #1a1208;
+  font: 600 14px/1.2 var(--font);
+  border-radius: 10px;
+  text-decoration: none;
+  transform: translateY(-220%);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: none;
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
 html,
 body,
 #app {
@@ -169,7 +199,6 @@ body,
 .tool:focus-visible {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(245, 193, 108, 0.45);
-  outline: none;
 }
 
 .tool.primary {
@@ -182,6 +211,10 @@ body,
 .tool.primary:focus-visible {
   background: #ffd48a;
   border-color: transparent;
+}
+
+.tool.primary:focus-visible {
+  outline-color: #fff;
 }
 
 .tool.ghost {
@@ -258,7 +291,6 @@ body,
 .scene-btn:hover,
 .scene-btn:focus-visible {
   border-color: rgba(245, 193, 108, 0.4);
-  outline: none;
 }
 
 .scene-btn.active {
@@ -353,7 +385,6 @@ body,
 .why-shape button.why-row:hover,
 .why-shape button.why-row:focus-visible {
   color: var(--text);
-  outline: none;
 }
 
 .why-shape button.why-row.active strong {
@@ -408,7 +439,8 @@ body,
   text-transform: uppercase;
 }
 
-.text-btn:hover {
+.text-btn:hover,
+.text-btn:focus-visible {
   color: var(--text);
 }
 
@@ -807,6 +839,12 @@ body,
   background: rgba(245, 193, 108, 0.12);
 }
 
+#catalog-search:focus-visible,
+#live-url:focus-visible,
+.commentator-controls select:focus-visible {
+  outline-offset: 2px;
+}
+
 .launch-list,
 .catalog-nav {
   display: flex;
@@ -833,7 +871,6 @@ body,
 .launch-card:focus-visible,
 .cat-btn:focus-visible {
   border-color: rgba(245, 193, 108, 0.4);
-  outline: none;
 }
 
 .launch-card.active,
@@ -1440,7 +1477,6 @@ body,
   vector-effect: non-scaling-stroke;
   cursor: pointer;
   pointer-events: auto;
-  outline: none;
 }
 
 .hotspot:hover,
@@ -2002,6 +2038,17 @@ a.text-btn {
   #live-hotspot-list .cat-btn {
     min-height: 44px;
     padding: 14px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

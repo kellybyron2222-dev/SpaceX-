@@ -38,7 +38,8 @@ export class Viewer {
     this.defaultCam = { position: new THREE.Vector3(), target: new THREE.Vector3() };
     this._camTween = null;
     this._firstLoad = true;
-    this.idleRotateEnabled = true;
+    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.idleRotateEnabled = !this.reducedMotion;
     this._userInteracting = false;
     this._lastInteract = 0;
 
@@ -338,6 +339,13 @@ export class Viewer {
 
   _tweenTo(position, target, duration = 0.8) {
     this.controls.autoRotate = false;
+    if (this.reducedMotion) {
+      this.camera.position.copy(position);
+      this.controls.target.copy(target);
+      this.controls.update();
+      this._camTween = null;
+      return;
+    }
     this._camTween = {
       t: 0,
       duration,

@@ -12,6 +12,7 @@
   </head>
   <body>
     <div id="app" data-mode="explore">
+      <a class="skip-link" id="skip-content" href="#scene-nav">Skip to scenes</a>
       <canvas id="view"></canvas>
       <div class="vignette" aria-hidden="true"></div>
 
@@ -192,7 +193,8 @@
 
       <aside class="panel catalog-panel learn-only" aria-label="Teaching catalog">
         <p class="side-label">Teaching catalog</p>
-        <input id="catalog-search" type="search" placeholder="Search tanks, QD arm, ASDS droneship…" autocomplete="off" />
+        <label class="field-label" for="catalog-search">Search</label>
+        <input id="catalog-search" type="search" placeholder="Tanks, flaps, droneship…" autocomplete="off" />
         <div class="filters" id="catalog-filters">
           <button type="button" class="chip active" data-family="all">All</button>
           <button type="button" class="chip" data-family="starship">Starship</button>
@@ -309,17 +311,17 @@
           </figcaption>
         </figure>
         <div class="tabs" role="tablist">
-          <button type="button" class="tab active" data-tab="overview">Overview</button>
-          <button type="button" class="tab" data-tab="history">History</button>
-          <button type="button" class="tab" data-tab="function">Function</button>
-          <button type="button" class="tab" data-tab="sources">Sources</button>
-          <button type="button" class="tab" data-tab="physics" id="tab-physics" title="Unlock with the link below" aria-label="Physics (locked). Unlock with the link below.">Physics</button>
+          <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="history">History</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="function">Function</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="sources">Sources</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="physics" id="tab-physics" title="Unlock with the link below" aria-label="Physics (locked). Unlock with the link below.">Physics</button>
         </div>
         <div id="teach-body" class="teach-body"></div>
         <button type="button" id="btn-physics" class="text-btn">I’m interested in the physics notes</button>
       </aside>
 
-      <div id="help" class="help hidden" role="dialog" aria-labelledby="help-title">
+      <div id="help" class="help hidden" role="dialog" aria-modal="true" aria-labelledby="help-title" aria-hidden="true">
         <div class="help-card">
           <h2 id="help-title">Controls</h2>
           <ul>
