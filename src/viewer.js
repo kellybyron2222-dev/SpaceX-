@@ -298,6 +298,18 @@ export class Viewer {
     this._tweenTo(this.defaultCam.position, this.defaultCam.target, 0.85);
   }
 
+  /** Tween to a stored teaching pose. Returns false if the pose is incomplete. */
+  applyPose(pose, { instant = false } = {}) {
+    const p = pose?.position;
+    const t = pose?.target;
+    if (!p || !t) return false;
+    const pos = new THREE.Vector3(p.x, p.y, p.z);
+    const target = new THREE.Vector3(t.x, t.y, t.z);
+    this.controls.autoRotate = false;
+    this._applyFrame({ pos, target }, { instant });
+    return true;
+  }
+
   findByPartId(id) {
     if (!this.root || !id) return null;
     let found = null;

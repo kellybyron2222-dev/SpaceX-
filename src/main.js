@@ -22,6 +22,7 @@ import {
   serializeDeepLink,
 } from "./data/deeplink.js";
 import { calloutKicker, peelBusy, peelHintFor, teachLabel, whyShapeFor } from "./data/teachingPeel.js";
+import { sceneForWebcast, webcastPose } from "./data/webcastCamera.js";
 
 const app = document.getElementById("app");
 const canvas = document.getElementById("view");
@@ -37,6 +38,8 @@ const btnExplode = document.getElementById("btn-explode");
 const btnCutaway = document.getElementById("btn-cutaway");
 const btnScale = document.getElementById("btn-scale");
 const btnWhy = document.getElementById("btn-why");
+const btnWebcast = document.getElementById("btn-webcast");
+const btnLiveMatch = document.getElementById("btn-live-match");
 const whyShape = document.getElementById("why-shape");
 const whyShapeList = document.getElementById("why-shape-list");
 const btnReassemble = document.getElementById("btn-reassemble");
@@ -655,6 +658,19 @@ btnWhy.addEventListener("click", () => {
   syncPeelChrome();
 });
 
+function matchWebcastCamera() {
+  const pose = webcastPose();
+  const sceneId = sceneForWebcast();
+  setMode("explore");
+  if (viewer.sceneId !== sceneId) selectScene(sceneId);
+  viewer.applyPose(pose);
+  const idleOff = viewer.setIdleRotate(false);
+  btnIdle.setAttribute("aria-pressed", idleOff ? "true" : "false");
+}
+
+btnWebcast.addEventListener("click", () => matchWebcastCamera());
+btnLiveMatch.addEventListener("click", () => matchWebcastCamera());
+
 function putBackTogether() {
   viewer.reassemble();
   viewer.clearSelection();
@@ -774,6 +790,7 @@ window.addEventListener("keydown", (event) => {
   if (state.mode === "live") {
     if (key === "h") live.toggleHotspots();
     if (key === "c") live.toggleCommentary();
+    if (key === "w") matchWebcastCamera();
     return;
   }
   if (key === "r") resetView();
@@ -785,6 +802,7 @@ window.addEventListener("keydown", (event) => {
   if (key === "e") btnExplode.click();
   if (key === "x") btnCutaway.click();
   if (key === "b") putBackTogether();
+  if (key === "w") matchWebcastCamera();
   if (key === "0") {
     const scene = viewer.scenes()[9];
     if (scene) selectScene(scene.id);

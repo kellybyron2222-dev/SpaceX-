@@ -173,7 +173,7 @@ All sizes are **rounded public figures** used only as rough scale (1 scene unit 
 | **Starship** | Upper stage, about **52 m**. Ogive nose, barrel tanks, windward hex tiles, forward/aft flaps, three sea-level and three vacuum Raptors. |
 | **Raptor engine** | Close-up methane/LOX **full-flow staged combustion** textbook teaching model: nozzle, chamber, gimbal, two preburners, pumps, pipes. Learn / Live show a licensed photo of real hardware beside the mesh. |
 | **Raptor vs Merlin** | Same camera, two cycles: methane full-flow Raptor on the left, RP-1 gas-generator Merlin on the right. Teaching sketch — not CAD or a test-stand drawing. |
-| **Mechazilla** | Launch-and-catch tower with chopsticks and a ghost booster. Tower height is a **~146 m-class** round figure. |
+| **Mechazilla** | Launch-and-catch tower with chopsticks and a ghost booster. Tower height is a **~146 m-class** round figure. **Match webcast** poses this scene like the gulf-side Live Launch view (tower left, stack right) — teaching pose, not a surveyed camera. |
 | **QD arm** | Quick-disconnect swing arm from a tower stub to a ghost 9 m barrel. |
 | **Heat-shield panel** | Curved hex/rect tile grid. Explode lifts tiles along normals. |
 | **Falcon 9** | ~**70 m** × **3.7 m** white stack: 9 Merlins, landing legs, grid fins, interstage, second stage, clamshell fairing. |
@@ -202,7 +202,7 @@ Physics copy uses **order-of-magnitude public figures** (9 m diameter, 124 / 72 
 - **T** Tracker · **V** Explore · **L** Learn · **Y** Live Launch
 - **H** toggle Live Launch hotspots
 - **Orbit** one-finger / left-drag · **pan** two-finger / right-drag · **zoom** pinch / wheel
-- **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** explode (float apart) · **X** cutaway tanks · **B** put back together
+- **R** reset camera and explode (tweened) · **I** idle rotate · **S** screenshot PNG · **E** explode (float apart) · **X** cutaway tanks · **W** match webcast camera · **B** put back together
 - **1–9** and **0** switch 3D scenes · **-** ASDS droneship · **=** Raptor vs Merlin · **F** fullscreen · **?** help · **Esc** clear selection
 
 ## Contest / demo notes
