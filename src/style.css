@@ -208,13 +208,15 @@ body,
   left: 14px;
   width: min(280px, calc(100vw - 28px));
   max-height: calc(100% - 176px);
-  overflow: auto;
+  overflow: hidden;
   padding: 14px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
 }
 
 .side-label {
@@ -230,6 +232,9 @@ body,
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 
 .scene-btn {
@@ -270,6 +275,7 @@ body,
   display: grid;
   gap: 8px;
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .telemetry div {
@@ -296,6 +302,7 @@ body,
   color: var(--muted);
   font-size: 11px;
   line-height: 1.45;
+  flex-shrink: 0;
 }
 
 .callout {

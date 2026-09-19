@@ -224,6 +224,7 @@ export class Viewer {
     const spec = sceneById(this.sceneId);
     const allowed = Boolean(this.root?.userData.supportsExplode);
     this.explodeTarget = on && allowed ? 1 : 0;
+    if (on && allowed) this._pullBackForExplode();
     return { allowed, hint: spec.explodeHint };
   }
 
@@ -261,6 +262,14 @@ export class Viewer {
       supportsExplode: Boolean(this.root?.userData.supportsExplode),
       supportsCutaway: Boolean(this.root?.userData.supportsCutaway),
     };
+  }
+
+  _pullBackForExplode() {
+    const target = this.controls.target.clone();
+    const dir = this.camera.position.clone().sub(target);
+    if (dir.lengthSq() < 1e-6) return;
+    const next = target.clone().add(dir.multiplyScalar(1.48));
+    this._tweenTo(next, target, 0.85);
   }
 
   resetCamera() {

@@ -221,7 +221,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
     const a = (i / 3) * Math.PI * 2;
     const eng = createMiniRaptor(mats);
     eng.position.set(Math.cos(a) * 1.15, 1.05, Math.sin(a) * 1.15);
-    homeAndExplode(eng, new THREE.Vector3(0, -2.2, 0));
+    homeAndExplode(eng, new THREE.Vector3(0, -4.6, 0));
     sl.add(eng);
   }
   tag(sl, PARTS.sl);
@@ -232,7 +232,7 @@ export function createStarship({ withPad = true, forStack = false } = {}) {
     const a = (i / 3) * Math.PI * 2 + Math.PI / 3;
     const eng = createMiniRaptor(mats, { vacuum: true });
     eng.position.set(Math.cos(a) * 2.7, 1.45, Math.sin(a) * 2.7);
-    homeAndExplode(eng, new THREE.Vector3(0, -2.8, 0));
+    homeAndExplode(eng, new THREE.Vector3(0, -5.4, 0));
     vac.add(eng);
   }
   tag(vac, PARTS.vac);
