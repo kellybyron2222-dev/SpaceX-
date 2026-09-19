@@ -1356,6 +1356,24 @@ body,
 }
 
 @media (min-width: 1100px) {
+  .topbar {
+    flex-wrap: nowrap;
+    padding: 8px 12px;
+    gap: 12px;
+  }
+
+  .brand p {
+    display: none;
+  }
+
+  .toolbar {
+    flex-wrap: nowrap;
+  }
+
+  .tool-more {
+    display: none;
+  }
+
   .live-stage {
     padding: 104px 380px 58px 330px;
   }
