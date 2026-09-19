@@ -1630,6 +1630,13 @@ a.live-fallback-cta.tool.primary {
   margin-bottom: 6px;
 }
 
+.commentator-now {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+
 .commentator h2 {
   font-size: 18px;
   text-transform: capitalize;
