@@ -9,12 +9,12 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#58](https://github.com/kellybyron2222-dev/SpaceX-/pull/58) playable Starship VOD, Copy share, Learn English, Tracker Live chip
-- **This PR:** README Grok Bot wrap: paste Copy share URL. Contest **not submitted**.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#59](https://github.com/kellybyron2222-dev/SpaceX-/pull/59) playable Starship VOD, Copy share, bot wrap README
+- **This PR:** Commentator hint: YouTube ads cannot be stripped.
 
 ## Open PRs
 
-Bot wrap README (this PR). **None** after merge.
+Ads honesty (this PR). **None** after merge.
 
 ## Next
 
