@@ -8,12 +8,12 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#76](https://github.com/kellybyron2222-dev/SpaceX-/pull/76) cue sheet through Explore peel, scale, Why, phone chrome, and the iterate-loop report
-- **This PR:** Person scale on Raptor and Raptor vs Merlin (no Falcon — 70 m would wreck a 3 m frame)
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#77](https://github.com/kellybyron2222-dev/SpaceX-/pull/77) cue sheet through Explore peel, scale, Why, phone chrome, and engine person scale
+- **This PR:** Why this shape on the heat-shield panel (hexes, 9 m curve, gaps)
 
 ## Open PRs
 
-Engine person scale (this branch).
+Why on the heat-shield panel (this branch).
 
 ## Next
 

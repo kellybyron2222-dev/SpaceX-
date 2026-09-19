@@ -17,6 +17,8 @@ describe("teaching peel", () => {
   it("names stack pieces in spoken English", () => {
     assert.equal(teachLabel({ id: "booster.engines" }), "The 33 engines");
     assert.equal(teachLabel({ id: "starship.tiles" }), "Heat-shield tiles");
+    assert.equal(teachLabel({ id: "tiles.carrier" }), "The barrel under the tiles");
+    assert.equal(teachLabel({ id: "tiles.felt" }), "Tile gaps");
     assert.equal(teachLabel({ id: "starship.loxHeader" }), "Oxygen header tank");
     assert.equal(teachLabel({ id: "mechazilla.arms" }), "Chopsticks — tower arms");
     assert.equal(teachLabel({ id: "scale.person" }), "A person — about 1.8 m");
@@ -49,6 +51,7 @@ describe("teaching peel", () => {
     assert.match(peelHintFor("compare-engines"), /person/i);
     assert.equal(peelHintFor("compare-engines").includes("?mode="), false);
     assert.match(peelHintFor("raptor"), /person/i);
+    assert.match(peelHintFor("tiles"), /hex|curve|Why/i);
     assert.match(peelHintFor("mechazilla"), /gulf-side/i);
     assert.match(peelHintFor("mechazilla"), /tower left/i);
   });
@@ -66,6 +69,18 @@ describe("teaching peel", () => {
     assert.deepEqual(s, { explode: false, isolateId: null, cutaway: true });
     s = reducePeel(s, { type: "reset" });
     assert.deepEqual(s, { explode: false, isolateId: null, cutaway: false });
+  });
+
+  it("ties the heat-shield panel to heat, curve, and gaps", () => {
+    const rows = whyShapeFor("tiles");
+    assert.equal(rows.length, 3);
+    assert.equal(rows[0].partId, "tiles.tiles");
+    assert.match(rows[0].body, /heat|tank/i);
+    assert.equal(rows[1].partId, "tiles.carrier");
+    assert.match(rows[1].body, /9 m|barrel|curve/i);
+    assert.equal(rows[2].partId, "tiles.felt");
+    assert.match(rows[2].body, /felt|gap/i);
+    assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
   });
 
   it("ties tiles, steel, and flaps to a job", () => {
