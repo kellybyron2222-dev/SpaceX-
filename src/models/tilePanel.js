@@ -9,6 +9,7 @@ const PARTS = ids("tiles", {
   },
   tiles: {
     name: "Thermal-protection tiles",
+    keepHue: true,
     frameTight: 1.22,
     frameBias: { x: 0.32, y: 0.12, z: 1.05 },
     blurb:

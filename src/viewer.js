@@ -3,7 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createStarfield, disposeHierarchy } from "./models/helpers.js";
 import { SCENES, sceneById } from "./models/index.js";
-import { meshTakesLook } from "./data/lookPass.js";
+import { meshTakesLook, selectKeepsHue } from "./data/lookPass.js";
 import { unionFilteredBounds } from "./data/meshBounds.js";
 
 const tmpBox = new THREE.Box3();
@@ -557,7 +557,8 @@ export class Viewer {
         child.userData._lookMat.dispose();
         child.userData._lookMat = null;
       }
-      const partId = this._partOf(child)?.userData?.part?.id;
+      const part = this._partOf(child)?.userData?.part;
+      const partId = part?.id;
       const faded = Boolean(this.isolatedId && partId && partId !== this.isolatedId);
       const selected = Boolean(selectedId && partId === selectedId);
       const clip = this.cutawayOn && child.userData.cutawayShell;
@@ -572,7 +573,7 @@ export class Viewer {
         mat.depthWrite = false;
         if (mat.emissive) mat.emissiveIntensity = 0;
       }
-      if (selected && mat.emissive && !faded) {
+      if (selected && mat.emissive && !faded && !selectKeepsHue(part)) {
         mat.emissive.setHex(0xf5c16c);
         mat.emissiveIntensity = 0.38;
       }
