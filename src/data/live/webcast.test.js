@@ -116,6 +116,23 @@ describe("resolveAutoWebcast", () => {
     assert.equal(resolveAutoWebcast({ fallbackId: "hI9HQfCAw64" }).youtubeId, "hI9HQfCAw64");
   });
 
+  it("does not let a recent Falcon VOD beat the latest Starship cue sheet", () => {
+    const falconDone = {
+      ...liveFalcon,
+      id: "f9-done",
+      status: "success",
+      webcastLive: false,
+      webcasts: [{ ...liveFalcon.webcasts[0], live: false }],
+    };
+    const pick = resolveAutoWebcast({
+      bundle: { upcoming: [], recent: [falconDone] },
+      latestSheetVideoId: "lC3RDO7tdLc",
+      fallbackId: "hI9HQfCAw64",
+    });
+    assert.equal(pick.reason, "cue-sheet");
+    assert.equal(pick.youtubeId, "lC3RDO7tdLc");
+  });
+
   it("treats the Flight 5 recap id as a stale default, not a user paste", () => {
     assert.equal(isStaleDefaultId("hI9HQfCAw64", "hI9HQfCAw64"), true);
     assert.equal(isStaleDefaultId("lC3RDO7tdLc", "hI9HQfCAw64"), false);

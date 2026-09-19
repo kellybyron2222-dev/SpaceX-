@@ -177,16 +177,28 @@ async function getJson(url, timeoutMs = 12000) {
   }
 }
 
+function mergeLaunches(...lists) {
+  const byId = new Map();
+  for (const list of lists) {
+    for (const launch of list || []) {
+      if (launch?.id && !byId.has(launch.id)) byId.set(launch.id, launch);
+    }
+  }
+  return [...byId.values()].sort((a, b) => new Date(b.net || 0) - new Date(a.net || 0));
+}
+
 async function fetchFromBase(base) {
   const q = "lsp__name=SpaceX&limit=12&mode=detailed";
-  const [up, prev] = await Promise.all([
+  const [up, prev, prevStarship] = await Promise.all([
     getJson(`${base}/launches/upcoming/?${q}`),
     getJson(`${base}/launches/previous/?lsp__name=SpaceX&limit=8&mode=detailed`),
+    getJson(`${base}/launches/previous/?search=Starship&limit=4&mode=detailed`).catch(() => ({ results: [] })),
   ]);
   if (!Array.isArray(up?.results) || !Array.isArray(prev?.results)) throw new Error("Unexpected LL2 shape");
+  const starshipRecent = Array.isArray(prevStarship?.results) ? prevStarship.results.map(normalizeLaunch) : [];
   return {
     upcoming: up.results.map(normalizeLaunch),
-    recent: prev.results.map(normalizeLaunch),
+    recent: mergeLaunches(starshipRecent, prev.results.map(normalizeLaunch)),
     source: "live",
     endpoint: base,
     fetchedAt: new Date().toISOString(),

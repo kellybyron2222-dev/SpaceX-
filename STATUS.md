@@ -9,11 +9,11 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33) cue sheet · [#34](https://github.com/kellybyron2222-dev/SpaceX-/pull/34) deep-links · [#35](https://github.com/kellybyron2222-dev/SpaceX-/pull/35) Commentator
-- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37): no-live fallback to latest completed VOD (Flight 13 as of 2026-09-18). Commentator syncs that clock.
+- [#37](https://github.com/kellybyron2222-dev/SpaceX-/pull/37): no-live fallback to latest completed VOD. This PR prefers a completed **Starship** webcast (Flight 13) over a newer Falcon in the last-eight LL2 window.
 
 ## Open PRs
 
-**None.**
+[#39](https://github.com/kellybyron2222-dev/SpaceX-/pull/39) Starship VOD pick. After merge: **none.**
 
 ## Next
 
