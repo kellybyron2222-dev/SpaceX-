@@ -18,11 +18,12 @@
 - [#50](https://github.com/kellybyron2222-dev/SpaceX-/pull/50) Idle Commentator Start one-liner
 - [#51](https://github.com/kellybyron2222-dev/SpaceX-/pull/51) Now playing oEmbed title
 - [#52](https://github.com/kellybyron2222-dev/SpaceX-/pull/52) README Live Launch → Commentator + Copy share
-- **This PR:** Live sidebar **Copy commentator link** (same `/SpaceX-/` deep-link as Commentator).
+- [#53](https://github.com/kellybyron2222-dev/SpaceX-/pull/53) Live sidebar Copy commentator link
+- **This PR:** 44px Commentator Mute / Show hold / Copy and Live sidebar copy so phones can tap without covering the YouTube play control.
 
 ## Open PRs
 
-Sidebar copy (this PR). **None** after merge.
+Mobile 44px copy (this PR). **None** after merge.
 
 ## Next
 
