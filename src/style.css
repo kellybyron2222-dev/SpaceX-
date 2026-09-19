@@ -104,9 +104,8 @@ body,
   border: 0;
   background: transparent;
   color: var(--muted);
-  font: 650 12px/1 var(--font);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font: 600 13px/1.2 var(--font);
+  letter-spacing: 0;
   padding: 8px 12px;
   border-radius: 9px;
   cursor: pointer;
@@ -134,10 +133,10 @@ body,
 }
 
 .brand h1 {
-  font-size: 15px;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .brand p {
@@ -158,9 +157,8 @@ body,
   border: 1px solid var(--panel-border);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
-  font: 600 12px/1 var(--font);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font: 600 13px/1.2 var(--font);
+  letter-spacing: 0;
   padding: 9px 12px;
   border-radius: 10px;
   cursor: pointer;
@@ -685,7 +683,8 @@ body,
 
 @media (max-width: 520px) {
   .brand h1 {
-    font-size: 13px;
+    font-size: 15px;
+    letter-spacing: -0.015em;
   }
 
   .brand p {
@@ -1308,15 +1307,15 @@ body,
   }
 
   .mode-btn {
-    padding: 12px 8px;
-    letter-spacing: 0.045em;
+    padding: 12px 10px;
+    letter-spacing: 0;
   }
 
   .tool,
   .tool.ghost {
     min-width: 44px;
-    padding: 12px 8px;
-    letter-spacing: 0.03em;
+    padding: 12px 10px;
+    letter-spacing: 0;
   }
 
   .chip {

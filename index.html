@@ -99,31 +99,35 @@
           <span class="mark" aria-hidden="true"></span>
           <div>
             <h1>Starship Component Viewer</h1>
-            <p>Companion for a Grok Bot · Live Launch Commentator · contest not submitted</p>
+            <p>Tap the stack to learn the parts</p>
           </div>
         </div>
         <nav class="modes" aria-label="App sections">
           <button type="button" class="mode-btn" data-mode="tracker">Tracker</button>
-          <button type="button" class="mode-btn active" data-mode="explore">Explore 3D</button>
+          <button type="button" class="mode-btn active" data-mode="explore" aria-label="Explore 3D">
+            Explore<span class="tool-more"> 3D</span>
+          </button>
           <button type="button" class="mode-btn" data-mode="learn">Learn</button>
-          <button type="button" class="mode-btn" data-mode="live">Live Launch</button>
+          <button type="button" class="mode-btn" data-mode="live" aria-label="Live Launch">
+            Live<span class="tool-more"> Launch</span>
+          </button>
         </nav>
         <div class="toolbar">
           <button type="button" id="btn-refresh" class="tool tracker-only" title="Refresh launches">Refresh</button>
-          <button type="button" id="btn-idle" class="tool explore-learn" aria-pressed="true" title="Idle rotate (I)">
-            Idle<span class="tool-more"> rotate</span>
-          </button>
           <button type="button" id="btn-explode" class="tool explore-learn" aria-pressed="false" title="Float the parts apart (E)">
             Explode
           </button>
-          <button type="button" id="btn-cutaway" class="tool explore-learn" aria-pressed="false" title="Open tank shells (X)">
-            Cutaway
+          <button type="button" id="btn-why" class="tool explore-learn" aria-pressed="false" title="Why this shape">
+            Why
           </button>
           <button type="button" id="btn-scale" class="tool explore-learn" aria-pressed="true" title="Person and Falcon 9 for scale">
             Scale
           </button>
-          <button type="button" id="btn-why" class="tool explore-learn" aria-pressed="false" title="Why this shape">
-            Why
+          <button type="button" id="btn-cutaway" class="tool explore-learn" aria-pressed="false" title="Open tank shells (X)">
+            Cutaway
+          </button>
+          <button type="button" id="btn-idle" class="tool explore-learn" aria-pressed="true" title="Idle rotate (I)">
+            Idle<span class="tool-more"> rotate</span>
           </button>
           <button type="button" id="btn-webcast" class="tool explore-learn" title="Pose Mechazilla to the gulf-side webcast view (W)">
             Match<span class="tool-more"> webcast</span>
@@ -132,7 +136,7 @@
             Put back<span class="tool-more"> together</span>
           </button>
           <button type="button" id="btn-reset" class="tool explore-learn" title="Reset camera and collapse explode (R)">Reset<span class="tool-more"> camera</span></button>
-          <button type="button" id="btn-shot" class="tool primary explore-learn" title="Download PNG (S)">Screenshot</button>
+          <button type="button" id="btn-shot" class="tool explore-learn" title="Download PNG (S)">Screenshot</button>
           <button type="button" id="btn-hotspots" class="tool live-only" aria-pressed="false" title="Show hotspot overlays (H)">
             Hotspots
           </button>
@@ -159,7 +163,7 @@
         </p>
       </aside>
 
-      <p id="orbit-hint" class="orbit-hint">Tap a part to isolate it · Explode floats pieces · Cutaway opens tanks</p>
+      <p id="orbit-hint" class="orbit-hint">Tap a part. Explode pulls the stack apart.</p>
 
       <section class="panel tracker-panel tracker-only" aria-label="Launch tracker">
         <header class="panel-head">

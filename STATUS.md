@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#78](https://github.com/kellybyron2222-dev/SpaceX-/pull/78) cue sheet through Explore peel, scale, Why, phone chrome, engine person, and heat-shield Why
-- **This PR:** Teaching 3D iterate-loop report update — still **8/10**. Nine fix PRs (#69–#75, #77–#78), then stop.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#79](https://github.com/kellybyron2222-dev/SpaceX-/pull/79) cue sheet through teaching 3D peel, scale, Why, and iterate report
+- **This PR:** Phone first-run chrome — sentence-case nav, Explode / Why / Scale first, Screenshot no longer the gold CTA
 
 ## Open PRs
 
-Iterate-loop report update (this branch). **None** after merge.
+iPhone first-run chrome (this branch). **None** after merge.
 
 ## Next
 
-Contest wrap stays parked — do not submit.
+Persona UX cycle continues (desktop, a11y, Live, Learn). Contest wrap stays parked — do not submit.
