@@ -1263,8 +1263,12 @@ body,
 
   #app[data-mode="live"] {
     --live-topbar: 11.75rem;
-    --live-sheet: min(36vh, 17rem);
+    --live-sheet: min(22vh, 11rem);
     --live-teach: min(18vh, 9rem);
+  }
+
+  #app[data-mode="live"]:has(.live-setup[open]) {
+    --live-sheet: min(48vh, 22rem);
   }
 
   #app[data-mode="live"] .live-panel {
@@ -1311,6 +1315,11 @@ body,
 
   #app[data-mode="live"] .commentator.is-idle {
     max-height: none;
+  }
+
+  #app[data-mode="live"] .commentator.is-idle .commentator-cue,
+  #app[data-mode="live"] .commentator.is-idle #btn-comm-copy {
+    display: none;
   }
 
   #app[data-mode="live"] .teach-panel .ref-photo {
@@ -1562,11 +1571,10 @@ body,
   top: 8px;
   right: 8px;
   z-index: 3;
-  min-height: 32px;
-  padding: 6px 10px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 13px;
+  letter-spacing: 0;
   text-decoration: none;
   color: var(--text);
   background: rgba(8, 12, 18, 0.82);
@@ -1940,6 +1948,38 @@ a.live-fallback-cta.tool.primary {
 .live-heading {
   font-size: 16px;
   margin: -4px 0 8px;
+}
+
+.live-watch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+
+.live-watch-row .tool {
+  min-height: 44px;
+}
+
+.live-setup {
+  margin-top: 8px;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 6px;
+}
+
+.live-setup > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font: 600 13px/1.2 var(--font);
+  color: var(--text);
+}
+
+.live-setup > summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 8px;
 }
 
 .field-label {

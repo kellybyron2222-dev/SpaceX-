@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#81](https://github.com/kellybyron2222-dev/SpaceX-/pull/81) cue sheet through phone chrome and desktop one-row header
-- **This PR:** Focus rings, skip link, reduced-motion idle/camera, labeled Search, help dialog focus
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#82](https://github.com/kellybyron2222-dev/SpaceX-/pull/82) cue sheet through first-run chrome, desktop keys, and a11y rings
+- **This PR:** Night-of Live — picture first, Stream setup collapsed, 44px YouTube chip
 
 ## Open PRs
 
-A11y chrome (this branch). **None** after merge.
+Live night picture (this branch). **None** after merge.
 
 ## Next
 
-Persona UX cycle continues (Live night-of, Learn peel). Contest wrap stays parked — do not submit.
+Persona UX cycle continues (Learn peel, scale honesty). Contest wrap stays parked — do not submit.
