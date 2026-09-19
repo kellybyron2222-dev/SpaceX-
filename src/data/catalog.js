@@ -347,9 +347,9 @@ export const CATALOG = [
     sceneId: "mechazilla",
     partId: "mechazilla.arms",
     matchIds: ["mechazilla.arms", "mechazilla.pads", "mechazilla.carriage"],
-    blurb: "Tower arms that stack stages and, as shown in public, catch a returning Super Heavy.",
+    blurb: "Tower arms on the pad — they stack the rocket and can catch Super Heavy. Not part of the vehicle.",
     overview:
-      "The Starbase tower arms — chopsticks — stack the vehicle and catch Super Heavy. The 2024 catch was public. Arm speed and fail-safes are not published. Vehicle pins are a separate card.",
+      "Chopsticks are the two big tower arms on the launch pad, not on the rocket. They stack Starship and, as shown in public, catch a returning Super Heavy. The 2024 catch was public. Arm speed and fail-safes are not published. Vehicle pins are a separate card.",
     history:
       "The arms stacked Starship first, then caught Super Heavy on a public 2024 test flight — a first for an orbital-class booster. SpaceX has talked about catch vs landing-leg mass. Arm speed, compliance, and fail-safes are not published. Kennedy’s Starship pad is a separate public construction story.",
     function:
