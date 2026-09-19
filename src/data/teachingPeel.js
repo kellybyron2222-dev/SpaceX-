@@ -21,6 +21,9 @@ export const TEACH_LABELS = {
   "starship.loxHeader": "Oxygen header tank",
   "starship.nose": "Nose and payload bay",
   "starship.tiles": "Heat-shield tiles",
+  "tiles.tiles": "Heat-shield tiles",
+  "tiles.carrier": "The barrel under the tiles",
+  "tiles.felt": "Tile gaps",
   "starship.fwdFlaps": "Front flaps",
   "starship.aftFlaps": "Back flaps",
   "starship.sl": "Sea-level engines",
@@ -70,6 +73,8 @@ export const PEEL_HINTS = {
     "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest. Scale puts a person beside the engine — Raptor is about a person and a half tall.",
   "compare-engines":
     "Same camera. Left is Raptor — two preburners, methane. Right is Merlin — one gas generator, RP-1. Explode floats both engines apart. Click a piece to isolate it. Scale puts a person in front so both bells stay human-sized.",
+  tiles:
+    "Explode lifts the hexes off the curve. Why ties the black face, the 9 m barrel, and the gaps to the job they do. Click a piece to isolate it.",
 };
 
 const DEFAULT_HINT = "Click a piece to isolate it. Explode floats parts apart when this scene supports it.";
@@ -212,6 +217,23 @@ export const WHY_SHAPE = {
       partId: "raptor.gimbal",
       title: "The engine can tilt",
       body: "Steer by pointing the whole engine. Those rams are the teaching stand-in.",
+    },
+  ],
+  tiles: [
+    {
+      partId: "tiles.tiles",
+      title: "Black tiles on the belly",
+      body: "They take reentry heat so the stainless tank does not cook on the way down.",
+    },
+    {
+      partId: "tiles.carrier",
+      title: "They follow a 9 m curve",
+      body: "This panel is a slice of the barrel. Hexes pack a curved wall. Explode lifts them along the surface.",
+    },
+    {
+      partId: "tiles.felt",
+      title: "Gaps are not empty",
+      body: "Dark lines stand in for felt and expansion room. Not a glue spec.",
     },
   ],
   mechazilla: [
