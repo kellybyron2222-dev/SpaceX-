@@ -73,7 +73,16 @@ describe("teaching peel", () => {
     assert.match(rows[1].title, /steel is the tank/i);
     assert.match(rows[2].body, /belly-first|tiled side/i);
     assert.equal(/delve|at a glance|robust /i.test(rows.map((r) => `${r.title} ${r.body}`).join(" ")), false);
-    assert.deepEqual(whyShapeFor("raptor"), []);
+  });
+
+  it("ties Raptor preburners and Mechazilla arms to a job", () => {
+    const raptor = whyShapeFor("raptor");
+    assert.equal(raptor[0].partId, "raptor.oxPre");
+    assert.match(raptor[0].body, /full-flow|preburner|methane/i);
+    const tower = whyShapeFor("mechazilla");
+    assert.equal(tower[1].partId, "mechazilla.arms");
+    assert.match(tower[1].body, /pins|9 m/i);
+    assert.equal(/delve|at a glance|robust /i.test([...raptor, ...tower].map((r) => `${r.title} ${r.body}`).join(" ")), false);
   });
 
   it("contrasts two preburners with one gas generator", () => {

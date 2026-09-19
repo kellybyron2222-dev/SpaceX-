@@ -271,7 +271,7 @@ function syncPeelChrome() {
   const whyRows = whyShapeFor(viewer.sceneId);
   btnWhy.disabled = !whyRows.length;
   btnWhy.setAttribute("aria-pressed", state.whyOn && whyRows.length ? "true" : "false");
-  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack scenes";
+  btnWhy.title = whyRows.length ? "Why this shape" : "Why this shape is for the stack, engines, and tower";
   renderWhyShape();
 }
 

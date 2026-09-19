@@ -196,6 +196,40 @@ export const WHY_SHAPE = {
       body: "Right-side pipes are kerosene-colored. Left-side Raptor burns methane. Same camera so both cycles stay in one view.",
     },
   ],
+  raptor: [
+    {
+      partId: "raptor.oxPre",
+      title: "Two preburners",
+      body: "Each pump spins on gas of its own propellant. That is the methane full-flow cycle — not Merlin’s one can.",
+    },
+    {
+      partId: "raptor.nozzle",
+      title: "The bell is open",
+      body: "Hot gas expands in the bell. The rings are a cooling hint, not a jacket drawing.",
+    },
+    {
+      partId: "raptor.gimbal",
+      title: "The engine can tilt",
+      body: "Steer by pointing the whole engine. Those rams are the teaching stand-in.",
+    },
+  ],
+  mechazilla: [
+    {
+      partId: "mechazilla.tower",
+      title: "Tall enough to catch",
+      body: "Public height is ~146 m. The arms sit where Super Heavy’s pins are — not at the pad.",
+    },
+    {
+      partId: "mechazilla.arms",
+      title: "Wide enough for 9 m",
+      body: "The chopsticks open around the booster, then close on the pins. Not the grid fins.",
+    },
+    {
+      partId: "mechazilla.ghost",
+      title: "The booster is the keep-out",
+      body: "That faded vehicle is why the bay is that wide. Teaching ghost, not a second flight article.",
+    },
+  ],
 };
 
 export function whyShapeFor(sceneId) {
