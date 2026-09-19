@@ -39,6 +39,7 @@ export class Viewer {
     this.explodeT = 0;
     this.cutawayOn = false;
     this.isolatedId = null;
+    this.scaleOn = true;
     this.selected = null;
     this.baseMats = new WeakMap();
     this.cutawayPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
@@ -193,6 +194,7 @@ export class Viewer {
     this.sceneId = spec.id;
     this.isolatedId = null;
     this.cutawayOn = false;
+    this.scaleOn = true;
     this.explodeTarget = 0;
     this.explodeT = 0;
     this.selected = null;
@@ -207,6 +209,7 @@ export class Viewer {
     this.root = spec.build();
     this.scene.add(this.root);
     this._captureOriginals();
+    this._applyScale();
     this._syncLook();
     this._fitShadow();
     const whole = this._prepareFrame();
@@ -226,6 +229,20 @@ export class Viewer {
     this.explodeTarget = on && allowed ? 1 : 0;
     if (on && allowed) this._pullBackForExplode();
     return { allowed, hint: spec.explodeHint };
+  }
+
+  setScale(on) {
+    const allowed = Boolean(this.root?.userData.supportsScale);
+    this.scaleOn = Boolean(on && allowed);
+    this._applyScale();
+    return { allowed, on: this.scaleOn };
+  }
+
+  _applyScale() {
+    if (!this.root) return;
+    this.root.traverse((obj) => {
+      if (obj.userData.scaleRefs) obj.visible = this.scaleOn;
+    });
   }
 
   setCutaway(on) {
@@ -261,6 +278,8 @@ export class Viewer {
       cutaway: this.cutawayOn,
       supportsExplode: Boolean(this.root?.userData.supportsExplode),
       supportsCutaway: Boolean(this.root?.userData.supportsCutaway),
+      supportsScale: Boolean(this.root?.userData.supportsScale),
+      scale: this.scaleOn && Boolean(this.root?.userData.supportsScale),
     };
   }
 
@@ -529,7 +548,7 @@ export class Viewer {
     const selectedId = this.selected?.userData?.part?.id || null;
     this.root.traverse((child) => {
       if (child.userData.cutawayInterior) child.visible = this.cutawayOn;
-      if (!child.isMesh || !child.material || child.userData.pickProxy) return;
+      if (!child.isMesh || !child.material || child.userData.pickProxy || child.userData.skipFrame) return;
       const orig = this.baseMats.get(child);
       if (!orig) return;
       if (child.userData._lookMat) {

@@ -17,6 +17,8 @@ describe("teaching peel", () => {
     assert.equal(teachLabel({ id: "starship.tiles" }), "Heat-shield tiles");
     assert.equal(teachLabel({ id: "starship.loxHeader" }), "Oxygen header tank");
     assert.equal(teachLabel({ id: "mechazilla.arms" }), "Chopsticks — tower arms");
+    assert.equal(teachLabel({ id: "scale.person" }), "A person — about 1.8 m");
+    assert.equal(teachLabel({ id: "scale.falcon" }), "Falcon 9 — for scale");
     assert.equal(teachLabel({ id: "unknown.part", name: "Fallback" }), "Fallback");
     assert.equal(/lede|at a glance|delve/i.test(Object.values(TEACH_LABELS).join(" ")), false);
   });
@@ -32,6 +34,7 @@ describe("teaching peel", () => {
 
   it("explains peel without a new URL scheme", () => {
     assert.match(peelHintFor("fullstack"), /Cutaway opens the tank shells/);
+    assert.match(peelHintFor("fullstack"), /Falcon 9/);
     assert.match(peelHintFor("fullstack"), /Click a piece/);
     assert.equal(peelHintFor("fullstack").includes("?mode="), false);
   });

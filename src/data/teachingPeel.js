@@ -44,14 +44,16 @@ export const TEACH_LABELS = {
   "raptor.tvc": "Steering rams",
   "pad.olm": "Launch mount",
   "pad.deluge": "Water deluge",
+  "scale.person": "A person — about 1.8 m",
+  "scale.falcon": "Falcon 9 — for scale",
 };
 
 export const CUTAWAY_SCENES = new Set(["fullstack", "booster", "starship"]);
 
 export const PEEL_HINTS = {
   fullstack:
-    "Explode floats ship, tanks, engines, and flaps apart. Click a piece to fade the rest. Cutaway opens the tank shells.",
-  booster: "Explode drops the engine cluster and spreads the fins. Click a piece to isolate it. Cutaway opens the tanks.",
+    "Explode floats ship, tanks, engines, and flaps apart. Click a piece to fade the rest. Cutaway opens the tank shells. Scale puts a person and a Falcon 9 beside the stack.",
+  booster: "Explode drops the engine cluster and spreads the fins. Click a piece to isolate it. Cutaway opens the tanks. Scale puts a person and a Falcon 9 beside the booster.",
   starship: "Explode spreads flaps and engines. Click a piece to isolate it. Cutaway opens the tanks and header tanks.",
   mechazilla: "Explode opens the chopsticks away from the booster. Click the arms or the vehicle to isolate one.",
   raptor: "Explode floats nozzle, pumps, and gimbal apart. Click one piece to fade the rest.",

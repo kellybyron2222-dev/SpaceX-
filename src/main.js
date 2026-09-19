@@ -35,6 +35,7 @@ const btnTeach = document.getElementById("btn-teach");
 const help = document.getElementById("help");
 const btnExplode = document.getElementById("btn-explode");
 const btnCutaway = document.getElementById("btn-cutaway");
+const btnScale = document.getElementById("btn-scale");
 const btnReassemble = document.getElementById("btn-reassemble");
 const btnCalloutTogether = document.getElementById("btn-callout-together");
 const calloutKickerEl = document.getElementById("callout-kicker");
@@ -250,6 +251,11 @@ function syncPeelChrome() {
   btnCutaway.disabled = !peel.supportsCutaway;
   btnCutaway.setAttribute("aria-pressed", peel.cutaway ? "true" : "false");
   btnCutaway.title = peel.supportsCutaway ? "Open the tank shells (X)" : "Cutaway is for tank scenes";
+  btnScale.disabled = !peel.supportsScale;
+  btnScale.setAttribute("aria-pressed", peel.scale ? "true" : "false");
+  btnScale.title = peel.supportsScale
+    ? "Person (~1.8 m) and Falcon 9 (~70 × 3.7 m) beside Super Heavy"
+    : "Scale figures are on the Super Heavy scenes";
   const busy = peelBusy(peel);
   btnReassemble.disabled = !busy;
   btnCalloutTogether.classList.toggle("hidden", !busy);
@@ -598,6 +604,12 @@ btnExplode.addEventListener("click", () => {
 btnCutaway.addEventListener("click", () => {
   const next = btnCutaway.getAttribute("aria-pressed") !== "true";
   viewer.setCutaway(next);
+  syncPeelChrome();
+});
+
+btnScale.addEventListener("click", () => {
+  const next = btnScale.getAttribute("aria-pressed") !== "true";
+  viewer.setScale(next);
   syncPeelChrome();
 });
 

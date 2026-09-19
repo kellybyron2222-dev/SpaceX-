@@ -261,6 +261,80 @@ export function addTeachingTanks(parent, { radius, yBottom, yTop, splitY, mats, 
   return { ch4, lox, dome };
 }
 
+/** ~1.8 m teaching figure — not a crew portrait. */
+export function createScalePerson(mats) {
+  const g = new THREE.Group();
+  const body = mats.darkSteel;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), mats.stainlessDark);
+  head.position.y = 1.68;
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.62, 10), body);
+  torso.position.y = 1.22;
+  const legs = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.13, 0.82, 10), body);
+  legs.position.y = 0.5;
+  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.58, 8), body);
+  armL.position.set(-0.22, 1.2, 0);
+  const armR = armL.clone();
+  armR.position.x = 0.22;
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.06, 20), mats.caution);
+  disc.position.y = 0.03;
+  g.add(head, torso, legs, armL, armR, disc);
+  tag(g, {
+    id: "scale.person",
+    name: "Person (for scale)",
+    blurb: "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Not a crew portrait.",
+  });
+  addPickProxy(g, new THREE.Vector3(0, 0.9, 0), 2.2, {
+    id: "scale.person",
+    name: "Person (for scale)",
+    blurb: "About 1.8 m tall. Super Heavy is about 72 m — roughly forty people stacked. Not a crew portrait.",
+  });
+  return g;
+}
+
+/** ~70 × 3.7 m Falcon 9 silhouette so Super Heavy is not a grey tube in a void. */
+export function createScaleFalcon(mats) {
+  const g = new THREE.Group();
+  const r = 3.7 / 2;
+  const h = 70;
+  const stack = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h - 6, 20), mats.whitePaint);
+  stack.position.y = (h - 6) / 2;
+  const inter = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 2.2, 16), mats.blackPaint);
+  inter.position.y = h - 7.2;
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(r, 6, 16), mats.whitePaint);
+  nose.position.y = h - 3;
+  g.add(stack, inter, nose);
+  for (let i = 0; i < 4; i++) {
+    const a = (i / 4) * Math.PI * 2;
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.6, 0.9), mats.whitePaint);
+    fin.position.set(Math.cos(a) * (r + 0.4), 18, Math.sin(a) * (r + 0.4));
+    g.add(fin);
+  }
+  tag(g, {
+    id: "scale.falcon",
+    name: "Falcon 9 (for scale)",
+    blurb:
+      "About 70 m tall and 3.7 m across. Nearly as tall as Super Heavy, much thinner. A teaching stick, not a Falcon CAD model.",
+  });
+  return g;
+}
+
+/** Person + Falcon 9 next to Super Heavy. Skipped from camera framing. */
+export function addScaleRefs(parent, mats, { personX = 11, falconX = 22 } = {}) {
+  const group = new THREE.Group();
+  group.userData.scaleRefs = true;
+  const person = createScalePerson(mats);
+  person.position.set(personX, 0, 12);
+  const falcon = createScaleFalcon(mats);
+  falcon.position.set(falconX, 0, -10);
+  group.add(person, falcon);
+  group.traverse((child) => {
+    child.userData.skipFrame = true;
+  });
+  parent.add(group);
+  parent.userData.supportsScale = true;
+  return group;
+}
+
 export function enableShadows(root) {
   root.traverse((child) => {
     if (child.isMesh && !child.userData.pickProxy) {
