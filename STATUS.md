@@ -9,12 +9,12 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#56](https://github.com/kellybyron2222-dev/SpaceX-/pull/56) playable Starship VOD, Copy share, Mute voice, Show hold, Tracker Live chip
-- **This PR:** Learn **Chopsticks** first line: pad tower arms, not on the rocket.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#57](https://github.com/kellybyron2222-dev/SpaceX-/pull/57) playable Starship VOD, Copy share, chopsticks English, Tracker Live chip
+- **This PR:** Tagged-components kicker: pick a name to open Learn. Hotspots stay off until H.
 
 ## Open PRs
 
-Chopsticks English (this PR). **None** after merge.
+Hotspot Learn kicker (this PR). **None** after merge.
 
 ## Next
 
