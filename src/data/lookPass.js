@@ -2,3 +2,8 @@
 export function meshTakesLook(child) {
   return Boolean(child?.isMesh && child.material && !child.userData?.pickProxy);
 }
+
+/** Black tiles stay black — gold wash contradicts “Black tiles on the belly”. */
+export function selectKeepsHue(part) {
+  return Boolean(part?.keepHue);
+}

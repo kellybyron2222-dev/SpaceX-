@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { meshTakesLook } from "./lookPass.js";
+import { meshTakesLook, selectKeepsHue } from "./lookPass.js";
 
 describe("isolate look pass", () => {
   it("still fades skipFrame scale meshes", () => {
@@ -14,5 +14,10 @@ describe("isolate look pass", () => {
     assert.equal(meshTakesLook({ isMesh: true, material: {}, userData: { pickProxy: true } }), false);
     assert.equal(meshTakesLook({ isMesh: false, material: {}, userData: {} }), false);
     assert.equal(meshTakesLook(null), false);
+  });
+
+  it("does not gold-wash heat-shield tiles", () => {
+    assert.equal(selectKeepsHue({ keepHue: true, id: "starship.tiles" }), true);
+    assert.equal(selectKeepsHue({ id: "booster.engines" }), false);
   });
 });

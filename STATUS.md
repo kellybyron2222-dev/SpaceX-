@@ -8,12 +8,12 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#69](https://github.com/kellybyron2222-dev/SpaceX-/pull/69) cue sheet through Explore peel, scale, Why this shape, webcast pose, and isolate fade
-- **This PR:** Why-tiles frames the whole belly. InstancedMesh uses the instance spread, not one hex at the origin.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#70](https://github.com/kellybyron2222-dev/SpaceX-/pull/70) cue sheet through Explore peel, isolate fade, and Why-tiles frame
+- **This PR:** Isolated heat-shield tiles stay black. Gold wash was contradicting “Black tiles on the belly.”
 
 ## Open PRs
 
-Why-tiles camera frame (this branch). **None** after merge.
+Keep tiles black (this branch). **None** after merge.
 
 ## Next
 
