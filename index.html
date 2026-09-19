@@ -224,7 +224,7 @@
 
       <aside class="panel live-panel live-only" aria-label="Live Launch controls">
         <p class="side-label">Live Launch</p>
-        <h2 class="live-heading">Public stream embed</h2>
+        <h2 class="live-heading">Watch the launch</h2>
         <section id="live-countdown" class="live-countdown hidden" hidden>
           <p id="live-countdown-kicker" class="live-countdown-kicker">Next public Starship window</p>
           <div class="live-countdown-row">
@@ -235,6 +235,15 @@
           <p id="live-countdown-meta" class="hint">Public Launch Library 2 time — not official SpaceX countdown.</p>
         </section>
         <p id="live-banner" class="banner">Public YouTube embed — not official SpaceX telemetry or internal cameras.</p>
+        <p class="hint">
+          Commentator sits beside the picture. It stays off until Start (toolbar or C).
+        </p>
+        <div class="live-watch-row">
+          <a id="live-open-yt" class="tool primary" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+          <a id="live-open-blocked" class="tool hidden" hidden href="https://www.youtube.com/watch?v=lC3RDO7tdLc" target="_blank" rel="noopener noreferrer">Watch latest webcast on YouTube</a>
+        </div>
+        <details class="live-setup">
+          <summary>Stream setup</summary>
         <label class="field-label" for="live-url">YouTube URL or video ID</label>
         <div class="live-url-row">
           <input
@@ -252,9 +261,7 @@
           <button type="button" id="btn-live-load" class="tool">Load</button>
         </div>
         <div class="live-url-actions">
-          <a id="live-open-yt" class="tool primary" href="https://www.youtube.com/watch?v=hI9HQfCAw64" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
           <button type="button" id="btn-live-copy" class="tool">Copy commentator link</button>
-          <a id="live-open-blocked" class="tool hidden" hidden href="https://www.youtube.com/watch?v=lC3RDO7tdLc" target="_blank" rel="noopener noreferrer">Watch latest webcast on YouTube</a>
           <button type="button" id="btn-embed-help" class="text-btn">Can't play here?</button>
           <button type="button" id="btn-live-default" class="text-btn" title="Skip iframe-blocked Flight 13 101/150 ids. Not Falcon. Ads cannot be stripped.">Reset to latest playable Starship</button>
         </div>
@@ -263,9 +270,6 @@
           Use <strong>Open on YouTube</strong> for YouTube’s player. We do not strip ads.
         </p>
         <p id="live-url-error" class="hint" hidden role="alert"></p>
-        <p class="hint">
-          <strong>Commentator</strong> is beside the stream (toolbar or C). It stays off until Start so the video stays clear.
-        </p>
         <p class="section-label">Overlay preset</p>
         <div class="filters" id="live-presets"></div>
         <p id="live-preset-blurb" class="hint"></p>
@@ -297,6 +301,7 @@
           only so they do not steal the YouTube play control. Click a box or a name here to open Learn.
           Coordinates live in <code>src/data/live/overlays.json</code> (0–1, top-left origin).
         </p>
+        </details>
       </aside>
 
       <aside id="teach" class="teach-panel learn-live" aria-label="Teach mode">
