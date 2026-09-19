@@ -327,7 +327,9 @@ export function addScaleRefs(parent, mats, { personX = 11, falconX = 22 } = {}) 
   const falcon = createScaleFalcon(mats);
   falcon.position.set(falconX, 0, -10);
   group.add(person, falcon);
-  group.traverse((child) => {
+  // Person is 1.8 m — skip so it does not steal the box. Falcon is ~70 m and
+  // taller than Starship, so it must stay in the camera frame.
+  person.traverse((child) => {
     child.userData.skipFrame = true;
   });
   parent.add(group);
