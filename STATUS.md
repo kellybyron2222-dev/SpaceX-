@@ -9,12 +9,12 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#60](https://github.com/kellybyron2222-dev/SpaceX-/pull/60) playable Starship VOD, Copy share, bot wrap, ads honesty
-- **This PR:** Live Learn empty state: Start / Copy share / Hotspots. Ads cannot be stripped.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#61](https://github.com/kellybyron2222-dev/SpaceX-/pull/61) playable Starship VOD, Copy share, bot wrap, ads honesty
+- **This PR:** Header: companion for a Grok Bot, contest not submitted. Footer: Copy share uses playable Starship VOD; ads stay.
 
 ## Open PRs
 
-Live Learn empty state (this PR). **None** after merge.
+Contest companion brand (this PR). **None** after merge.
 
 ## Next
 
