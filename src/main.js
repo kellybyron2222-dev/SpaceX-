@@ -6,6 +6,7 @@ import {
   formatUtc,
   loadLaunches,
   nextStarshipWindow,
+  isStarshipLaunch,
   REFRESH_MS,
   statusTip,
   launchMatchesFilter,
@@ -406,6 +407,9 @@ function renderLaunches() {
             : "";
         })
         .join("");
+      const liveChip = isStarshipLaunch(launch)
+        ? `<span class="mini-chip" data-live="1" title="Open Live Launch Commentator on the playable Starship VOD">Live Launch</span>`
+        : "";
       const tip = statusTip(launch.status, launch.statusLabel);
       const netTitle =
         "NET means No Earlier Than — the vehicle will not launch before this time.";
@@ -414,9 +418,16 @@ function renderLaunches() {
         <span class="meta">${launch.vehicle} · ${launch.pad}</span>
         <span class="meta">${launch.site}${t ? ` · ${t}` : ""}</span>
         <span class="meta" title="${netTitle}">${when}</span>
-        <div class="related">${chips}</div>
+        <div class="related">${liveChip}${chips}</div>
       `;
       card.addEventListener("click", (ev) => {
+        const liveGo = ev.target.closest("[data-live]");
+        if (liveGo) {
+          ev.preventDefault();
+          setMode("live");
+          live.applyShareLink({ commentary: true });
+          return;
+        }
         const chip = ev.target.closest("[data-cat]");
         if (chip) {
           ev.preventDefault();
