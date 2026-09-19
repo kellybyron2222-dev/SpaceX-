@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#67](https://github.com/kellybyron2222-dev/SpaceX-/pull/67) cue sheet through Explore peel, scale, Why this shape, and Raptor vs Merlin
-- **This PR:** **Match webcast** — one click (Explore or Live) poses Mechazilla like the gulf-side pad camera: tower left, stack right. Teaching pose, not a surveyed camera. Idle rotate pauses so the view holds.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#68](https://github.com/kellybyron2222-dev/SpaceX-/pull/68) cue sheet through Explore peel, scale, Why this shape, Raptor vs Merlin, and Match webcast
+- **This PR:** Isolate fades the person and Falcon 9 with the rest of the stack. Scale refs stay out of the camera box.
 
 ## Open PRs
 
-Match webcast camera (this branch). **None** after merge.
+Isolate scale fade (this branch). **None** after merge.
 
 ## Next
 
-Teaching-3D list is complete after this lands. Contest wrap stays parked — do not submit.
+Keep reviewing teaching 3D (Starship-only scale, Why-tiles frame, mobile peel chrome). Contest wrap parked — do not submit.
