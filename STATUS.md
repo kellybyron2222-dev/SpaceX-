@@ -9,12 +9,12 @@
 ## Shipped
 
 - [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#43](https://github.com/kellybyron2222-dev/SpaceX-/pull/43) cue sheet, deep-links, Commentator, latest-VOD, Learn English
-- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#55](https://github.com/kellybyron2222-dev/SpaceX-/pull/55) English beats, playable Starship VOD, Copy share, Mute voice, Show hold, help/README, 44px, Reset playable
-- **This PR:** Tracker Starship cards get **Live Launch** → Commentator (`commentary=1`). Not Falcon default.
+- [#44](https://github.com/kellybyron2222-dev/SpaceX-/pull/44)–[#56](https://github.com/kellybyron2222-dev/SpaceX-/pull/56) playable Starship VOD, Copy share, Mute voice, Show hold, Tracker Live chip
+- **This PR:** Learn **Chopsticks** first line: pad tower arms, not on the rocket.
 
 ## Open PRs
 
-Tracker Live Launch chip (this PR). **None** after merge.
+Chopsticks English (this PR). **None** after merge.
 
 ## Next
 

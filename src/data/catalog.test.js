@@ -40,6 +40,9 @@ describe("public-figure catalog copy", () => {
   });
 
   it("lists chopsticks as pad GSE, not vehicle hardware", () => {
-    assert.equal(catalogById("chopsticks").domain, "ground");
+    const e = catalogById("chopsticks");
+    assert.equal(e.domain, "ground");
+    assert.match(e.blurb, /not part of the vehicle/i);
+    assert.match(e.overview, /not on the rocket/i);
   });
 });
