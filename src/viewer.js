@@ -4,6 +4,7 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createStarfield, disposeHierarchy } from "./models/helpers.js";
 import { SCENES, sceneById } from "./models/index.js";
 import { meshTakesLook } from "./data/lookPass.js";
+import { unionFilteredBounds } from "./data/meshBounds.js";
 
 const tmpBox = new THREE.Box3();
 const tmpSize = new THREE.Vector3();
@@ -11,20 +12,8 @@ const tmpCenter = new THREE.Vector3();
 const tmpGeomBox = new THREE.Box3();
 const IDLE_RESUME_S = 5.5;
 
-/** Bounding box that skips decorative ground / sea meshes (userData.skipFrame). */
 function boxFromObjectFiltered(object, target) {
-  target.makeEmpty();
-  object.updateWorldMatrix(true, true);
-  object.traverse((node) => {
-    if (node.userData.skipFrame || !node.isMesh || !node.geometry) return;
-    const geom = node.geometry;
-    if (!geom.boundingBox) geom.computeBoundingBox();
-    if (!geom.boundingBox) return;
-    tmpGeomBox.copy(geom.boundingBox).applyMatrix4(node.matrixWorld);
-    target.union(tmpGeomBox);
-  });
-  if (target.isEmpty()) target.setFromObject(object);
-  return target;
+  return unionFilteredBounds(object, target, tmpGeomBox);
 }
 
 function easeInOutCubic(t) {

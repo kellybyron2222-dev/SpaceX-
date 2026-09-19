@@ -51,6 +51,8 @@ const PARTS = ids("starship", {
   },
   tiles: {
     name: "Windward heat shield",
+    frameTight: 1.42,
+    frameBias: { x: 0.55, y: 0.06, z: 1.02 },
     blurb:
       "The windward side is tiled for reentry heating. This is a coarse hex grid on half the cylinder — not a production tile map or bond pattern.",
   },

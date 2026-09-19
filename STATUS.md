@@ -8,13 +8,13 @@
 
 ## Shipped
 
-- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#68](https://github.com/kellybyron2222-dev/SpaceX-/pull/68) cue sheet through Explore peel, scale, Why this shape, Raptor vs Merlin, and Match webcast
-- **This PR:** Isolate fades the person and Falcon 9 with the rest of the stack. Scale refs stay out of the camera box.
+- [#33](https://github.com/kellybyron2222-dev/SpaceX-/pull/33)–[#69](https://github.com/kellybyron2222-dev/SpaceX-/pull/69) cue sheet through Explore peel, scale, Why this shape, webcast pose, and isolate fade
+- **This PR:** Why-tiles frames the whole belly. InstancedMesh uses the instance spread, not one hex at the origin.
 
 ## Open PRs
 
-Isolate scale fade (this branch). **None** after merge.
+Why-tiles camera frame (this branch). **None** after merge.
 
 ## Next
 
-Keep reviewing teaching 3D (Starship-only scale, Why-tiles frame, mobile peel chrome). Contest wrap parked — do not submit.
+Keep reviewing teaching 3D (Starship-only scale, person readability, mobile peel chrome). Contest wrap parked — do not submit.
