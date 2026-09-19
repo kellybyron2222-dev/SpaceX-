@@ -14,7 +14,7 @@
 
 ## Open PRs
 
-This PR (playable Starship VOD). **None** after merge.
+[#45](https://github.com/kellybyron2222-dev/SpaceX-/pull/45) playable Starship VOD (skip Flight 13 101/150). **None** after merge.
 
 ## Next
 
