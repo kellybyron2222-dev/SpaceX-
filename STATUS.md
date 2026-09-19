@@ -14,11 +14,12 @@
 - [#46](https://github.com/kellybyron2222-dev/SpaceX-/pull/46) Commentator Copy share link (playable `video=` under `/SpaceX-/`)
 - [#47](https://github.com/kellybyron2222-dev/SpaceX-/pull/47) Mute voice (speech only, not YouTube)
 - [#48](https://github.com/kellybyron2222-dev/SpaceX-/pull/48) Collapse pre-T-0 hold beats; Show hold
-- **This PR:** Help lists Copy share link + bot query `?mode=live&commentary=1&video=` under `/SpaceX-/`.
+- [#49](https://github.com/kellybyron2222-dev/SpaceX-/pull/49) Help: Copy share + `?mode=live&commentary=1&video=`
+- **This PR:** Idle Commentator one-liner — Start jumps to T-0 on the newest playable Starship VOD. 101/150 Watch on YouTube. Ads stay.
 
 ## Open PRs
 
-Help share URL (this PR). **None** after merge.
+Idle Start copy (this PR). **None** after merge.
 
 ## Next
 

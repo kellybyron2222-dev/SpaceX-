@@ -488,7 +488,7 @@ export function createLiveLaunch({ onSelect, onShareChange, onLearn } = {}) {
       if (commPhase) commPhase.textContent = "Public play-by-play";
       if (commCue) {
         commCue.textContent =
-          "Start commentary to follow the newest Starship webcast that plays in-page. If Flight 13 blocks embedding (YouTube 101/150), we skip to the next completed Starship VOD — Watch on YouTube for the blocked stream. Ads cannot be stripped.";
+          "Start jumps to T-0 on the newest Starship VOD that plays in-page. If Flight 13 blocks embedding (101/150), Watch on YouTube — we skip to the next Starship clip. Ads cannot be stripped.";
       }
       if (commTags) {
         commTags.hidden = true;
