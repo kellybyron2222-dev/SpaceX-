@@ -199,8 +199,22 @@ function setMode(mode) {
   state.mode = mode;
   app.dataset.mode = mode;
   document.querySelectorAll(".mode-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.mode === mode);
+    const on = btn.dataset.mode === mode;
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-current", on ? "page" : "false");
   });
+  const skip = document.getElementById("skip-content");
+  if (skip) {
+    const targets = {
+      explore: { href: "#scene-nav", label: "Skip to scenes" },
+      tracker: { href: "#launch-list", label: "Skip to launches" },
+      learn: { href: "#catalog-search", label: "Skip to catalog search" },
+      live: { href: "#btn-comm-start", label: "Skip to commentary" },
+    };
+    const next = targets[mode] || targets.explore;
+    skip.href = next.href;
+    skip.textContent = next.label;
+  }
   if (mode !== "explore") hideCallout();
   if (mode === "live") {
     live.activate();
@@ -390,7 +404,9 @@ function showTeach(entry) {
   const tab = state.teachTab === "physics" && !state.physicsUnlocked ? "overview" : state.teachTab;
   state.teachTab = tab;
   document.querySelectorAll(".tab").forEach((el) => {
-    el.classList.toggle("active", el.dataset.tab === tab);
+    const on = el.dataset.tab === tab;
+    el.classList.toggle("active", on);
+    el.setAttribute("aria-selected", on ? "true" : "false");
   });
   if (tab === "sources") {
     const items = (entry.sources || [])
@@ -699,9 +715,16 @@ function resetView() {
 }
 btnReset.addEventListener("click", () => resetView());
 btnShot.addEventListener("click", () => viewer.screenshot());
-btnHelp.addEventListener("click", () => help.classList.toggle("hidden"));
+const helpClose = document.getElementById("help-close");
+function setHelpOpen(open) {
+  help.classList.toggle("hidden", !open);
+  help.setAttribute("aria-hidden", open ? "false" : "true");
+  if (open) helpClose.focus();
+  else btnHelp.focus();
+}
+btnHelp.addEventListener("click", () => setHelpOpen(help.classList.contains("hidden")));
 btnRefresh.addEventListener("click", () => refreshLaunches());
-document.getElementById("help-close").addEventListener("click", () => help.classList.add("hidden"));
+helpClose.addEventListener("click", () => setHelpOpen(false));
 document.getElementById("callout-close").addEventListener("click", () => {
   viewer.isolateById(null);
   viewer.clearSelection();
@@ -776,9 +799,12 @@ window.addEventListener("keydown", (event) => {
   if (key === "v") setMode("explore");
   if (key === "l") setMode("learn");
   if (key === "y") setMode("live");
-  if (key === "?" || (event.shiftKey && key === "/")) help.classList.toggle("hidden");
+  if (key === "?" || (event.shiftKey && key === "/")) setHelpOpen(help.classList.contains("hidden"));
   if (key === "escape") {
-    help.classList.add("hidden");
+    if (!help.classList.contains("hidden")) {
+      setHelpOpen(false);
+      return;
+    }
     viewer.isolateById(null);
     viewer.clearSelection();
     hideCallout();
@@ -829,6 +855,10 @@ window.addEventListener("keydown", (event) => {
 });
 
 selectScene("fullstack");
+if (viewer.reducedMotion) btnIdle.setAttribute("aria-pressed", "false");
+document.querySelectorAll(".mode-btn").forEach((btn) => {
+  btn.setAttribute("aria-current", btn.dataset.mode === state.mode ? "page" : "false");
+});
 renderCatalog();
 refreshLaunches();
 setInterval(refreshLaunches, REFRESH_MS);
